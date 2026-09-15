@@ -1,1 +1,3 @@
 # idea-tribe
+
+hello friends
