@@ -91,3 +91,7 @@
     background: rgba(201, 149, 42, 0.8);
   }
 }
+
+.leaflet-container {
+  z-index: 0 !important;
+}

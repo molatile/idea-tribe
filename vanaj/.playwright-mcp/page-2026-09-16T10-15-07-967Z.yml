@@ -1,0 +1,218 @@
+- generic [ref=f2e3]:
+  - navigation [ref=f2e4]:
+    - generic [ref=f2e5]:
+      - link "वनज" [ref=f2e6] [cursor=pointer]:
+        - /url: /
+      - button [ref=f2e7] [cursor=pointer]
+  - main [ref=f2e9]:
+    - generic [ref=f2e10]:
+      - generic [ref=f2e13]:
+        - heading "वनज" [level=1] [ref=f2e14]
+        - heading "Vanaj" [level=2] [ref=f2e15]
+        - paragraph [ref=f2e16]: Jharkhand's Living Heritage
+        - generic [ref=f2e17]:
+          - link "Explore Marketplace" [ref=f2e18] [cursor=pointer]:
+            - /url: /marketplace
+          - link "Discover Culture" [ref=f2e19] [cursor=pointer]:
+            - /url: /tourism
+      - generic [ref=f2e20]:
+        - generic: व
+        - generic [ref=f2e22]:
+          - heading "The Spirit of the Forest" [level=2] [ref=f2e23]
+          - generic [ref=f2e24]:
+            - paragraph [ref=f2e25]: Jharkhand, meaning "The Land of Forests," is home to 32 distinct tribal communities, each carrying thousands of years of wisdom, art, and harmony with nature.
+            - paragraph [ref=f2e26]: Vanaj is a digital canvas dedicated to preserving and celebrating this incredible diversity. From the reverberating beats of the Mandar to the intricate lost-wax casting of Dokra artisans, we bring the heart of Central India to the world.
+      - generic [ref=f2e27]:
+        - heading "Discover the Heritage" [level=2] [ref=f2e29]
+        - generic [ref=f2e31]:
+          - link "🥁 नृत्य Dance & Rhythms Experience the energetic Chhau and Santhali dances." [ref=f2e32] [cursor=pointer]:
+            - /url: /dance
+            - generic [ref=f2e33]:
+              - generic [ref=f2e34]:
+                - generic [ref=f2e35]: 🥁
+                - heading "नृत्य" [level=3] [ref=f2e36]
+                - heading "Dance & Rhythms" [level=4] [ref=f2e37]
+              - paragraph [ref=f2e39]: Experience the energetic Chhau and Santhali dances.
+          - link "🗣️ भाषा Languages Explore the map of Santali, Ho, and Mundari." [ref=f2e43] [cursor=pointer]:
+            - /url: /languages
+            - generic [ref=f2e44]:
+              - generic [ref=f2e45]:
+                - generic [ref=f2e46]: 🗣️
+                - heading "भाषा" [level=3] [ref=f2e47]
+                - heading "Languages" [level=4] [ref=f2e48]
+              - paragraph [ref=f2e50]: Explore the map of Santali, Ho, and Mundari.
+          - link "🍲 भोजन Tribal Cuisine Discover traditional flavors." [ref=f2e54] [cursor=pointer]:
+            - /url: /food
+            - generic [ref=f2e55]:
+              - generic [ref=f2e56]:
+                - generic [ref=f2e57]: 🍲
+                - heading "भोजन" [level=3] [ref=f2e58]
+                - heading "Tribal Cuisine" [level=4] [ref=f2e59]
+              - paragraph [ref=f2e61]: Discover traditional flavors.
+          - link "🏺 बाज़ार Marketplace Authentic Dokra art and crafts." [ref=f2e65] [cursor=pointer]:
+            - /url: /marketplace
+            - generic [ref=f2e66]:
+              - generic [ref=f2e67]:
+                - generic [ref=f2e68]: 🏺
+                - heading "बाज़ार" [level=3] [ref=f2e69]
+                - heading "Marketplace" [level=4] [ref=f2e70]
+              - paragraph [ref=f2e72]: Authentic Dokra art and crafts.
+          - link "🗺️ पर्यटन Tourism Map Navigate sacred groves and villages." [ref=f2e76] [cursor=pointer]:
+            - /url: /tourism
+            - generic [ref=f2e77]:
+              - generic [ref=f2e78]:
+                - generic [ref=f2e79]: 🗺️
+                - heading "पर्यटन" [level=3] [ref=f2e80]
+                - heading "Tourism Map" [level=4] [ref=f2e81]
+              - paragraph [ref=f2e83]: Navigate sacred groves and villages.
+          - link "🎙️ इतिहास Oral History Listen to folklore and songs." [ref=f2e87] [cursor=pointer]:
+            - /url: /archive
+            - generic [ref=f2e88]:
+              - generic [ref=f2e89]:
+                - generic [ref=f2e90]: 🎙️
+                - heading "इतिहास" [level=3] [ref=f2e91]
+                - heading "Oral History" [level=4] [ref=f2e92]
+              - paragraph [ref=f2e94]: Listen to folklore and songs.
+      - generic [ref=f2e99]:
+        - heading "Roots of the Soil" [level=2] [ref=f2e101]
+        - generic [ref=f2e103]:
+          - generic [ref=f2e104]:
+            - generic [ref=f2e105]: 🏹
+            - heading "Santhal" [level=3] [ref=f2e106]
+            - paragraph [ref=f2e107]: Austroasiatic roots, renowned for their Ol Chiki script and sacred Jaher Than groves.
+          - generic [ref=f2e109]:
+            - generic [ref=f2e110]: 🌿
+            - heading "Munda" [level=3] [ref=f2e111]
+            - paragraph [ref=f2e112]: Ancient agrarian wisdom and intricate customary laws spanning generations.
+          - generic [ref=f2e114]:
+            - generic [ref=f2e115]: 🌾
+            - heading "Ho" [level=3] [ref=f2e116]
+            - paragraph [ref=f2e117]: Deep reverence for nature, guided by traditional governance and Desauli.
+          - generic [ref=f2e119]:
+            - generic [ref=f2e120]: 🥁
+            - heading "Oraon" [level=3] [ref=f2e121]
+            - paragraph [ref=f2e122]: Dravidian heritage, celebrated globally through the majestic Sarhul festival.
+      - generic [ref=f2e125]:
+        - generic [ref=f2e126]:
+          - generic [ref=f2e127]: 🔥
+          - generic [ref=f2e128]: Sarhul
+        - generic [ref=f2e129]:
+          - generic [ref=f2e130]: 🥁
+          - generic [ref=f2e131]: Karma
+        - generic [ref=f2e132]:
+          - generic [ref=f2e133]: 🔥
+          - generic [ref=f2e134]: Sohrai
+        - generic [ref=f2e135]:
+          - generic [ref=f2e136]: 🥁
+          - generic [ref=f2e137]: Tusu Parab
+        - generic [ref=f2e138]:
+          - generic [ref=f2e139]: 🔥
+          - generic [ref=f2e140]: Bhagta Parab
+        - generic [ref=f2e141]:
+          - generic [ref=f2e142]: 🥁
+          - generic [ref=f2e143]: Manda
+        - generic [ref=f2e144]:
+          - generic [ref=f2e145]: 🔥
+          - generic [ref=f2e146]: Roha Puna
+        - generic [ref=f2e147]:
+          - generic [ref=f2e148]: 🥁
+          - generic [ref=f2e149]: Baha
+        - generic [ref=f2e150]:
+          - generic [ref=f2e151]: 🔥
+          - generic [ref=f2e152]: Sarhul
+        - generic [ref=f2e153]:
+          - generic [ref=f2e154]: 🥁
+          - generic [ref=f2e155]: Karma
+        - generic [ref=f2e156]:
+          - generic [ref=f2e157]: 🔥
+          - generic [ref=f2e158]: Sohrai
+        - generic [ref=f2e159]:
+          - generic [ref=f2e160]: 🥁
+          - generic [ref=f2e161]: Tusu Parab
+        - generic [ref=f2e162]:
+          - generic [ref=f2e163]: 🔥
+          - generic [ref=f2e164]: Bhagta Parab
+        - generic [ref=f2e165]:
+          - generic [ref=f2e166]: 🥁
+          - generic [ref=f2e167]: Manda
+        - generic [ref=f2e168]:
+          - generic [ref=f2e169]: 🔥
+          - generic [ref=f2e170]: Roha Puna
+        - generic [ref=f2e171]:
+          - generic [ref=f2e172]: 🥁
+          - generic [ref=f2e173]: Baha
+        - generic [ref=f2e174]:
+          - generic [ref=f2e175]: 🔥
+          - generic [ref=f2e176]: Sarhul
+        - generic [ref=f2e177]:
+          - generic [ref=f2e178]: 🥁
+          - generic [ref=f2e179]: Karma
+        - generic [ref=f2e180]:
+          - generic [ref=f2e181]: 🔥
+          - generic [ref=f2e182]: Sohrai
+        - generic [ref=f2e183]:
+          - generic [ref=f2e184]: 🥁
+          - generic [ref=f2e185]: Tusu Parab
+        - generic [ref=f2e186]:
+          - generic [ref=f2e187]: 🔥
+          - generic [ref=f2e188]: Bhagta Parab
+        - generic [ref=f2e189]:
+          - generic [ref=f2e190]: 🥁
+          - generic [ref=f2e191]: Manda
+        - generic [ref=f2e192]:
+          - generic [ref=f2e193]: 🔥
+          - generic [ref=f2e194]: Roha Puna
+        - generic [ref=f2e195]:
+          - generic [ref=f2e196]: 🥁
+          - generic [ref=f2e197]: Baha
+        - generic [ref=f2e198]:
+          - generic [ref=f2e199]: 🔥
+          - generic [ref=f2e200]: Sarhul
+        - generic [ref=f2e201]:
+          - generic [ref=f2e202]: 🥁
+          - generic [ref=f2e203]: Karma
+        - generic [ref=f2e204]:
+          - generic [ref=f2e205]: 🔥
+          - generic [ref=f2e206]: Sohrai
+        - generic [ref=f2e207]:
+          - generic [ref=f2e208]: 🥁
+          - generic [ref=f2e209]: Tusu Parab
+        - generic [ref=f2e210]:
+          - generic [ref=f2e211]: 🔥
+          - generic [ref=f2e212]: Bhagta Parab
+        - generic [ref=f2e213]:
+          - generic [ref=f2e214]: 🥁
+          - generic [ref=f2e215]: Manda
+        - generic [ref=f2e216]:
+          - generic [ref=f2e217]: 🔥
+          - generic [ref=f2e218]: Roha Puna
+        - generic [ref=f2e219]:
+          - generic [ref=f2e220]: 🥁
+          - generic [ref=f2e221]: Baha
+  - contentinfo [ref=f2e222]:
+    - generic [ref=f2e224]:
+      - link "वनज VANAJ" [ref=f2e225] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=f2e226]: झारखंड की जीवंत विरासत
+      - list [ref=f2e227]:
+        - listitem [ref=f2e228]:
+          - link "Dance" [ref=f2e229] [cursor=pointer]:
+            - /url: /dance
+        - listitem [ref=f2e230]:
+          - link "Languages" [ref=f2e231] [cursor=pointer]:
+            - /url: /languages
+        - listitem [ref=f2e232]:
+          - link "Food" [ref=f2e233] [cursor=pointer]:
+            - /url: /food
+        - listitem [ref=f2e234]:
+          - link "Marketplace" [ref=f2e235] [cursor=pointer]:
+            - /url: /marketplace
+        - listitem [ref=f2e236]:
+          - link "Tourism" [ref=f2e237] [cursor=pointer]:
+            - /url: /tourism
+        - listitem [ref=f2e238]:
+          - link "Oral History" [ref=f2e239] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=f2e241]:
+        - paragraph [ref=f2e242]: © 2026 Vanaj. All rights reserved.
+        - paragraph [ref=f2e243]: Honoring Jharkhand's Indigenous Roots

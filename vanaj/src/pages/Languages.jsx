@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, GeoJSON, useMapEvents } from 'react-leaflet';
+import { MapContainer, GeoJSON, useMapEvents, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { X, Sparkles, Volume2, ArrowRightLeft, Globe, BookOpen, PenTool, Sun, Moon, Music, Flame, Wind, Feather } from 'lucide-react';
+import { X, Sparkles, Volume2, ArrowRightLeft, Globe, BookOpen, PenTool, Sun, Moon, Music, Flame, Wind, Feather, ChevronDown } from 'lucide-react';
 import jharkhandData from '../data/jharkhand.json';
-import { districtInfo, languageColors } from '../data/districtInfo';
+import { districtInfo, languageColors, languageHistories } from '../data/districtInfo';
 
 function MapClickHandler({ clearSelection }) {
   useMapEvents({
@@ -56,6 +56,7 @@ export default function Languages() {
   const geoJsonRef = useRef(null);
   const [showContributeSuccess, setShowContributeSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('Santali');
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   
   // Tribal Simulation State
   const [isDrumming, setIsDrumming] = useState(false);
@@ -69,6 +70,7 @@ export default function Languages() {
   const clearSelection = () => {
     setSelectedDistrict(null);
     selectedDistrictRef.current = null;
+    setIsHistoryExpanded(false);
   };
 
   useEffect(() => {
@@ -141,6 +143,7 @@ export default function Languages() {
         };
         setSelectedDistrict(newDistrict);
         selectedDistrictRef.current = newDistrict.name;
+        setIsHistoryExpanded(false);
       }
     });
   };
@@ -207,12 +210,12 @@ export default function Languages() {
         </div>
 
         {/* Map Section (Old Map Design) */}
-        <div className="relative rounded-xl overflow-hidden mb-16 flex flex-col lg:flex-row h-auto lg:h-[650px] shadow-2xl border-[12px] border-[#4a332a] bg-[#e6d5b8]">
-          <div className="flex-1 h-[500px] lg:h-full relative z-0 p-4">
+        <div className="relative rounded-xl mb-16 flex flex-col lg:flex-row h-auto lg:min-h-[650px] shadow-2xl border-[12px] border-[#4a332a] bg-[#e6d5b8]">
+          <div className="w-full lg:w-[60%] lg:h-full relative z-0 p-2 md:p-4 flex flex-col">
             <div className="absolute inset-0 bg-[#e6d5b8] opacity-50 z-[-1]" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/old-map.png")' }}></div>
             
             {/* Compass Rose Decoration */}
-            <div className="absolute top-6 left-6 z-[400] opacity-70 pointer-events-none">
+            <div className="absolute top-6 right-6 z-[400] opacity-70 pointer-events-none">
               <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M50 0L60 40L100 50L60 60L50 100L40 60L0 50L40 40L50 0Z" fill="#4a332a"/>
                 <circle cx="50" cy="50" r="15" fill="#e6d5b8" stroke="#4a332a" strokeWidth="2"/>
@@ -224,10 +227,18 @@ export default function Languages() {
               maxBounds={jharkhandBounds}
               maxBoundsViscosity={1.0}
               minZoom={7}
-              zoomControl={true}
+              zoomControl={false}
               attributionControl={false}
-              className="h-full w-full bg-transparent"
+              className="bg-transparent"
+              style={{ 
+                height: '100%', 
+                width: '100%',
+                minHeight: '450px',
+                flex: 1,
+                zIndex: 0
+              }}
             >
+              <ZoomControl position="bottomright" />
               {/* Removed TileLayer to create a standalone parchment map effect */}
               <MapClickHandler clearSelection={clearSelection} />
               <GeoJSON 
@@ -240,16 +251,22 @@ export default function Languages() {
 
           {/* Info Panel */}
           <div className={`
-            lg:relative top-0 right-0 h-full w-full lg:w-[400px] bg-[#2d1b14] text-[#f4e8d1] p-8 shadow-2xl transition-all duration-500 z-[500] flex flex-col border-l-4 border-[#8a6020]
-            ${selectedDistrict ? 'translate-y-0 lg:translate-x-0' : 'hidden lg:flex opacity-100'}
+            fixed lg:relative inset-x-0 bottom-0 z-[1000] lg:z-[500]
+            w-full lg:w-[40%] bg-[#2d1b14] text-[#f4e8d1] p-6 lg:p-8 
+            shadow-[0_-10px_40px_rgba(0,0,0,0.5)] lg:shadow-2xl 
+            transition-transform duration-500 ease-out flex flex-col 
+            border-t-4 lg:border-t-0 lg:border-l-4 border-[#8a6020]
+            rounded-t-3xl lg:rounded-none overflow-y-auto lg:overflow-visible
+            max-h-[calc(100vh-460px)] lg:max-h-none lg:h-full
+            ${selectedDistrict ? 'translate-y-0' : 'translate-y-full lg:translate-y-0'}
           `}>
             {selectedDistrict ? (
-              <div className="h-full overflow-y-auto pr-2 custom-scrollbar relative">
+              <div className="w-full h-full lg:overflow-visible pr-2 relative">
                 <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/stardust.png")' }}></div>
                 
                 <button 
                   onClick={clearSelection}
-                  className="lg:hidden absolute top-0 right-0 text-[#8a6020] hover:text-white"
+                  className="lg:hidden absolute top-2 right-2 text-[#8a6020] hover:text-white w-[44px] h-[44px] flex items-center justify-center bg-black/20 rounded-full"
                 >
                   <X size={28} />
                 </button>
@@ -294,6 +311,53 @@ export default function Languages() {
                       {selectedDistrict.unescoStatus}
                     </div>
                   </div>
+
+                  {languageHistories[selectedDistrict.dominantLanguage] && (
+                    <div className="border border-[#8a6020]/30 rounded overflow-hidden">
+                      <button
+                        onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
+                        className="w-full flex items-center justify-between p-4 bg-black/20 hover:bg-black/30 transition-colors"
+                      >
+                        <h4 className="text-[#FFD700] text-lg font-bold flex items-center gap-2">
+                          📜 Language History
+                        </h4>
+                        <ChevronDown 
+                          className={`text-[#8a6020] transition-transform duration-300 ${isHistoryExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                      <div className={`transition-all duration-500 ease-in-out ${isHistoryExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'} overflow-y-auto custom-scrollbar`}>
+                        <div className="p-4 border-l-4 border-[#c7a052] bg-black/10 space-y-3 text-sm text-[#e6d5b8]">
+                          <div className="flex gap-2">
+                            <span className="text-[#8a6020] font-bold mt-1">•</span>
+                            <p><span className="text-[#c7a052] font-semibold">Origin:</span> {languageHistories[selectedDistrict.dominantLanguage].origin}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <span className="text-[#8a6020] font-bold mt-1">•</span>
+                            <p><span className="text-[#c7a052] font-semibold">Script:</span> {languageHistories[selectedDistrict.dominantLanguage].script}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <span className="text-[#8a6020] font-bold mt-1">•</span>
+                            <p><span className="text-[#c7a052] font-semibold">Significance:</span> {languageHistories[selectedDistrict.dominantLanguage].significance}</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <span className="text-[#8a6020] font-bold mt-1">•</span>
+                            <p><span className="text-[#c7a052] font-semibold">UNESCO Status:</span> {languageHistories[selectedDistrict.dominantLanguage].unescoStatus}</p>
+                          </div>
+                          <div className="pt-2">
+                            <p className="text-[#c7a052] font-semibold mb-2 flex gap-2"><span className="text-[#8a6020] font-bold">•</span> Historical Events:</p>
+                            <ul className="space-y-2 pl-4">
+                              {languageHistories[selectedDistrict.dominantLanguage].historicalEvents.map((event, idx) => (
+                                <li key={idx} className="flex gap-2">
+                                  <span className="text-[#8a6020] font-bold mt-1">-</span>
+                                  <span>{event}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ) : (
@@ -406,7 +470,7 @@ export default function Languages() {
                   <select 
                     value={targetLang}
                     onChange={(e) => setTargetLang(e.target.value)}
-                    className="w-full bg-white px-4 py-2 rounded border-2 border-[#8a6020] font-bold text-[#4a332a] focus:ring-2 focus:ring-[#8a6020] focus:outline-none"
+                    className="w-full bg-white px-4 py-2 min-h-[44px] rounded border-2 border-[#8a6020] font-bold text-[#4a332a] focus:ring-2 focus:ring-[#8a6020] focus:outline-none"
                   >
                     <option value="Santali">Santali</option>
                     <option value="Mundari">Mundari</option>
@@ -438,7 +502,7 @@ export default function Languages() {
 
                 <div className="relative">
                   <div className="absolute top-4 right-4 flex gap-2">
-                     <button className="p-2 text-[#8a6020] hover:bg-[#f4e8d1] rounded transition" title="Listen">
+                     <button className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#8a6020] hover:bg-[#f4e8d1] rounded transition" title="Listen">
                        <Volume2 size={20} />
                      </button>
                   </div>
@@ -464,7 +528,7 @@ export default function Languages() {
                   <button
                     key={lang}
                     onClick={() => setActiveTab(lang)}
-                    className={`px-4 py-2 rounded text-sm font-bold transition-all uppercase tracking-wider ${
+                    className={`px-4 min-h-[44px] rounded text-sm font-bold transition-all uppercase tracking-wider ${
                       activeTab === lang 
                         ? 'bg-[#8a6020] text-white' 
                         : 'bg-[#3d261e] text-[#a0907d] hover:text-white'
@@ -521,7 +585,7 @@ export default function Languages() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-bold text-[#8a6020] uppercase tracking-widest mb-2">Language Branch</label>
-                    <select className="w-full bg-[#f4e8d1] border-2 border-[#a0907d] rounded p-3 text-[#4a332a] font-bold focus:border-[#8a6020] focus:outline-none" required>
+                    <select className="w-full bg-[#f4e8d1] border-2 border-[#a0907d] rounded p-3 min-h-[44px] text-[#4a332a] font-bold focus:border-[#8a6020] focus:outline-none" required>
                       <option value="">Select language...</option>
                       <option value="santali">Santali</option>
                       <option value="mundari">Mundari</option>
@@ -532,7 +596,7 @@ export default function Languages() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#8a6020] uppercase tracking-widest mb-2">The Word</label>
-                    <input type="text" className="w-full bg-[#f4e8d1] border-2 border-[#a0907d] rounded p-3 text-[#4a332a] font-bold focus:border-[#8a6020] focus:outline-none placeholder:text-[#bdae9c]" required placeholder="Enter vernacular phrase" />
+                    <input type="text" className="w-full bg-[#f4e8d1] border-2 border-[#a0907d] rounded p-3 min-h-[44px] text-[#4a332a] font-bold focus:border-[#8a6020] focus:outline-none placeholder:text-[#bdae9c]" required placeholder="Enter vernacular phrase" />
                   </div>
                 </div>
                 <div>

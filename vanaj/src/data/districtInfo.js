@@ -33,3 +33,66 @@ export const districtInfo = {
   Khunti: { dominantLanguage: 'Mundari', speakers: '450,000+', tribes: ['Munda'], unescoStatus: 'Vulnerable' },
   Ramgarh: { dominantLanguage: 'Khortha', speakers: '700,000+', tribes: ['Munda', 'Karmali'], unescoStatus: 'Safe' }
 };
+
+export const languageHistories = {
+  Santali: {
+    origin: "Austroasiatic language family (Munda branch), spoken primarily by the Santhal people.",
+    script: "Ol Chiki (invented by Pandit Raghunath Murmu in 1925).",
+    significance: "One of the most widely spoken tribal languages in India. Rich in oral literature, folklore, and songs.",
+    unescoStatus: "Safe (Vulnerable in some regions)",
+    historicalEvents: [
+      "In 2003, Santali was added to the 8th Schedule of the Indian Constitution (92nd Amendment).",
+      "Publication of the first Santali dictionary by P.O. Bodding in the early 20th century."
+    ]
+  },
+  Mundari: {
+    origin: "Austroasiatic language family (Munda branch), closely related to Santali and Ho.",
+    script: "Mundari Bani (developed by Rohidas Singh Nag).",
+    significance: "Central to the cultural identity of the Munda tribe. Features a rich tradition of folk songs, particularly related to agricultural cycles.",
+    unescoStatus: "Vulnerable",
+    historicalEvents: [
+      "The Birsa Munda Rebellion (Ulgulan) of 1899-1900 heavily relied on Mundari for mobilization.",
+      "Encyclopaedia Mundarica was compiled by John Baptist Hoffmann in the early 20th century."
+    ]
+  },
+  Ho: {
+    origin: "Austroasiatic language family, spoken by the Ho, Munda, and Kolha people.",
+    script: "Warang Citi (developed by Lako Bodra in the 1950s).",
+    significance: "Deeply connected to the animistic Sarna religion and nature-worshipping festivals like Mage Porob.",
+    unescoStatus: "Vulnerable",
+    historicalEvents: [
+      "The Kol Mutiny (1831–1832) was organized significantly through Ho language communication.",
+      "Ongoing movements demand the inclusion of Ho in the 8th Schedule of the Indian Constitution."
+    ]
+  },
+  Kurukh: {
+    origin: "Dravidian language family, spoken by the Oraon (Kurukh) and Kisan people.",
+    script: "Tolong Siki (developed by Dr. Narayan Oraon).",
+    significance: "A rare Dravidian linguistic island in North India, carrying profound oral epics and traditions.",
+    unescoStatus: "Vulnerable",
+    historicalEvents: [
+      "Tana Bhagat Movement (1914) used Kurukh for spreading messages against British taxes.",
+      "Recognized by the Sahitya Akademi for literary development."
+    ]
+  },
+  Kharia: {
+    origin: "Austroasiatic language family (Munda branch), distinct from the North Munda languages like Santali.",
+    script: "Usually written in Devanagari or Latin script.",
+    significance: "Crucial to the Kharia tribe, preserving unique ecological knowledge and kinship terminologies.",
+    unescoStatus: "Definitely Endangered",
+    historicalEvents: [
+      "Historically spoken by traditional hunter-gatherer communities in the Chota Nagpur Plateau.",
+      "Language documentation efforts surged in the late 20th century to prevent extinction."
+    ]
+  },
+  Khortha: {
+    origin: "Indo-Aryan language, often considered a dialect of Magahi, acting as a lingua franca.",
+    script: "Devanagari.",
+    significance: "Serves as the vital link language (lingua franca) between the tribal and non-tribal communities of Jharkhand.",
+    unescoStatus: "Safe",
+    historicalEvents: [
+      "Evolved natively over centuries as a contact language across the Chota Nagpur region.",
+      "Played a major role in the Jharkhand statehood movement as a unifying medium of communication."
+    ]
+  }
+};
