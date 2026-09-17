@@ -1,182 +1,290 @@
 export const tourismData = [
   {
-    id: 'hundru-falls',
-    name: 'Hundru Falls',
-    district: 'Ranchi',
-    type: 'Waterfall',
-    shortDesc: 'One of the highest waterfalls in Jharkhand, falling from a height of 320 feet.',
-    description: 'Hundru Falls is created on the course of the Subarnarekha River, where it falls from a height of 320 feet creating the highest water fall of the state. It is a spectacular site and a popular picnic spot. The spectacular scenic views combined with the roaring sound of water make it a must-visit destination.',
-    bestTime: 'Post-monsoon (September to November) when the water is in full force.',
-    howToReach: 'Located 45 km from Ranchi city. Best reached by private taxi or personal vehicle.',
-    nearbyAttractions: 'Jonha Falls, Sita Falls, Getalsud Dam.',
-    coordinates: [23.4474, 85.6664]
+    id: "hundru-falls",
+    name: "Hundru Falls",
+    district: "Ranchi",
+    type: "Waterfall",
+    shortDesc: "One of the highest waterfalls in Jharkhand, falling from a height of 320 feet.",
+    description: "Hundru Falls is created on the course of the Subarnarekha River, where it falls from a height of 320 feet creating the highest water fall of the state. It is a spectacular site and a popular picnic spot. The spectacular scenic views combined with the roaring sound of water make it a must-visit destination.",
+    bestTime: "Post-monsoon (September to November) when the water is in full force.",
+    howToReach: "Located 45 km from Ranchi city. Best reached by private taxi or personal vehicle.",
+    nearbyAttractions: "Jonha Falls, Sita Falls, Getalsud Dam.",
+    coordinates: [
+      23.4474,
+      85.6664
+    ],
+    image: "/images/tourism/hundru%20falls.png"
   },
   {
-    id: 'dassam-falls',
-    name: 'Dassam Falls',
-    district: 'Ranchi',
-    type: 'Waterfall',
-    shortDesc: 'A natural cascade across the Kanchi River, falling from 144 feet.',
-    description: 'Dassam Falls is a stunning waterfall on the Kanchi River, a tributary of the Subarnarekha. The water falls from a height of 144 feet, breaking into ten streams, giving it the name "Dassam". The surrounding area is thickly forested, providing a serene environment for nature lovers.',
-    bestTime: 'October to February for the best weather and scenic beauty.',
-    howToReach: 'Situated about 40 km from Ranchi on the Tata Road. Accessible by car.',
-    nearbyAttractions: 'Surya Temple, Deori Mandir, Panchghagh Falls.',
-    coordinates: [23.0315, 85.5583]
+    id: "dassam-falls",
+    name: "Dassam Falls",
+    district: "Ranchi",
+    type: "Waterfall",
+    shortDesc: "A natural cascade across the Kanchi River, falling from 144 feet.",
+    description: "Dassam Falls is a stunning waterfall on the Kanchi River, a tributary of the Subarnarekha. The water falls from a height of 144 feet, breaking into ten streams, giving it the name \"Dassam\". The surrounding area is thickly forested, providing a serene environment for nature lovers.",
+    bestTime: "October to February for the best weather and scenic beauty.",
+    howToReach: "Situated about 40 km from Ranchi on the Tata Road. Accessible by car.",
+    nearbyAttractions: "Surya Temple, Deori Mandir, Panchghagh Falls.",
+    coordinates: [
+      23.0315,
+      85.5583
+    ],
+    image: "/images/tourism/dassam%20Fall.png"
   },
   {
-    id: 'betla-national-park',
-    name: 'Betla National Park',
-    district: 'Palamu',
-    type: 'Wildlife',
-    shortDesc: 'Known for its rich biodiversity and being one of the first tiger reserves in India.',
-    description: 'Betla National Park, located in the Chota Nagpur Plateau, offers excellent opportunities for observing wildlife in its natural habitat. The park is home to elephants, tigers, leopards, wild boars, and a diverse range of bird species. The dense Sal forests and open grasslands create a picturesque landscape.',
-    bestTime: 'November to March for comfortable safaris and wildlife spotting.',
-    howToReach: 'The nearest airport is Ranchi (170 km) and the nearest railway station is Daltonganj (25 km).',
-    nearbyAttractions: 'Palamu Forts, Lodh Falls, Kechki Sangam.',
-    coordinates: [23.8878, 84.1906]
+    id: "betla-national-park",
+    name: "Betla National Park",
+    district: "Palamu",
+    type: "Wildlife",
+    shortDesc: "Known for its rich biodiversity and being one of the first tiger reserves in India.",
+    description: "Betla National Park, located in the Chota Nagpur Plateau, offers excellent opportunities for observing wildlife in its natural habitat. The park is home to elephants, tigers, leopards, wild boars, and a diverse range of bird species. The dense Sal forests and open grasslands create a picturesque landscape.",
+    bestTime: "November to March for comfortable safaris and wildlife spotting.",
+    howToReach: "The nearest airport is Ranchi (170 km) and the nearest railway station is Daltonganj (25 km).",
+    nearbyAttractions: "Palamu Forts, Lodh Falls, Kechki Sangam.",
+    coordinates: [
+      23.8878,
+      84.1906
+    ],
+    image: "/images/tourism/betla%20national%20park.png"
   },
   {
-    id: 'netarhat',
-    name: 'Netarhat',
-    district: 'Lohardaga',
-    type: 'Valley',
-    shortDesc: 'Often referred to as the "Queen of Chotanagpur", famous for its sunrises and sunsets.',
-    description: 'Netarhat is a beautiful hill station situated at an altitude of 3,622 feet. Known as the "Queen of Chotanagpur", it is famous for its breathtaking sunrise and sunset views, especially during the summer. The plateau is covered with thick forests and offers a cool climate year-round.',
-    bestTime: 'Throughout the year, but particularly pleasant during summer (April-June) and winter.',
-    howToReach: 'Located 156 km from Ranchi. Direct buses and taxis are available from Ranchi.',
-    nearbyAttractions: 'Magnolia Point, Upper Ghaghri Falls, Lower Ghaghri Falls.',
-    coordinates: [23.4839, 84.2690]
+    id: "netarhat",
+    name: "Netarhat",
+    district: "Lohardaga",
+    type: "Valley",
+    shortDesc: "Often referred to as the \"Queen of Chotanagpur\", famous for its sunrises and sunsets.",
+    description: "Netarhat is a beautiful hill station situated at an altitude of 3,622 feet. Known as the \"Queen of Chotanagpur\", it is famous for its breathtaking sunrise and sunset views, especially during the summer. The plateau is covered with thick forests and offers a cool climate year-round.",
+    bestTime: "Throughout the year, but particularly pleasant during summer (April-June) and winter.",
+    howToReach: "Located 156 km from Ranchi. Direct buses and taxis are available from Ranchi.",
+    nearbyAttractions: "Magnolia Point, Upper Ghaghri Falls, Lower Ghaghri Falls.",
+    coordinates: [
+      23.4839,
+      84.269
+    ],
+    image: "/images/tourism/neharthat.png"
   },
   {
-    id: 'panchghagh-falls',
-    name: 'Panchghagh Falls',
-    district: 'West Singhbhum',
-    type: 'Waterfall',
-    shortDesc: 'A group of five scenic waterfalls surrounded by rocky terrain.',
-    description: 'Panchghagh is named for its five distinct streams formed by the breaking of the Banai River. The falls are relatively safe and accessible, making it a very popular picnic spot. The rocky surroundings and lush greenery add to its raw natural charm.',
-    bestTime: 'October to March when the water flow is steady and the weather is cool.',
-    howToReach: 'Around 55 km from Ranchi on the Khunti-Simdega road.',
-    nearbyAttractions: 'Khunti, Deer Park, Angrabari (Amreshwar Dham).',
-    coordinates: [22.9567, 85.2530]
+    id: "panchghagh-falls",
+    name: "Panchghagh Falls",
+    district: "West Singhbhum",
+    type: "Waterfall",
+    shortDesc: "A group of five scenic waterfalls surrounded by rocky terrain.",
+    description: "Panchghagh is named for its five distinct streams formed by the breaking of the Banai River. The falls are relatively safe and accessible, making it a very popular picnic spot. The rocky surroundings and lush greenery add to its raw natural charm.",
+    bestTime: "October to March when the water flow is steady and the weather is cool.",
+    howToReach: "Around 55 km from Ranchi on the Khunti-Simdega road.",
+    nearbyAttractions: "Khunti, Deer Park, Angrabari (Amreshwar Dham).",
+    coordinates: [
+      22.9567,
+      85.253
+    ],
+    image: "/images/tourism/pachghagh%20fall.png"
   },
   {
-    id: 'jonha-falls',
-    name: 'Jonha Falls',
-    district: 'Ranchi',
-    type: 'Waterfall',
-    shortDesc: 'Also known as Gautamdhara, it is an impressive hanging valley fall.',
-    description: 'Jonha Falls is situated at an edge of the Ranchi plateau. The Gunga River hangs over the edge forming the falls. A temple and an ashram dedicated to Buddha are located nearby, lending it the alternative name Gautamdhara. You have to descend around 700 steps to get to the base.',
-    bestTime: 'October to February for ideal trekking and sightseeing conditions.',
-    howToReach: 'Approximately 40 km from Ranchi, easily accessible by road.',
-    nearbyAttractions: 'Sita Falls, Hundru Falls, Getalsud Dam.',
-    coordinates: [23.3551, 85.6416]
+    id: "jonha-falls",
+    name: "Jonha Falls",
+    district: "Ranchi",
+    type: "Waterfall",
+    shortDesc: "Also known as Gautamdhara, it is an impressive hanging valley fall.",
+    description: "Jonha Falls is situated at an edge of the Ranchi plateau. The Gunga River hangs over the edge forming the falls. A temple and an ashram dedicated to Buddha are located nearby, lending it the alternative name Gautamdhara. You have to descend around 700 steps to get to the base.",
+    bestTime: "October to February for ideal trekking and sightseeing conditions.",
+    howToReach: "Approximately 40 km from Ranchi, easily accessible by road.",
+    nearbyAttractions: "Sita Falls, Hundru Falls, Getalsud Dam.",
+    coordinates: [
+      23.3551,
+      85.6416
+    ],
+    image: "/images/tourism/jonha%20falls.png"
   },
   {
-    id: 'patratu-valley',
-    name: 'Patratu Valley',
-    district: 'Ramgarh',
-    type: 'Valley',
-    shortDesc: 'Famed for its winding roads and stunning panoramic views of the Patratu Dam.',
-    description: 'Patratu Valley features lush green hills and a meandering road with sharp hairpin bends that offer spectacular views of the expansive Patratu Dam. The valley is a favorite destination for road trips, photography, and enjoying the serene beauty of the reservoir.',
-    bestTime: 'Monsoon and winter months (July to February).',
-    howToReach: 'Just 40 km from Ranchi. A drive through the valley road is highly recommended.',
-    nearbyAttractions: 'Patratu Dam, Patratu Thermal Power Station, Rajrappa Temple.',
-    coordinates: [23.6190, 85.2891]
+    id: "patratu-valley",
+    name: "Patratu Valley",
+    district: "Ramgarh",
+    type: "Valley",
+    shortDesc: "Famed for its winding roads and stunning panoramic views of the Patratu Dam.",
+    description: "Patratu Valley features lush green hills and a meandering road with sharp hairpin bends that offer spectacular views of the expansive Patratu Dam. The valley is a favorite destination for road trips, photography, and enjoying the serene beauty of the reservoir.",
+    bestTime: "Monsoon and winter months (July to February).",
+    howToReach: "Just 40 km from Ranchi. A drive through the valley road is highly recommended.",
+    nearbyAttractions: "Patratu Dam, Patratu Thermal Power Station, Rajrappa Temple.",
+    coordinates: [
+      23.619,
+      85.2891
+    ],
+    image: "/images/tourism/patratu%20valley.png"
   },
   {
-    id: 'deoghar-temple',
-    name: 'Deoghar Temple',
-    district: 'Deoghar',
-    type: 'Temple',
-    shortDesc: 'Baidyanath Jyotirlinga temple, one of the most sacred Hindu pilgrimage sites.',
-    description: 'The Baidyanath Temple complex in Deoghar is a highly revered Hindu pilgrimage site, housing one of the twelve Jyotirlingas. Devotees visit throughout the year, but the Shravani Mela in July-August draws millions of pilgrims who carry holy water from the Ganges to offer to Lord Shiva.',
-    bestTime: 'October to March for pleasant weather; July-August for Shravani Mela.',
-    howToReach: 'Well-connected by train (Jasidih Junction is 8 km away) and road. Nearest airport is Deoghar Airport.',
-    nearbyAttractions: 'Nandan Pahar, Tapovan, Naulakha Mandir.',
-    coordinates: [24.4927, 86.6997]
+    id: "deoghar-temple",
+    name: "Deoghar Temple",
+    district: "Deoghar",
+    type: "Temple",
+    shortDesc: "Baidyanath Jyotirlinga temple, one of the most sacred Hindu pilgrimage sites.",
+    description: "The Baidyanath Temple complex in Deoghar is a highly revered Hindu pilgrimage site, housing one of the twelve Jyotirlingas. Devotees visit throughout the year, but the Shravani Mela in July-August draws millions of pilgrims who carry holy water from the Ganges to offer to Lord Shiva.",
+    bestTime: "October to March for pleasant weather; July-August for Shravani Mela.",
+    howToReach: "Well-connected by train (Jasidih Junction is 8 km away) and road. Nearest airport is Deoghar Airport.",
+    nearbyAttractions: "Nandan Pahar, Tapovan, Naulakha Mandir.",
+    coordinates: [
+      24.4927,
+      86.6997
+    ],
+    image: "/images/tourism/baba%20baidyanath%20dham,.png"
   },
   {
-    id: 'usri-falls',
-    name: 'Usri Falls',
-    district: 'Giridih',
-    type: 'Waterfall',
-    shortDesc: 'A picturesque waterfall on the Usri River dropping in three separate streams.',
-    description: 'Surrounded by the Parasnath Hills, Usri Falls is a beautiful spot where the Usri River plunges down a steep gorge in three separate tiers. The dense forest of Khandoli and the rocky terrain make it a perfect escape for nature lovers and picnic enthusiasts.',
-    bestTime: 'Post-monsoon and winter seasons (September to February).',
-    howToReach: 'Located 13 km from Giridih town, reachable by auto-rickshaws and taxis.',
-    nearbyAttractions: 'Khandoli Dam, Parasnath Hills (Shikharji).',
-    coordinates: [24.1610, 86.3533]
+    id: "usri-falls",
+    name: "Usri Falls",
+    district: "Giridih",
+    type: "Waterfall",
+    shortDesc: "A picturesque waterfall on the Usri River dropping in three separate streams.",
+    description: "Surrounded by the Parasnath Hills, Usri Falls is a beautiful spot where the Usri River plunges down a steep gorge in three separate tiers. The dense forest of Khandoli and the rocky terrain make it a perfect escape for nature lovers and picnic enthusiasts.",
+    bestTime: "Post-monsoon and winter seasons (September to February).",
+    howToReach: "Located 13 km from Giridih town, reachable by auto-rickshaws and taxis.",
+    nearbyAttractions: "Khandoli Dam, Parasnath Hills (Shikharji).",
+    coordinates: [
+      24.161,
+      86.3533
+    ],
+    image: "/images/tourism/ushri%20falls.png"
   },
   {
-    id: 'massanjore-dam',
-    name: 'Massanjore Dam',
-    district: 'Dumka',
-    type: 'Lake',
-    shortDesc: 'A major hydroelectric dam on the Mayurakshi River offering scenic beauty.',
-    description: 'Also known as Canada Dam, Massanjore Dam is a majestic structure built across the Mayurakshi River. Surrounded by hills and forests, the expansive reservoir creates a stunning lake view. It is an ideal spot for photography, boating, and enjoying peaceful sunsets.',
-    bestTime: 'August to February when the reservoir is full.',
-    howToReach: 'About 31 km from Dumka city. Can be reached via buses or taxis.',
-    nearbyAttractions: 'Dumka town, Basukinath Temple (further away).',
-    coordinates: [24.1039, 87.2917]
+    id: "massanjore-dam",
+    name: "Massanjore Dam",
+    district: "Dumka",
+    type: "Lake",
+    shortDesc: "A major hydroelectric dam on the Mayurakshi River offering scenic beauty.",
+    description: "Also known as Canada Dam, Massanjore Dam is a majestic structure built across the Mayurakshi River. Surrounded by hills and forests, the expansive reservoir creates a stunning lake view. It is an ideal spot for photography, boating, and enjoying peaceful sunsets.",
+    bestTime: "August to February when the reservoir is full.",
+    howToReach: "About 31 km from Dumka city. Can be reached via buses or taxis.",
+    nearbyAttractions: "Dumka town, Basukinath Temple (further away).",
+    coordinates: [
+      24.1039,
+      87.2917
+    ],
+    image: "/images/tourism/masanjor.png"
   },
   {
-    id: 'dalma-wildlife-sanctuary',
-    name: 'Dalma Wildlife Sanctuary',
-    district: 'East Singhbhum',
-    type: 'Wildlife',
-    shortDesc: 'Famous for its dense forests and significant population of Indian elephants.',
-    description: 'Situated around the Dalma Hills near Jamshedpur, this sanctuary is known for its resident elephants, barking deer, sloth bears, and leopards. The sanctuary offers breathtaking views of the Subarnarekha River and the steel city of Jamshedpur from its higher elevations.',
-    bestTime: 'October to March is the best time for wildlife viewing.',
-    howToReach: 'Only 10-15 km from Jamshedpur city. Accessible by private vehicles.',
-    nearbyAttractions: 'Dimna Lake, Jubilee Park, Tata Steel Zoological Park.',
-    coordinates: [22.9056, 86.2089]
+    id: "dalma-wildlife-sanctuary",
+    name: "Dalma Wildlife Sanctuary",
+    district: "East Singhbhum",
+    type: "Wildlife",
+    shortDesc: "Famous for its dense forests and significant population of Indian elephants.",
+    description: "Situated around the Dalma Hills near Jamshedpur, this sanctuary is known for its resident elephants, barking deer, sloth bears, and leopards. The sanctuary offers breathtaking views of the Subarnarekha River and the steel city of Jamshedpur from its higher elevations.",
+    bestTime: "October to March is the best time for wildlife viewing.",
+    howToReach: "Only 10-15 km from Jamshedpur city. Accessible by private vehicles.",
+    nearbyAttractions: "Dimna Lake, Jubilee Park, Tata Steel Zoological Park.",
+    coordinates: [
+      22.9056,
+      86.2089
+    ],
+    image: "/images/tourism/dalma%20wildlife%20sanctuary.png"
   },
   {
-    id: 'lodh-falls',
-    name: 'Lodh Falls',
-    district: 'Latehar',
-    type: 'Waterfall',
-    shortDesc: 'The highest waterfall in Jharkhand, hidden deep within the Burha River.',
-    description: 'Also known as Burhaghigh Falls, Lodh Falls is the highest waterfall in Jharkhand, dropping from a spectacular height of 468 feet. Tucked deep within the Chota Nagpur Plateau forests, it offers a dramatic and thundering sight, especially during the monsoon.',
-    bestTime: 'Monsoon and immediate post-monsoon (August to November).',
-    howToReach: 'Located 120 km from Daltonganj. The journey involves driving through dense forests.',
-    nearbyAttractions: 'Betla National Park, Mahuadanr Wolf Sanctuary.',
-    coordinates: [23.7226, 84.0532]
+    id: "lodh-falls",
+    name: "Lodh Falls",
+    district: "Latehar",
+    type: "Waterfall",
+    shortDesc: "The highest waterfall in Jharkhand, hidden deep within the Burha River.",
+    description: "Also known as Burhaghigh Falls, Lodh Falls is the highest waterfall in Jharkhand, dropping from a spectacular height of 468 feet. Tucked deep within the Chota Nagpur Plateau forests, it offers a dramatic and thundering sight, especially during the monsoon.",
+    bestTime: "Monsoon and immediate post-monsoon (August to November).",
+    howToReach: "Located 120 km from Daltonganj. The journey involves driving through dense forests.",
+    nearbyAttractions: "Betla National Park, Mahuadanr Wolf Sanctuary.",
+    coordinates: [
+      23.7226,
+      84.0532
+    ],
+    image: "/images/tourism/lodh%20waterfall.png"
   },
   {
-    id: 'rajrappa-temple',
-    name: 'Rajrappa Temple',
-    district: 'Ramgarh',
-    type: 'Temple',
-    shortDesc: 'A famous Chinnamasta temple located at the confluence of Bhairavi and Damodar rivers.',
-    description: 'The Chinnamasta Temple in Rajrappa is an important Hindu pilgrimage site, notable for its unique architecture and the dramatic confluence of the Bhairavi and Damodar rivers. The temple attracts thousands of devotees daily and is surrounded by scenic natural beauty.',
-    bestTime: 'All year round, but festivals like Navratri see major crowds.',
-    howToReach: 'About 28 km from Ramgarh Cantt and 70 km from Ranchi.',
-    nearbyAttractions: 'Patratu Valley, Gola.',
-    coordinates: [23.6267, 85.7061]
+    id: "rajrappa-temple",
+    name: "Rajrappa Temple",
+    district: "Ramgarh",
+    type: "Temple",
+    shortDesc: "A famous Chinnamasta temple located at the confluence of Bhairavi and Damodar rivers.",
+    description: "The Chinnamasta Temple in Rajrappa is an important Hindu pilgrimage site, notable for its unique architecture and the dramatic confluence of the Bhairavi and Damodar rivers. The temple attracts thousands of devotees daily and is surrounded by scenic natural beauty.",
+    bestTime: "All year round, but festivals like Navratri see major crowds.",
+    howToReach: "About 28 km from Ramgarh Cantt and 70 km from Ranchi.",
+    nearbyAttractions: "Patratu Valley, Gola.",
+    coordinates: [
+      23.6267,
+      85.7061
+    ],
+    image: "/images/tourism/chhinnamastika%20temple.png"
   },
   {
-    id: 'topchanchi-lake',
-    name: 'Topchanchi Lake',
-    district: 'Dhanbad',
-    type: 'Lake',
-    shortDesc: 'A serene artificial lake surrounded by the green Parasnath Hills.',
-    description: 'Created by a dam on a small stream, Topchanchi Lake is a beautiful artificial reservoir located at the base of the Parasnath Hills. The calm waters and the surrounding Topchanchi Wildlife Sanctuary make it a perfect spot for bird watching, picnics, and peaceful walks.',
-    bestTime: 'October to March for comfortable outings.',
-    howToReach: 'Located on the NH19, about 37 km from Dhanbad city.',
-    nearbyAttractions: 'Parasnath Hills, Maithon Dam, Panchet Dam.',
-    coordinates: [23.9015, 86.1969]
+    id: "topchanchi-lake",
+    name: "Topchanchi Lake",
+    district: "Dhanbad",
+    type: "Lake",
+    shortDesc: "A serene artificial lake surrounded by the green Parasnath Hills.",
+    description: "Created by a dam on a small stream, Topchanchi Lake is a beautiful artificial reservoir located at the base of the Parasnath Hills. The calm waters and the surrounding Topchanchi Wildlife Sanctuary make it a perfect spot for bird watching, picnics, and peaceful walks.",
+    bestTime: "October to March for comfortable outings.",
+    howToReach: "Located on the NH19, about 37 km from Dhanbad city.",
+    nearbyAttractions: "Parasnath Hills, Maithon Dam, Panchet Dam.",
+    coordinates: [
+      23.9015,
+      86.1969
+    ],
+    image: "/images/tourism/topchanchi.png"
   },
   {
-    id: 'mccluskieganj',
-    name: 'McCluskieganj',
-    district: 'Ranchi',
-    type: 'Heritage',
-    shortDesc: 'A former Anglo-Indian settlement known for its colonial architecture and tranquil vibe.',
-    description: 'Founded in the 1930s by the Colonization Society of India, McCluskieganj is a unique town that was once a thriving Anglo-Indian settlement. Today, it retains its old-world charm with colonial bungalows, a beautiful church, and a slow-paced lifestyle amidst thick Sal and Mahua forests.',
-    bestTime: 'October to March to enjoy the pleasant weather and explore the town.',
-    howToReach: 'About 60 km from Ranchi. Can be reached by road or by train (McCluskieganj Station).',
-    nearbyAttractions: 'Duli Village (all-religion temple), Chatti River.',
-    coordinates: [23.5707, 85.0347]
+    id: "mccluskieganj",
+    name: "McCluskieganj",
+    district: "Ranchi",
+    type: "Heritage",
+    shortDesc: "A former Anglo-Indian settlement known for its colonial architecture and tranquil vibe.",
+    description: "Founded in the 1930s by the Colonization Society of India, McCluskieganj is a unique town that was once a thriving Anglo-Indian settlement. Today, it retains its old-world charm with colonial bungalows, a beautiful church, and a slow-paced lifestyle amidst thick Sal and Mahua forests.",
+    bestTime: "October to March to enjoy the pleasant weather and explore the town.",
+    howToReach: "About 60 km from Ranchi. Can be reached by road or by train (McCluskieganj Station).",
+    nearbyAttractions: "Duli Village (all-religion temple), Chatti River.",
+    coordinates: [
+      23.5707,
+      85.0347
+    ],
+    image: "/images/tourism/mccluskieganj.png"
+  },
+  {
+    id: "parasnath-hill",
+    name: "Parasnath Hill",
+    district: "Giridih",
+    type: "Heritage",
+    shortDesc: "The highest mountain peak in Jharkhand and a major Jain pilgrimage site.",
+    description: "Parasnath Hill, also known as Shikharji, is a significant Jain pilgrimage site where 20 of the 24 Jain Tirthankaras attained salvation. It is the highest peak in Jharkhand. The climb offers breathtaking views and a spiritually uplifting experience.",
+    bestTime: "October to March.",
+    howToReach: "Nearest railway station is Parasnath Station. Well connected by road.",
+    nearbyAttractions: "Usri Falls, Madhuban.",
+    coordinates: [
+      23.9622,
+      86.1306
+    ],
+    image: "/images/tourism/parasnath.png"
+  },
+  {
+    id: "jagannath-temple",
+    name: "Jagannath Temple",
+    district: "Ranchi",
+    type: "Temple",
+    shortDesc: "A historic 17th-century temple built in the same architectural style as the Puri Jagannath Temple.",
+    description: "Built in 1691 by the king of Barkagarh, Jagannathpur Temple is located on a small hillock. It resembles the famous Jagannath Temple of Puri. The annual Rath Yatra here is a major attraction drawing thousands of devotees.",
+    bestTime: "Throughout the year. June/July for Rath Yatra.",
+    howToReach: "Located in Dhurwa, Ranchi. Easily accessible by auto or taxi from the city center.",
+    nearbyAttractions: "Ranchi Lake, Pahari Mandir.",
+    coordinates: [
+      23.3159,
+      85.3023
+    ],
+    image: "/images/tourism/jagganath%20temple.png"
+  },
+  {
+    id: "sarna-sthal",
+    name: "Sarna Sthal",
+    district: "Ranchi",
+    type: "Heritage",
+    shortDesc: "A sacred grove worship place for the indigenous tribal communities of Jharkhand.",
+    description: "Sarna Sthal represents the animistic religious practices of the tribal communities in Jharkhand. It is a sacred grove usually marked by Sal trees, where the tribal deity is worshipped, particularly during the Sarhul festival, celebrating nature.",
+    bestTime: "March/April during Sarhul festival to experience tribal culture.",
+    howToReach: "Various Sarna Sthals are located across Ranchi and nearby villages.",
+    nearbyAttractions: "Tribal Museum, Ranchi.",
+    coordinates: [
+      23.3662,
+      85.3188
+    ],
+    image: "/images/tourism/sarna%20sthal.png"
   }
 ];
