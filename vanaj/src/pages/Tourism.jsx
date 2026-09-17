@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, ArrowLeft, Calendar, Info, Map as MapIcon } from 'lucide-react';
+import { Search, MapPin, ArrowLeft, Calendar, Info, Map as MapIcon, Clock, User, CheckCircle } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -42,10 +42,26 @@ const MapUpdater = ({ coordinates }) => {
 
 const Filters = ['All', 'Waterfall', 'Wildlife', 'Temple', 'Valley', 'Lake', 'Heritage'];
 
+const workshops = [
+  { id: 1, name: 'Dokra Metal Casting', artisan: 'Munda artisan', duration: '2 hours', price: '₹100', desc: 'Learn the ancient lost-wax casting technique.' },
+  { id: 2, name: 'Paitkar Scroll Painting', artisan: 'Santali artist', duration: '3 hours', price: '₹100', desc: 'Create vibrant narratives using natural colors.' },
+  { id: 3, name: 'Bamboo Craft Making', artisan: 'Ho tribe craftsman', duration: '2 hours', price: '₹100', desc: 'Weave utilitarian and artistic bamboo crafts.' },
+  { id: 4, name: 'Tribal Cooking Experience', artisan: 'Oraon family', duration: '2.5 hours', price: '₹100', desc: 'Cook traditional dishes with local ingredients.' },
+  { id: 5, name: 'Sohrai Art Painting', artisan: 'Oraon artisan', duration: '2 hours', price: '₹100', desc: 'Paint mud walls with natural clay colors.' },
+  { id: 6, name: 'Tribal Dance Learning', artisan: 'Karma/Jhumair', duration: '1.5 hours', price: '₹100', desc: 'Learn traditional steps to the beat of mandar.' },
+];
+
 const Tourism = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [formSuccess, setFormSuccess] = useState(false);
+
+  const handleHostFormSubmit = (e) => {
+    e.preventDefault();
+    setFormSuccess(true);
+    setTimeout(() => setFormSuccess(false), 5000);
+  };
 
   // Filter logic
   const filteredData = tourismData.filter(loc => {
@@ -265,6 +281,125 @@ const Tourism = () => {
             </button>
           </div>
         )}
+      </section>
+
+      {/* Experience a Tribal Workshop */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-heading text-vanaj-dark mb-4">
+            Experience a Tribal Workshop
+          </h2>
+          <p className="text-lg text-vanaj-dark/70 font-medium max-w-2xl mx-auto">
+            Learn directly from Jharkhand's master tribal craftsmen
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {workshops.map((workshop) => (
+            <div key={workshop.id} className="bg-gradient-to-br from-vanaj-earth to-vanaj-ochre rounded-2xl p-6 text-white shadow-lg hover:-translate-y-2 transition-transform duration-300 flex flex-col">
+              <h3 className="text-2xl font-heading mb-2">{workshop.name}</h3>
+              <div className="flex items-center text-white/90 text-sm mb-2">
+                <User className="w-4 h-4 mr-2" />
+                {workshop.artisan}
+              </div>
+              <div className="flex items-center justify-between text-white/90 text-sm mb-4">
+                <span className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2" />
+                  {workshop.duration}
+                </span>
+                <span className="font-bold text-lg">{workshop.price} per seat</span>
+              </div>
+              <p className="text-white/80 text-sm mb-6 flex-grow">{workshop.desc}</p>
+              
+              <button 
+                disabled
+                className="w-full py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+              >
+                <span className="group-hover:opacity-0 transition-opacity">Book a Seat</span>
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-sm px-2 text-center bg-vanaj-dark/50 backdrop-blur-sm">
+                  Coming Soon — Payment Gateway launching soon!
+                </span>
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Host a Workshop (For Organizations) */}
+      <section className="bg-[#0D1F17] py-20 relative overflow-hidden text-vanaj-cream">
+        <div className="absolute inset-0 opacity-5 bg-tribal-pattern"></div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-heading text-vanaj-ochre mb-4">
+              Host a Workshop with Us
+            </h2>
+            <p className="text-lg text-vanaj-cream/80 max-w-2xl mx-auto">
+              Government bodies, NGOs, and cultural organizations can host their own workshops for tourists
+            </p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-sm border border-vanaj-ochre/20 rounded-3xl p-6 md:p-10">
+            {formSuccess ? (
+              <div className="text-center py-12">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-vanaj-ochre/20 text-vanaj-ochre mb-4">
+                  <CheckCircle className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-heading text-vanaj-ochre mb-2">Request Submitted!</h3>
+                <p className="text-vanaj-cream/80">We will review your application and get back to you shortly.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleHostFormSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Organization Name</label>
+                    <input required type="text" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="e.g. Jharkhand Tribal Arts Council" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Type</label>
+                    <select required className="w-full bg-[#0D1F17] border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors">
+                      <option value="">Select type...</option>
+                      <option value="Government">Government</option>
+                      <option value="NGO">NGO</option>
+                      <option value="Private">Private</option>
+                      <option value="Cultural Body">Cultural Body</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Contact Person</label>
+                    <input required type="text" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="Full Name" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Phone</label>
+                    <input required type="tel" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="+91 xxxxx xxxxx" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Email</label>
+                    <input required type="email" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="email@example.com" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Proposed Date</label>
+                    <input required type="date" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" style={{ colorScheme: 'dark' }} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Workshop Title</label>
+                    <input required type="text" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="What is the workshop about?" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Description</label>
+                    <textarea required rows="3" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="Describe the activities and learning outcomes..."></textarea>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Expected Attendees</label>
+                    <input required type="number" min="1" className="w-full bg-transparent border border-vanaj-ochre/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-colors" placeholder="e.g. 20" />
+                  </div>
+                </div>
+                <button type="submit" className="w-full mt-6 bg-vanaj-ochre text-[#0D1F17] font-bold text-lg py-4 rounded-xl hover:bg-white transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  Submit Proposal
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
       </section>
     </div>
   );
