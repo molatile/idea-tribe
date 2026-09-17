@@ -54,7 +54,8 @@ const workshops = [
     languages: 'Hindi, Sadri',
     seats: { filled: 8, total: 12 },
     learn: ['Wax modeling techniques', 'Clay mould preparation', 'Metal pouring process'],
-    image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&q=80&w=800',
+    about: 'Dhokra is a 4,000-year-old lost-wax metal casting technique, one of India\'s oldest craft traditions.'
   },
   { 
     id: 2, 
@@ -66,7 +67,8 @@ const workshops = [
     languages: 'Santali, Hindi',
     seats: { filled: 11, total: 15 },
     learn: ['Making natural colors', 'Traditional storytelling', 'Brush strokes technique'],
-    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=800',
+    about: 'Paitkar is a scroll-based storytelling art where the artist paints myths and daily life panel by panel.'
   },
   { 
     id: 3, 
@@ -78,7 +80,8 @@ const workshops = [
     languages: 'Ho, Hindi',
     seats: { filled: 5, total: 10 },
     learn: ['Bamboo splitting', 'Basic weaving patterns', 'Finishing and polishing'],
-    image: 'https://images.unsplash.com/photo-1490262145325-1815e966e313?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1490262145325-1815e966e313?auto=format&fit=crop&q=80&w=800',
+    about: 'A GI-tagged craft of Jharkhand\'s Mohli tribes using a unique foot-based slicing technique to split bamboo.'
   },
   { 
     id: 4, 
@@ -90,7 +93,8 @@ const workshops = [
     languages: 'Kurukh, Hindi',
     seats: { filled: 12, total: 12 },
     learn: ['Identifying local herbs', 'Traditional fire cooking', 'Plating in Sal leaves'],
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800',
+    about: 'Tribal food relies on rice, pulses, foraged greens, wild fungi and river fish — cooked slow on clay hearths.'
   },
   { 
     id: 5, 
@@ -102,7 +106,8 @@ const workshops = [
     languages: 'Hindi, English',
     seats: { filled: 3, total: 15 },
     learn: ['Mud wall preparation', 'Clay color mixing', 'Traditional motifs'],
-    image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80&w=800',
+    about: 'An ancient mural art painted by tribal women on mud walls during harvest festivals using natural earth pigments.'
   },
   { 
     id: 6, 
@@ -114,7 +119,8 @@ const workshops = [
     languages: 'Hindi, Sadri',
     seats: { filled: 18, total: 20 },
     learn: ['Basic footwork', 'Matching mandar beats', 'Group coordination'],
-    image: 'https://images.unsplash.com/photo-1516307365426-bea591f05011?auto=format&fit=crop&q=80&w=800'
+    image: 'https://images.unsplash.com/photo-1516307365426-bea591f05011?auto=format&fit=crop&q=80&w=800',
+    about: 'Jharkhand\'s tribal dances — Jhumair, Chhau, Karma, Paika — are tied to festivals and community life.'
   }
 ];
 
@@ -604,8 +610,12 @@ const Tourism = () => {
               {/* Expanded Content (Visible on hover) */}
               <div className="absolute inset-0 bg-vanaj-dark/95 backdrop-blur-md p-6 flex flex-col justify-between opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
                 <div>
-                  <h3 className="text-2xl font-heading text-vanaj-cream mb-4">{workshop.name}</h3>
+                  <h3 className="text-2xl font-heading text-vanaj-cream mb-2">{workshop.name}</h3>
                   
+                  <p className="text-vanaj-cream/80 text-sm mb-4 line-clamp-3 leading-relaxed">
+                    {workshop.about}
+                  </p>
+
                   {/* Progress Bar */}
                   <div className="mb-6">
                     <div className="flex justify-between text-xs text-vanaj-cream/80 mb-2">
