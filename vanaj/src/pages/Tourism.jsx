@@ -190,6 +190,7 @@ const HostWorkshopForm = () => {
                 <option value="NGO">Non-Profit / NGO</option>
                 <option value="Private">Private Enterprise</option>
                 <option value="Cultural">Cultural Association</option>
+                <option value="College">College Workshop</option>
               </select>
             </div>
             <button type="button" onClick={nextStep} className="w-full mt-6 bg-vanaj-ochre/20 hover:bg-vanaj-ochre/30 text-vanaj-ochre font-bold py-3 rounded-xl transition-all flex items-center justify-center group">
