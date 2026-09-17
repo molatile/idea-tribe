@@ -47,9 +47,9 @@ const workshops = [
   { 
     id: 1, 
     name: 'Dokra Metal Casting', 
-    artisan: { name: 'Birsa Munda', tribe: 'Munda', experience: '15 Years', avatar: 'https://i.pravatar.cc/150?u=1' }, 
+    artisan: { name: 'Birsa Munda', tribe: 'Munda', experience: '15 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Birsa' }, 
     duration: '2 hours', 
-    price: '₹100', 
+    price: '₹950', 
     difficulty: 'Intermediate',
     languages: 'Hindi, Sadri',
     seats: { filled: 8, total: 12 },
@@ -60,9 +60,9 @@ const workshops = [
   { 
     id: 2, 
     name: 'Paitkar Scroll Painting', 
-    artisan: { name: 'Sumi Santal', tribe: 'Santali', experience: '20 Years', avatar: 'https://i.pravatar.cc/150?u=2' }, 
+    artisan: { name: 'Sumi Santal', tribe: 'Santali', experience: '20 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Sumi' }, 
     duration: '3 hours', 
-    price: '₹100', 
+    price: '₹800', 
     difficulty: 'Beginner',
     languages: 'Santali, Hindi',
     seats: { filled: 11, total: 15 },
@@ -73,22 +73,22 @@ const workshops = [
   { 
     id: 3, 
     name: 'Bamboo Craft Making', 
-    artisan: { name: 'Mangal Ho', tribe: 'Ho', experience: '10 Years', avatar: 'https://i.pravatar.cc/150?u=3' }, 
+    artisan: { name: 'Mangal Ho', tribe: 'Ho', experience: '10 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Mangal' }, 
     duration: '2 hours', 
-    price: '₹100', 
+    price: '₹900', 
     difficulty: 'Beginner',
     languages: 'Ho, Hindi',
     seats: { filled: 5, total: 10 },
     learn: ['Bamboo splitting', 'Basic weaving patterns', 'Finishing and polishing'],
-    image: 'https://images.unsplash.com/photo-1490262145325-1815e966e313?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&q=80&w=800',
     about: 'A GI-tagged craft of Jharkhand\'s Mohli tribes using a unique foot-based slicing technique to split bamboo.'
   },
   { 
     id: 4, 
     name: 'Tribal Cooking', 
-    artisan: { name: 'Sunita Oraon', tribe: 'Oraon', experience: '25 Years', avatar: 'https://i.pravatar.cc/150?u=4' }, 
+    artisan: { name: 'Sunita Oraon', tribe: 'Oraon', experience: '25 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Sunita' }, 
     duration: '2.5 hours', 
-    price: '₹100', 
+    price: '₹800', 
     difficulty: 'Beginner',
     languages: 'Kurukh, Hindi',
     seats: { filled: 12, total: 12 },
@@ -99,9 +99,9 @@ const workshops = [
   { 
     id: 5, 
     name: 'Sohrai Art Painting', 
-    artisan: { name: 'Rani Oraon', tribe: 'Oraon', experience: '12 Years', avatar: 'https://i.pravatar.cc/150?u=5' }, 
+    artisan: { name: 'Rani Oraon', tribe: 'Oraon', experience: '12 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Rani' }, 
     duration: '2 hours', 
-    price: '₹100', 
+    price: '₹800', 
     difficulty: 'Beginner',
     languages: 'Hindi, English',
     seats: { filled: 3, total: 15 },
@@ -112,15 +112,67 @@ const workshops = [
   { 
     id: 6, 
     name: 'Tribal Dance Learning', 
-    artisan: { name: 'Karma Group', tribe: 'Multiple', experience: '30 Years', avatar: 'https://i.pravatar.cc/150?u=6' }, 
+    artisan: { name: 'Karma Group', tribe: 'Multiple', experience: '30 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Karma' }, 
     duration: '1.5 hours', 
-    price: '₹100', 
+    price: '₹800', 
     difficulty: 'Beginner',
     languages: 'Hindi, Sadri',
     seats: { filled: 18, total: 20 },
     learn: ['Basic footwork', 'Matching mandar beats', 'Group coordination'],
     image: 'https://images.unsplash.com/photo-1516307365426-bea591f05011?auto=format&fit=crop&q=80&w=800',
     about: 'Jharkhand\'s tribal dances — Jhumair, Chhau, Karma, Paika — are tied to festivals and community life.'
+  },
+  { 
+    id: 7, 
+    name: 'Tribal Silver Jewelry Making', 
+    artisan: { name: 'Budhu Lohra', tribe: 'Lohra', experience: '22 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Budhu' }, 
+    duration: '4 hours', 
+    price: '₹3500', 
+    difficulty: 'Advanced',
+    languages: 'Hindi, Sadri',
+    seats: { filled: 4, total: 8 },
+    learn: ['Silver wire drawing', 'Bead weaving techniques', 'Traditional motif design'],
+    image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800',
+    about: 'Craft authentic tribal jewelry using silver, brass, and colorful beads, learning techniques passed down through generations of the Lohra community.'
+  },
+  { 
+    id: 8, 
+    name: 'Kuchai Silk Weaving Masterclass', 
+    artisan: { name: 'Sita Devi', tribe: 'Santhal', experience: '35 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Sita' }, 
+    duration: '6 hours', 
+    price: '₹4500', 
+    difficulty: 'Intermediate',
+    languages: 'Santhali, Hindi',
+    seats: { filled: 2, total: 5 },
+    learn: ['Tussar silk cocoon processing', 'Yarn spinning', 'Handloom weaving basics'],
+    image: 'https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?auto=format&fit=crop&q=80&w=800',
+    about: 'An immersive full-day experience in Kuchai silk weaving. Learn the organic process of creating famous Jharkhand Tussar silk from cocoon to cloth.'
+  },
+  { 
+    id: 9, 
+    name: 'Chhau Mask Crafting', 
+    artisan: { name: 'Gurunath', tribe: 'Bhumij', experience: '28 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Gurunath' }, 
+    duration: '5 hours', 
+    price: '₹2800', 
+    difficulty: 'Intermediate',
+    languages: 'Bengali, Hindi',
+    seats: { filled: 6, total: 10 },
+    learn: ['Paper mache layering', 'Clay modeling', 'Mythological painting'],
+    image: 'https://images.unsplash.com/photo-1580136608260-4eb11f4b24fe?auto=format&fit=crop&q=80&w=800',
+    about: 'Design and paint a traditional Seraikela Chhau mask, understanding the deep mythological significance of the colors and expressions.'
+  },
+  { 
+    id: 10, 
+    name: 'Jadopatia Scroll Painting', 
+    artisan: { name: 'Ram Jadu Patua', tribe: 'Jadu Patua', experience: '18 Years', avatar: 'https://api.dicebear.com/8.x/avataaars/svg?seed=Ram' }, 
+    duration: '3.5 hours', 
+    price: '₹1500', 
+    difficulty: 'Beginner',
+    languages: 'Santhali, Hindi',
+    seats: { filled: 8, total: 12 },
+    learn: ['Creating continuous scrolls', 'Natural pigment extraction', 'Folk storytelling'],
+    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&q=80&w=800',
+    about: 'Join the magic painters (Jadu Patua) of Santhal Pargana to create narrative scroll paintings that illustrate local myths and folklore.'
   }
 ];
 
@@ -556,7 +608,7 @@ const Tourism = () => {
           <div className="flex flex-wrap justify-center gap-8 md:gap-16">
             <div className="text-center">
               <div className="text-4xl font-heading text-vanaj-ochre mb-2">
-                <CountUp end={6} />
+                <CountUp end={10} />
               </div>
               <div className="text-vanaj-cream/60 uppercase tracking-widest text-sm font-medium">Workshops</div>
             </div>
