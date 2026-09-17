@@ -11,10 +11,12 @@ export default {
           green: '#2D6A4F',
           ochre: '#C9952A',
           red: '#8B1A1A',
-          cream: '#FDF6EC',
+          cream: '#FDF0E0',
           'dark-cream': '#F5EDD9',
-          dark: '#1B4332',
-          'very-dark': '#0D1F17'
+          dark: '#2C1A0E', /* changed from 1B4332 to Deep brown */
+          'very-dark': '#1A0F08',
+          earth: '#8B5E3C',
+          gold: '#C9952A'
         }
       },
       fontFamily: {
