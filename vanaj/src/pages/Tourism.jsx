@@ -69,9 +69,13 @@ const Tourism = () => {
           </button>
 
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-vanaj-dark/10">
-            {/* Top Placeholder Image */}
-            <div className="w-full h-64 md:h-96 bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400 font-medium">Image Placeholder: {selectedLocation.name}</span>
+            {/* Top Image */}
+            <div className="w-full h-64 md:h-96 bg-gray-200 relative overflow-hidden">
+              <img 
+                src={selectedLocation.image} 
+                alt={selectedLocation.name} 
+                className="w-full h-full object-cover"
+              />
             </div>
 
             <div className="p-6 md:p-10">
@@ -219,11 +223,13 @@ const Tourism = () => {
                 onClick={() => setSelectedLocation(location)}
                 className="bg-white rounded-2xl overflow-hidden shadow-sm border border-vanaj-dark/5 cursor-pointer group transition-all duration-300 hover:-translate-y-2 hover:shadow-xl flex flex-col"
               >
-                {/* Image Placeholder */}
-                <div className="h-48 bg-gray-200 w-full flex items-center justify-center overflow-hidden">
-                  <span className="text-gray-400 font-medium group-hover:scale-105 transition-transform duration-500">
-                    Image: {location.name}
-                  </span>
+                {/* Image */}
+                <div className="h-48 bg-gray-200 w-full relative overflow-hidden">
+                  <img 
+                    src={location.image} 
+                    alt={location.name} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
                 
                 {/* Content */}
