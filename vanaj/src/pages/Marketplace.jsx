@@ -184,6 +184,90 @@ const ornamentsData = [
   }
 ];
 
+const handicraftsData = [
+  {
+    id: 1,
+    name: 'Dhokra Tribal Family Figurine',
+    tribe: 'Various Tribes',
+    description: 'A beautiful handmade Dhokra metal craft depicting a traditional tribal family.',
+    significance: 'Dhokra is an ancient bell metal craft practiced by indigenous artisans, representing traditional family bonds.',
+    materials: 'Bell metal (Dhokra)',
+    image: '/models/handicrafts/dhokra%20tribal%20family%20figurine.png'
+  },
+  {
+    id: 2,
+    name: 'Dhokra Tribal Family Sculpture',
+    tribe: 'Various Tribes',
+    description: 'An intricately detailed sculpture of a tribal family, created using the lost-wax casting technique.',
+    significance: 'Preserves the ancient heritage of Dhokra art and portrays everyday tribal life.',
+    materials: 'Bell metal (Dhokra)',
+    image: '/models/handicrafts/dhokra%20tribal%20family%20sculpture.png'
+  },
+  {
+    id: 3,
+    name: 'Dhokra Tribal Musician Sculpture',
+    tribe: 'Various Tribes',
+    description: 'A charming sculpture of a tribal musician playing a traditional instrument.',
+    significance: 'Celebrates the rich musical traditions and festive spirit of indigenous communities.',
+    materials: 'Bell metal (Dhokra)',
+    image: '/models/handicrafts/dhokra%20tribal%20musician%20sculpture.png'
+  },
+  {
+    id: 4,
+    name: 'Terracotta Tribal Dancer Sculpture',
+    tribe: 'Various Tribes',
+    description: 'A vibrant terracotta sculpture capturing the graceful movements of a tribal dancer.',
+    significance: 'Honors the traditional dance forms that are integral to tribal festivals and rituals.',
+    materials: 'Terracotta clay',
+    image: '/models/handicrafts/terracotta%20tribal%20dancer%20sculpture.png'
+  },
+  {
+    id: 5,
+    name: 'Tribal Bird Terracotta Vessel',
+    tribe: 'Various Tribes',
+    description: 'A unique terracotta vessel adorned with tribal bird motifs.',
+    significance: 'Reflects the close relationship between tribal communities and nature.',
+    materials: 'Terracotta clay',
+    image: '/models/handicrafts/tribal%20bird%20terracotta%20vessel.png'
+  },
+  {
+    id: 6,
+    name: 'Tribal Folk Drummer Figurine',
+    tribe: 'Various Tribes',
+    description: 'A beautifully crafted figurine of a tribal folk drummer in action.',
+    significance: 'Represents the heartbeat of tribal celebrations and the importance of rhythm in their culture.',
+    materials: 'Terracotta / Mixed materials',
+    image: '/models/handicrafts/tribal%20folk%20drummer%20figurine.png'
+  },
+  {
+    id: 7,
+    name: 'Tribal Terracotta Ceremonial Pot',
+    tribe: 'Various Tribes',
+    description: 'An ornate terracotta pot used in traditional tribal ceremonies.',
+    significance: 'Holds sacred significance in rituals, often used to store offerings during festivals.',
+    materials: 'Terracotta clay',
+    image: '/models/handicrafts/tribal%20terracotta%20ceremonial%20pot.png'
+  },
+  {
+    id: 8,
+    name: 'Warli Tribal Wall Hanging',
+    tribe: 'Warli / Various Tribes',
+    description: 'A decorative wall hanging featuring traditional tribal art motifs.',
+    significance: 'Brings the stories and daily life scenes of tribal communities into the home.',
+    materials: 'Wood, canvas, and natural pigments',
+    image: '/models/handicrafts/warli%20tribal%20wall%20hanging.png'
+  },
+  {
+    id: 9,
+    name: 'Wooden Tribal Ceremonial Mask',
+    tribe: 'Various Tribes',
+    description: 'A striking hand-carved wooden mask used in traditional ceremonies.',
+    significance: 'Worn during ritualistic dances to embody spirits and deities, protecting the community.',
+    materials: 'Wood and natural colors',
+    image: '/models/handicrafts/wooden%20tribal%20ceremonial%20mask.png'
+  }
+];
+
 const ImageViewer = ({ item, items, onClose, onNext, onPrev }) => {
   if (!item) return null;
 
@@ -208,7 +292,7 @@ const ImageViewer = ({ item, items, onClose, onNext, onPrev }) => {
             <img 
               src={item.image} 
               alt={item.name} 
-              className="w-full h-full object-contain cursor-zoom-in transition-transform duration-500 hover:scale-[1.02]"
+              className={`w-full h-full cursor-zoom-in transition-transform duration-500 hover:scale-[1.02] ${item.image.includes('clothes') ? 'object-contain md:object-cover' : 'object-contain'}`}
             />
             
             {/* Navigation Arrows */}
@@ -301,7 +385,7 @@ const Marketplace = () => {
         };
     }, [selectedImageIndex]);
 
-    const activeData = activeTab === 'Clothes' ? clothesData : (activeTab === 'Ornaments' ? ornamentsData : []);
+    const activeData = activeTab === 'Clothes' ? clothesData : (activeTab === 'Ornaments' ? ornamentsData : (activeTab === 'Handicrafts' ? handicraftsData : []));
 
     const handleNext = () => {
         if (selectedImageIndex !== null) {
@@ -359,11 +443,11 @@ const Marketplace = () => {
                                 onClick={() => setSelectedImageIndex(index)}
                             >
                                 {/* Product Image Area */}
-                                <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden">
+                                <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden flex items-center justify-center">
                                     <img
                                         src={item.image}
                                         alt={item.name}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${activeTab === 'Clothes' ? 'object-cover' : 'object-contain p-4'}`}
                                     />
                                     
                                     {/* Overlay on hover */}
@@ -382,7 +466,7 @@ const Marketplace = () => {
                                     <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537] mb-1.5">{item.tribe}</div>
                                     <h3 className="text-lg font-bold text-[#1A1A1A] mb-2 leading-tight group-hover:text-[#C68537] transition-colors">{item.name}</h3>
                                     
-                                    {activeTab === 'Ornaments' ? (
+                                    {(activeTab === 'Ornaments' || activeTab === 'Handicrafts') ? (
                                         <>
                                             <p className="text-stone-500 text-sm mb-2 line-clamp-2 font-light">
                                                 <span className="font-semibold text-stone-600">Materials:</span> {item.materials}
