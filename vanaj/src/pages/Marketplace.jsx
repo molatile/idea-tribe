@@ -1,27 +1,192 @@
 import React, { useState, useEffect } from 'react';
 
-const ModelViewer = ({ modelPath, onClose }) => {
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D1F17] overflow-hidden">
-      <model-viewer
-        src={modelPath}
-        auto-rotate
-        camera-controls
-        shadow-intensity="1"
-        style={{ width: '100%', height: '500px', background: '#0D1F17' }}
-      >
-      </model-viewer>
+const clothesData = [
+  {
+    id: 1,
+    name: 'Asur Tribe Clothing',
+    tribe: 'Asur Tribe',
+    description: 'Traditional Asur tribe clothing featuring distinct indigenous weaving patterns and earth-toned colors reflecting their deep connection to nature and their iron-smelting heritage.',
+    significance: 'Worn during significant community gatherings and festivals to honor ancestral spirits and preserve their unique cultural identity.',
+    materials: 'Locally sourced cotton and natural dyes',
+    price: '₹1,299',
+    discountPrice: '₹899',
+    image: '/models/clothes/asur cloth.png'
+  },
+  {
+    id: 2,
+    name: 'Ho Tribe Clothing',
+    tribe: 'Ho Tribe',
+    description: 'Vibrant and intricate Ho tribe attire, characterized by elegant borders and traditional motifs that narrate stories of their agrarian lifestyle.',
+    significance: 'An essential part of the Mage Porob festival and marriage ceremonies, symbolizing purity and community solidarity.',
+    materials: 'Handwoven cotton threads',
+    price: '₹1,499',
+    discountPrice: '₹999',
+    image: '/models/clothes/ho cloth.png'
+  },
+  {
+    id: 3,
+    name: 'Kharia Tribe Clothing',
+    tribe: 'Kharia Tribe',
+    description: 'Graceful Kharia tribe garments adorned with simple yet striking geometric patterns, embodying their minimalist yet culturally rich traditions.',
+    significance: 'Represents a harmonious relationship with the forest and is primarily worn during the Jangkor festival.',
+    materials: 'Coarse cotton and natural plant-based dyes',
+    price: '₹1,199',
+    discountPrice: '₹799',
+    image: '/models/clothes/kharia cloth.png'
+  },
+  {
+    id: 4,
+    name: 'Khortha Tribe Clothing',
+    tribe: 'Khortha Tribe',
+    description: 'Beautifully crafted Khortha clothing, showcasing the vibrant cultural blend of the Chota Nagpur plateau through vivid colors and comfortable drapes.',
+    significance: 'A symbol of festive joy, frequently worn during Karam and Tusu festivals to celebrate harvest and brotherhood.',
+    materials: 'Cotton blend with intricate thread work',
+    price: '₹1,399',
+    discountPrice: '₹899',
+    image: '/models/clothes/khortha cloth.png'
+  },
+  {
+    id: 5,
+    name: 'Kurukh Tribe Clothing',
+    tribe: 'Kurukh Tribe',
+    description: 'Distinctive Kurukh tribe apparel featuring traditional red and white borders, signifying auspiciousness and community pride.',
+    significance: 'Integral to the Sarhul festival, celebrating the blossoming of the Sal trees and the union of earth and sun.',
+    materials: 'Hand-spun cotton',
+    price: '₹1,599',
+    discountPrice: '₹1,099',
+    image: '/models/clothes/kurukh cloth.png'
+  },
+  {
+    id: 6,
+    name: 'Munda Tribe Clothing',
+    tribe: 'Munda Tribe',
+    description: 'Classic Munda tribe garments, beautifully woven with deep cultural motifs and vibrant borders that stand out against earthy base colors.',
+    significance: 'Worn proudly during the Baa (flower) festival and other rituals honoring the supreme deity Singbonga.',
+    materials: 'Pure cotton with traditional embroidery',
+    price: '₹1,499',
+    discountPrice: '₹949',
+    image: '/models/clothes/munda cloth.png'
+  },
+  {
+    id: 7,
+    name: 'Oraon Tribe Clothing',
+    tribe: 'Oraon Tribe',
+    description: 'Elegant Oraon traditional wear, reflecting their vibrant agricultural festivals and rich heritage through symbolic weaving styles.',
+    significance: 'Signifies cultural vitality and is the central attire during major agricultural and social celebrations like Karma.',
+    materials: 'Cotton and sustainable natural fibers',
+    price: '₹1,599',
+    discountPrice: '₹1,049',
+    image: '/models/clothes/oraon cloth.png'
+  },
+  {
+    id: 8,
+    name: 'Santhali Tribe Clothing',
+    tribe: 'Santhali Tribe',
+    description: 'Iconic Santhali clothing, famous for its elegant Phuta Kacha style and striking check patterns that hold profound historical value.',
+    significance: 'A symbol of Santhal identity, worn during the Baha festival and Sohrai to honor nature and ancestors.',
+    materials: 'High-quality cotton with natural indigo and madder dyes',
+    price: '₹1,699',
+    discountPrice: '₹1,199',
+    image: '/models/clothes/santhali cloth.png'
+  }
+];
 
-      {/* Close Button */}
-      <button 
-        onClick={onClose}
-        className="absolute top-6 right-6 md:top-8 md:right-8 z-10 p-3 bg-black/40 hover:bg-black/80 text-white/90 hover:text-white rounded-full backdrop-blur-md transition-all border border-white/10 hover:scale-105"
-        aria-label="Close Viewer"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+const ImageViewer = ({ item, items, onClose, onNext, onPrev }) => {
+  if (!item) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D1F17]/95 backdrop-blur-sm overflow-y-auto">
+      <div className="min-h-screen py-10 px-4 md:px-8 w-full flex items-center justify-center">
+        <div className="relative w-full max-w-6xl bg-stone-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-[#C68537]/20">
+          
+          {/* Close Button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 z-50 p-2.5 bg-black/50 hover:bg-[#C68537] text-white rounded-full transition-all border border-white/10 hover:border-transparent group"
+            aria-label="Close Viewer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Image Section */}
+          <div className="w-full md:w-3/5 h-[40vh] md:h-[80vh] bg-black relative group flex items-center justify-center">
+            <img 
+              src={item.image} 
+              alt={item.name} 
+              className="w-full h-full object-contain cursor-zoom-in transition-transform duration-500 hover:scale-[1.02]"
+            />
+            
+            {/* Navigation Arrows */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); onPrev(); }}
+              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-[#C68537] text-white rounded-full backdrop-blur transition-all border border-white/10 opacity-0 group-hover:opacity-100 focus:opacity-100 -translate-x-4 group-hover:translate-x-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-[#C68537] text-white rounded-full backdrop-blur transition-all border border-white/10 opacity-0 group-hover:opacity-100 focus:opacity-100 translate-x-4 group-hover:translate-x-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Details Section */}
+          <div className="w-full md:w-2/5 p-8 md:p-10 flex flex-col justify-center bg-gradient-to-br from-stone-900 to-[#121a16] text-white">
+            <div className="text-sm font-semibold uppercase tracking-widest text-[#C68537] mb-3 flex items-center">
+              <span className="w-8 h-px bg-[#C68537] mr-3"></span>
+              {item.tribe}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-white mb-6 leading-tight">
+              {item.name}
+            </h2>
+            
+            <div className="space-y-6 flex-grow">
+              <div>
+                <h4 className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Description</h4>
+                <p className="text-stone-300 leading-relaxed text-[15px] font-light">
+                  {item.description}
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Cultural Significance</h4>
+                <p className="text-stone-300 leading-relaxed text-[15px] font-light italic border-l-2 border-[#C68537]/50 pl-4">
+                  "{item.significance}"
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-stone-400 text-sm font-medium uppercase tracking-wider mb-2">Materials Used</h4>
+                <p className="text-stone-300 leading-relaxed text-[15px] font-light flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-[#C68537]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  {item.materials}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-10 pt-8 border-t border-white/10">
+              <a 
+                href={`https://wa.me/1234567890?text=I'm interested in the ${item.name} from the Marketplace.`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center bg-[#25D366] text-white px-6 py-4 rounded-xl font-medium hover:bg-[#20bd5a] transition-all transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/20"
+              >
+                <svg className="w-5 h-5 mr-3 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                Contact via WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -29,11 +194,11 @@ const ModelViewer = ({ modelPath, onClose }) => {
 const Marketplace = () => {
     const tabs = ['Clothes', 'Ornaments', 'Necklaces', 'Handicrafts', 'Bamboo Crafts'];
     const [activeTab, setActiveTab] = useState('Clothes');
-    const [viewerModel, setViewerModel] = useState(null);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
     // Prevent body scroll when viewer is open
     useEffect(() => {
-        if (viewerModel) {
+        if (selectedImageIndex !== null) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
@@ -41,7 +206,19 @@ const Marketplace = () => {
         return () => {
             document.body.style.overflow = 'unset';
         };
-    }, [viewerModel]);
+    }, [selectedImageIndex]);
+
+    const handleNext = () => {
+        if (selectedImageIndex !== null) {
+            setSelectedImageIndex((selectedImageIndex + 1) % clothesData.length);
+        }
+    };
+
+    const handlePrev = () => {
+        if (selectedImageIndex !== null) {
+            setSelectedImageIndex((selectedImageIndex - 1 + clothesData.length) % clothesData.length);
+        }
+    };
 
     return (
         <div className="pt-24 min-h-screen bg-stone-50 pb-20">
@@ -79,71 +256,42 @@ const Marketplace = () => {
 
                 {/* Content */}
                 {activeTab === 'Clothes' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Product Card */}
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-xl transition-shadow duration-300 group flex flex-col h-full">
-                            {/* Product Image Area */}
-                            <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden">
-                                {/* Thumbnail Image */}
-                                <model-viewer
-                                    src="/models/clothes/adivasi_pride_tshirt_new.glb"
-                                    auto-rotate
-                                    camera-controls
-                                    shadow-intensity="1"
-                                    style={{ width: '100%', height: '100%', background: '#f5edd9' }}
-                                    disable-zoom
-                                    className="absolute inset-0 w-full h-full"
-                                >
-                                </model-viewer>
-                                
-                                {/* 3D Badge */}
-                                <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur text-[#C68537] text-xs font-bold px-3 py-1.5 rounded-full flex items-center shadow-sm">
-                                    <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                                    </svg>
-                                    3D View
-                                </div>
-
-                                {/* 3D View Button Overlay */}
-                                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <button 
-                                        onClick={() => setViewerModel('/models/clothes/adivasi_pride_tshirt_new.glb')}
-                                        className="bg-[#C68537] text-white px-6 py-3 rounded-full font-medium shadow-xl transform transition-transform hover:scale-105 active:scale-95 flex items-center"
-                                    >
-                                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        View in 3D
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            {/* Product Info */}
-                            <div className="p-6 flex flex-col flex-grow">
-                                <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537] mb-2">Warli Tribe</div>
-                                <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Adivasi Pride T-Shirt</h3>
-                                <p className="text-stone-500 text-sm mb-6 line-clamp-2 flex-grow">
-                                    Premium cotton t-shirt featuring authentic tribal motifs. Connect with heritage through modern fashion.
-                                </p>
-                                
-                                <div className="flex items-center justify-between pt-4 border-t border-stone-100">
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-stone-400 font-medium line-through">₹1,299</span>
-                                        <span className="text-2xl font-bold text-[#1A1A1A]">₹899</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                        {clothesData.map((item, index) => (
+                            <div 
+                                key={item.id} 
+                                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-xl transition-all duration-500 group flex flex-col h-full cursor-pointer transform hover:-translate-y-1"
+                                onClick={() => setSelectedImageIndex(index)}
+                            >
+                                {/* Product Image Area */}
+                                <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden">
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    
+                                    {/* Overlay on hover */}
+                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                        <div className="bg-white/95 backdrop-blur text-[#1A1A1A] px-6 py-3 rounded-full font-medium shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center">
+                                            <svg className="w-5 h-5 mr-2 text-[#C68537]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                            </svg>
+                                            View Details
+                                        </div>
                                     </div>
-                                    <a 
-                                        href="https://wa.me/1234567890" 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center justify-center bg-[#25D366] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#20bd5a] transition-colors shadow-sm"
-                                    >
-                                        <svg className="w-4 h-4 mr-2 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                                        Order
-                                    </a>
+                                </div>
+                                
+                                {/* Product Info */}
+                                <div className="p-5 flex flex-col flex-grow bg-white">
+                                    <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537] mb-1.5">{item.tribe}</div>
+                                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2 leading-tight group-hover:text-[#C68537] transition-colors">{item.name}</h3>
+                                    <p className="text-stone-500 text-sm mb-4 line-clamp-2 flex-grow font-light">
+                                        {item.description}
+                                    </p>
                                 </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 )}
 
@@ -165,11 +313,14 @@ const Marketplace = () => {
                 )}
             </div>
 
-            {/* 3D Viewer Modal */}
-            {viewerModel && (
-                <ModelViewer 
-                    modelPath={viewerModel} 
-                    onClose={() => setViewerModel(null)} 
+            {/* Image Viewer Modal */}
+            {selectedImageIndex !== null && (
+                <ImageViewer 
+                    item={clothesData[selectedImageIndex]} 
+                    items={clothesData}
+                    onClose={() => setSelectedImageIndex(null)}
+                    onNext={handleNext}
+                    onPrev={handlePrev}
                 />
             )}
         </div>
