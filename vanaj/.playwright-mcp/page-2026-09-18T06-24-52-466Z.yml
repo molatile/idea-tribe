@@ -1,0 +1,72 @@
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - link "वनज" [ref=e6] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e7]:
+        - link "Dance" [ref=e8] [cursor=pointer]:
+          - /url: /dance
+        - link "Languages" [ref=e9] [cursor=pointer]:
+          - /url: /languages
+        - link "Food" [ref=e10] [cursor=pointer]:
+          - /url: /food
+        - link "Marketplace" [ref=e11] [cursor=pointer]:
+          - /url: /marketplace
+        - link "Tourism" [ref=e12] [cursor=pointer]:
+          - /url: /tourism
+  - main [ref=e13]:
+    - generic [ref=e262]:
+      - generic [ref=e263]:
+        - generic [ref=e264]:
+          - heading "Marketplace" [level=1] [ref=e265]
+          - paragraph [ref=e266]: Discover authentic tribal craftsmanship. Support indigenous artisans directly.
+        - generic [ref=e267]:
+          - button "👗 Clothes" [ref=e268] [cursor=pointer]
+          - button "💍 Ornaments" [ref=e269] [cursor=pointer]
+          - button "📿 Necklaces" [ref=e270] [cursor=pointer]
+          - button "🎨 Handicrafts" [ref=e271] [cursor=pointer]
+          - button "🧺 Bamboo Crafts" [ref=e272] [cursor=pointer]
+        - generic [ref=e274]:
+          - generic [ref=e275]:
+            - generic [ref=e279]: 3D View
+            - button "View in 3D" [active] [ref=e283] [cursor=pointer]
+          - generic [ref=e287]:
+            - generic [ref=e288]: Warli Tribe
+            - heading "Adivasi Pride T-Shirt" [level=3] [ref=e289]
+            - paragraph [ref=e290]: Premium cotton t-shirt featuring authentic tribal motifs. Connect with heritage through modern fashion.
+            - generic [ref=e291]:
+              - generic [ref=e292]:
+                - generic [ref=e293]: ₹1,299
+                - generic [ref=e294]: ₹899
+              - link "Order" [ref=e295] [cursor=pointer]:
+                - /url: https://wa.me/1234567890
+      - generic [ref=e298]:
+        - generic: Drag to rotate · Scroll to zoom
+        - button "Close Viewer" [ref=e302] [cursor=pointer]
+  - contentinfo [ref=e240]:
+    - generic [ref=e242]:
+      - link "वनज VANAJ" [ref=e243] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=e244]: झारखंड की जीवंत विरासत
+      - list [ref=e245]:
+        - listitem [ref=e246]:
+          - link "Dance" [ref=e247] [cursor=pointer]:
+            - /url: /dance
+        - listitem [ref=e248]:
+          - link "Languages" [ref=e249] [cursor=pointer]:
+            - /url: /languages
+        - listitem [ref=e250]:
+          - link "Food" [ref=e251] [cursor=pointer]:
+            - /url: /food
+        - listitem [ref=e252]:
+          - link "Marketplace" [ref=e253] [cursor=pointer]:
+            - /url: /marketplace
+        - listitem [ref=e254]:
+          - link "Tourism" [ref=e255] [cursor=pointer]:
+            - /url: /tourism
+        - listitem [ref=e256]:
+          - link "Oral History" [ref=e257] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=e259]:
+        - paragraph [ref=e260]: © 2026 Vanaj. All rights reserved.
+        - paragraph [ref=e261]: Honoring Jharkhand's Indigenous Roots
