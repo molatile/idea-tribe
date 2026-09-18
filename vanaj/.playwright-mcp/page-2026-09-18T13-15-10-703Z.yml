@@ -1,0 +1,165 @@
+- generic [ref=f1e3]:
+  - navigation [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "वनज" [ref=f1e6] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f1e7]:
+        - link "Dance" [ref=f1e8] [cursor=pointer]:
+          - /url: /dance
+        - link "Languages" [ref=f1e9] [cursor=pointer]:
+          - /url: /languages
+        - link "Food" [ref=f1e10] [cursor=pointer]:
+          - /url: /food
+        - link "Marketplace" [ref=f1e11] [cursor=pointer]:
+          - /url: /marketplace
+        - link "Tourism" [ref=f1e12] [cursor=pointer]:
+          - /url: /tourism
+  - main [ref=f1e13]:
+    - generic [ref=f1e15]:
+      - generic [ref=f1e16]:
+        - heading "Marketplace" [level=1] [ref=f1e17]
+        - paragraph [ref=f1e18]: Discover authentic tribal craftsmanship. Support indigenous artisans directly.
+      - generic [ref=f1e19]:
+        - button "👗 Clothes" [ref=f1e20] [cursor=pointer]
+        - button "💍 Ornaments" [active] [ref=f1e21] [cursor=pointer]
+        - button "📿 Necklaces" [ref=f1e22] [cursor=pointer]
+        - button "🎨 Handicrafts" [ref=f1e23] [cursor=pointer]
+        - button "🧺 Bamboo Crafts" [ref=f1e24] [cursor=pointer]
+      - generic [ref=f1e25]:
+        - generic [ref=f1e26] [cursor=pointer]:
+          - generic [ref=f1e27]:
+            - img "Tribal Armlet" [ref=f1e136]
+            - generic [ref=f1e29]: View Details
+          - generic [ref=f1e33]:
+            - generic [ref=f1e34]: Various Tribes
+            - heading "Tribal Armlet" [level=3] [ref=f1e137]
+            - paragraph [ref=f1e138]: "Materials: Brass and mixed metals"
+            - paragraph [ref=f1e139]: "Significance: Symbolizes strength and serves as a protective charm in tribal culture."
+            - link "Contact via WhatsApp" [ref=f1e140]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Tribal Armlet from the Marketplace.
+        - generic [ref=f1e37] [cursor=pointer]:
+          - generic [ref=f1e38]:
+            - img "Banki (traditional bracelet)" [ref=f1e143]
+            - generic [ref=f1e40]: View Details
+          - generic [ref=f1e44]:
+            - generic [ref=f1e45]: Santhal & Ho Tribes
+            - heading "Banki (traditional bracelet)" [level=3] [ref=f1e144]
+            - paragraph [ref=f1e145]: "Materials: Silver and bell metal"
+            - paragraph [ref=f1e146]: "Significance: Worn by women as a symbol of marital bliss and prosperity."
+            - link "Contact via WhatsApp" [ref=f1e147]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Banki (traditional bracelet) from the Marketplace.
+        - generic [ref=f1e48] [cursor=pointer]:
+          - generic [ref=f1e49]:
+            - img "Tribal Finger Ring" [ref=f1e150]
+            - generic [ref=f1e51]: View Details
+          - generic [ref=f1e55]:
+            - generic [ref=f1e56]: Various Tribes
+            - heading "Tribal Finger Ring" [level=3] [ref=f1e151]
+            - paragraph [ref=f1e152]: "Materials: Silver and copper alloy"
+            - paragraph [ref=f1e153]: "Significance: Often passed down through generations as a family heirloom."
+            - link "Contact via WhatsApp" [ref=f1e154]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Tribal Finger Ring from the Marketplace.
+        - generic [ref=f1e59] [cursor=pointer]:
+          - generic [ref=f1e60]:
+            - img "Hair Ornament" [ref=f1e157]
+            - generic [ref=f1e62]: View Details
+          - generic [ref=f1e66]:
+            - generic [ref=f1e67]: Munda & Oraon Tribes
+            - heading "Hair Ornament" [level=3] [ref=f1e158]
+            - paragraph [ref=f1e159]: "Materials: Brass and natural beads"
+            - paragraph [ref=f1e160]: "Significance: Worn during the Karma festival to represent the beauty of nature."
+            - link "Contact via WhatsApp" [ref=f1e161]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Hair Ornament from the Marketplace.
+        - generic [ref=f1e70] [cursor=pointer]:
+          - generic [ref=f1e71]:
+            - img "Hair Pin" [ref=f1e164]
+            - generic [ref=f1e73]: View Details
+          - generic [ref=f1e77]:
+            - generic [ref=f1e78]: Various Tribes
+            - heading "Hair Pin" [level=3] [ref=f1e165]
+            - paragraph [ref=f1e166]: "Materials: Silver and bronze"
+            - paragraph [ref=f1e167]: "Significance: A daily wear ornament that also serves to reflect the artisan's craftsmanship."
+            - link "Contact via WhatsApp" [ref=f1e168]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Hair Pin from the Marketplace.
+        - generic [ref=f1e81] [cursor=pointer]:
+          - generic [ref=f1e82]:
+            - img "Khadag" [ref=f1e171]
+            - generic [ref=f1e84]: View Details
+          - generic [ref=f1e88]:
+            - generic [ref=f1e89]: Santhal Tribe
+            - heading "Khadag" [level=3] [ref=f1e172]
+            - paragraph [ref=f1e173]: "Materials: Bell metal"
+            - paragraph [ref=f1e174]: "Significance: Represents social status and is a key part of bridal jewelry."
+            - link "Contact via WhatsApp" [ref=f1e175]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Khadag from the Marketplace.
+        - generic [ref=f1e92] [cursor=pointer]:
+          - generic [ref=f1e93]:
+            - img "Kundri (earring)" [ref=f1e178]
+            - generic [ref=f1e95]: View Details
+          - generic [ref=f1e99]:
+            - generic [ref=f1e100]: Ho & Kharia Tribes
+            - heading "Kundri (earring)" [level=3] [ref=f1e179]
+            - paragraph [ref=f1e180]: "Materials: Silver and brass"
+            - paragraph [ref=f1e181]: "Significance: Enhances facial beauty and is believed to ward off evil spirits."
+            - link "Contact via WhatsApp" [ref=f1e182]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Kundri (earring) from the Marketplace.
+        - generic [ref=f1e103] [cursor=pointer]:
+          - generic [ref=f1e104]:
+            - img "Tribal Nose Ring" [ref=f1e185]
+            - generic [ref=f1e106]: View Details
+          - generic [ref=f1e110]:
+            - generic [ref=f1e111]: Various Tribes
+            - heading "Tribal Nose Ring" [level=3] [ref=f1e186]
+            - paragraph [ref=f1e187]: "Materials: Silver"
+            - paragraph [ref=f1e188]: "Significance: An essential bridal ornament symbolizing purity and womanhood."
+            - link "Contact via WhatsApp" [ref=f1e189]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Tribal Nose Ring from the Marketplace.
+        - generic [ref=f1e192] [cursor=pointer]:
+          - generic [ref=f1e193]:
+            - img "Panwari" [ref=f1e194]
+            - generic [ref=f1e195]: View Details
+          - generic [ref=f1e199]:
+            - generic [ref=f1e200]: Oraon Tribe
+            - heading "Panwari" [level=3] [ref=f1e201]
+            - paragraph [ref=f1e202]: "Materials: Mixed metal alloy"
+            - paragraph [ref=f1e203]: "Significance: Used in traditional ceremonies and harvest dances."
+            - link "Contact via WhatsApp" [ref=f1e204]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Panwari from the Marketplace.
+        - generic [ref=f1e207] [cursor=pointer]:
+          - generic [ref=f1e208]:
+            - img "Tribal Waist Belt" [ref=f1e209]
+            - generic [ref=f1e210]: View Details
+          - generic [ref=f1e214]:
+            - generic [ref=f1e215]: Various Tribes
+            - heading "Tribal Waist Belt" [level=3] [ref=f1e216]
+            - paragraph [ref=f1e217]: "Materials: Silver and bells"
+            - paragraph [ref=f1e218]: "Significance: Highlights the traditional attire and represents the vitality of the wearer."
+            - link "Contact via WhatsApp" [ref=f1e219]:
+              - /url: https://wa.me/1234567890?text=I'm interested in the Tribal Waist Belt from the Marketplace.
+  - contentinfo [ref=f1e114]:
+    - generic [ref=f1e116]:
+      - link "वनज VANAJ" [ref=f1e117] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=f1e118]: झारखंड की जीवंत विरासत
+      - list [ref=f1e119]:
+        - listitem [ref=f1e120]:
+          - link "Dance" [ref=f1e121] [cursor=pointer]:
+            - /url: /dance
+        - listitem [ref=f1e122]:
+          - link "Languages" [ref=f1e123] [cursor=pointer]:
+            - /url: /languages
+        - listitem [ref=f1e124]:
+          - link "Food" [ref=f1e125] [cursor=pointer]:
+            - /url: /food
+        - listitem [ref=f1e126]:
+          - link "Marketplace" [ref=f1e127] [cursor=pointer]:
+            - /url: /marketplace
+        - listitem [ref=f1e128]:
+          - link "Tourism" [ref=f1e129] [cursor=pointer]:
+            - /url: /tourism
+        - listitem [ref=f1e130]:
+          - link "Oral History" [ref=f1e131] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=f1e133]:
+        - paragraph [ref=f1e134]: © 2026 Vanaj. All rights reserved.
+        - paragraph [ref=f1e135]: Honoring Jharkhand's Indigenous Roots
