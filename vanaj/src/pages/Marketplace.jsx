@@ -91,6 +91,99 @@ const clothesData = [
   }
 ];
 
+const ornamentsData = [
+  {
+    id: 1,
+    name: 'Tribal Armlet',
+    tribe: 'Various Tribes',
+    description: 'A beautifully crafted traditional armlet worn during festivals and special occasions.',
+    significance: 'Symbolizes strength and serves as a protective charm in tribal culture.',
+    materials: 'Brass and mixed metals',
+    image: '/models/ornaments/armlet.png'
+  },
+  {
+    id: 2,
+    name: 'Banki (traditional bracelet)',
+    tribe: 'Santhal & Ho Tribes',
+    description: 'An elegant traditional bracelet known as Banki, featuring intricate tribal motifs.',
+    significance: 'Worn by women as a symbol of marital bliss and prosperity.',
+    materials: 'Silver and bell metal',
+    image: '/models/ornaments/banki.png'
+  },
+  {
+    id: 3,
+    name: 'Tribal Finger Ring',
+    tribe: 'Various Tribes',
+    description: 'A distinctive tribal finger ring with unique geometric patterns.',
+    significance: 'Often passed down through generations as a family heirloom.',
+    materials: 'Silver and copper alloy',
+    image: '/models/ornaments/finger%20ring.png'
+  },
+  {
+    id: 4,
+    name: 'Hair Ornament',
+    tribe: 'Munda & Oraon Tribes',
+    description: 'A traditional hair ornament that adds grace to tribal dance attires.',
+    significance: 'Worn during the Karma festival to represent the beauty of nature.',
+    materials: 'Brass and natural beads',
+    image: '/models/ornaments/hair%20ornament.png'
+  },
+  {
+    id: 5,
+    name: 'Hair Pin',
+    tribe: 'Various Tribes',
+    description: 'An intricately designed hair pin used to secure traditional buns.',
+    significance: 'A daily wear ornament that also serves to reflect the artisan\'s craftsmanship.',
+    materials: 'Silver and bronze',
+    image: '/models/ornaments/hair%20pin.png'
+  },
+  {
+    id: 6,
+    name: 'Khadag',
+    tribe: 'Santhal Tribe',
+    description: 'A heavy traditional solid bracelet worn by tribal women.',
+    significance: 'Represents social status and is a key part of bridal jewelry.',
+    materials: 'Bell metal',
+    image: '/models/ornaments/khadag.png'
+  },
+  {
+    id: 7,
+    name: 'Kundri (earring)',
+    tribe: 'Ho & Kharia Tribes',
+    description: 'Classic Kundri earrings featuring hanging floral designs.',
+    significance: 'Enhances facial beauty and is believed to ward off evil spirits.',
+    materials: 'Silver and brass',
+    image: '/models/ornaments/kundri.png'
+  },
+  {
+    id: 8,
+    name: 'Tribal Nose Ring',
+    tribe: 'Various Tribes',
+    description: 'A prominent tribal nose ring with delicate detailing.',
+    significance: 'An essential bridal ornament symbolizing purity and womanhood.',
+    materials: 'Silver',
+    image: '/models/ornaments/nose%20ring.png'
+  },
+  {
+    id: 9,
+    name: 'Panwari',
+    tribe: 'Oraon Tribe',
+    description: 'A beautiful Panwari ornament featuring ethnic tribal patterns.',
+    significance: 'Used in traditional ceremonies and harvest dances.',
+    materials: 'Mixed metal alloy',
+    image: '/models/ornaments/panwari.png'
+  },
+  {
+    id: 10,
+    name: 'Tribal Waist Belt',
+    tribe: 'Various Tribes',
+    description: 'A traditional ornate waist belt worn over tribal sarees.',
+    significance: 'Highlights the traditional attire and represents the vitality of the wearer.',
+    materials: 'Silver and bells',
+    image: '/models/ornaments/waist%20belt.png'
+  }
+];
+
 const ImageViewer = ({ item, items, onClose, onNext, onPrev }) => {
   if (!item) return null;
 
@@ -208,15 +301,17 @@ const Marketplace = () => {
         };
     }, [selectedImageIndex]);
 
+    const activeData = activeTab === 'Clothes' ? clothesData : (activeTab === 'Ornaments' ? ornamentsData : []);
+
     const handleNext = () => {
         if (selectedImageIndex !== null) {
-            setSelectedImageIndex((selectedImageIndex + 1) % clothesData.length);
+            setSelectedImageIndex((selectedImageIndex + 1) % activeData.length);
         }
     };
 
     const handlePrev = () => {
         if (selectedImageIndex !== null) {
-            setSelectedImageIndex((selectedImageIndex - 1 + clothesData.length) % clothesData.length);
+            setSelectedImageIndex((selectedImageIndex - 1 + activeData.length) % activeData.length);
         }
     };
 
@@ -255,9 +350,9 @@ const Marketplace = () => {
                 </div>
 
                 {/* Content */}
-                {activeTab === 'Clothes' && (
+                {activeData.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                        {clothesData.map((item, index) => (
+                        {activeData.map((item, index) => (
                             <div 
                                 key={item.id} 
                                 className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-xl transition-all duration-500 group flex flex-col h-full cursor-pointer transform hover:-translate-y-1"
@@ -293,10 +388,7 @@ const Marketplace = () => {
                             </div>
                         ))}
                     </div>
-                )}
-
-                {/* Coming Soon for other tabs */}
-                {activeTab !== 'Clothes' && (
+                ) : (
                     <div className="py-24 flex flex-col items-center justify-center text-center bg-white rounded-3xl border border-stone-100 shadow-sm mt-8">
                         <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mb-6">
                             <svg className="w-10 h-10 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -316,8 +408,8 @@ const Marketplace = () => {
             {/* Image Viewer Modal */}
             {selectedImageIndex !== null && (
                 <ImageViewer 
-                    item={clothesData[selectedImageIndex]} 
-                    items={clothesData}
+                    item={activeData[selectedImageIndex]} 
+                    items={activeData}
                     onClose={() => setSelectedImageIndex(null)}
                     onNext={handleNext}
                     onPrev={handlePrev}

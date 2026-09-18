@@ -24,57 +24,35 @@ const DANCES = [
     hasVideo: true,
   },
   {
-    id: 'chhau',
-    name: 'Chhau Dance',
-    tribe: 'Various',
-    occasion: 'Chaitra Parva',
-    region: 'Seraikela',
-    significance: 'A martial and semi-classical dance form originating from the Chota Nagpur Plateau, characterized by elaborate masks, vigorous martial movements, and storytelling based on epics like the Mahabharata and Ramayana.',
-    hasVideo: false,
-  },
-  {
-    id: 'karma',
-    name: 'Karma Dance',
-    tribe: 'Baiga, Oraon, Munda',
-    occasion: 'Karma festival',
-    region: 'Across Jharkhand',
-    significance: 'Performed to please Karam Devta, the god of power and youth. Dancers form a circle, placing arms around each other\'s waists, moving rhythmically to pray for a good harvest and protection.',
-    hasVideo: false,
-  },
-  {
-    id: 'jhumair',
-    name: 'Jhumair',
-    tribe: 'Sadan, Kurmi',
-    occasion: 'Harvest season, festivals',
-    region: 'Chota Nagpur',
-    significance: 'A popular folk dance performed largely by women during the harvest season. It expresses joy and gratitude for a bountiful crop, with songs reflecting the daily life and struggles of the agrarian community.',
-    hasVideo: false,
-  },
-  {
-    id: 'paika',
-    name: 'Paika Dance',
-    tribe: 'Munda',
-    occasion: 'Weddings, welcoming guests',
-    region: 'Khunti, Ranchi',
-    significance: 'A traditional martial dance performed exclusively by men, brandishing swords and shields. It showcases the courage and martial prowess of the Paika warriors who once defended the region.',
-    hasVideo: false,
-  },
-  {
     id: 'santhali',
     name: 'Santhali Dance',
     tribe: 'Santhal',
     occasion: 'Sohrai, Baha festivals',
     region: 'Santhal Pargana',
     significance: 'A vibrant and synchronized group dance, often performed with a large number of participants. Women dance in long lines holding hands, while men play traditional instruments like the Tirio (flute) and Tumdak (drum).',
-    hasVideo: false,
+    videoSrc: '/videos/dance/santhali-folk dance.mp4',
+    hasVideo: true,
   },
-];
-
-const UPCOMING_DANCES = [
-  'Firkal Dance',
-  'Mundari Dance',
-  'Barao Dance',
-  'Domkach'
+  {
+    id: 'asur',
+    name: 'Asur Folk Dance',
+    tribe: 'Asur',
+    occasion: 'Tribal festivals',
+    region: 'Jharkhand',
+    significance: 'Asur tribe folk dance, performed during tribal festivals',
+    videoSrc: '/videos/dance/asur-folk dance (3).mp4',
+    hasVideo: true,
+  },
+  {
+    id: 'kharia',
+    name: 'Kharia Folk Dance',
+    tribe: 'Kharia',
+    occasion: 'Harvest festivals',
+    region: 'Jharkhand',
+    significance: 'Kharia tribe folk dance, performed during harvest festivals',
+    videoSrc: '/videos/dance/khariya-folk dance.mp4',
+    hasVideo: true,
+  }
 ];
 
 const CinematicPlayer = ({ dance }) => {
@@ -455,38 +433,7 @@ export default function Dance() {
         </div>
       </section>
 
-      {/* More Coming Soon Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5 pt-20 sm:pt-24">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-white mb-4 sm:mb-6">More Coming Soon</h2>
-          <p className="font-body text-neutral-400 text-lg font-light max-w-xl mx-auto">
-            Our cultural documentation is ongoing. More dances are being added to the archive.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          {UPCOMING_DANCES.map((name, i) => (
-            <motion.div 
-              key={name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: i * 0.1, ease: "easeOut" }}
-              className="aspect-square sm:aspect-[4/3] rounded-xl bg-[#0a0a0a] border border-white/5 flex items-center justify-center p-4 text-center group relative overflow-hidden shadow-lg"
-            >
-              <div className="absolute inset-0 bg-[#C9952A]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
-              <motion.div 
-                animate={{ opacity: [0.3, 0.7, 0.3] }} 
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
-                className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent pointer-events-none"
-              />
-              
-              <h4 className="font-heading text-xl sm:text-2xl text-neutral-600 group-hover:text-[#C9952A] transition-colors duration-500 z-10">{name}</h4>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+
 
       {/* Fullscreen Modal */}
       <AnimatePresence>

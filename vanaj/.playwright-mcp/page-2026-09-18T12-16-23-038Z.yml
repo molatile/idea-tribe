@@ -1,0 +1,116 @@
+- generic [ref=f8e3]:
+  - navigation [ref=f8e4]:
+    - generic [ref=f8e5]:
+      - link "वनज" [ref=f8e6] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f8e7]:
+        - link "Dance" [ref=f8e8] [cursor=pointer]:
+          - /url: /dance
+        - link "Languages" [ref=f8e9] [cursor=pointer]:
+          - /url: /languages
+        - link "Food" [ref=f8e10] [cursor=pointer]:
+          - /url: /food
+        - link "Marketplace" [ref=f8e11] [cursor=pointer]:
+          - /url: /marketplace
+        - link "Tourism" [ref=f8e12] [cursor=pointer]:
+          - /url: /tourism
+  - main [ref=f8e13]:
+    - generic [ref=f8e14]:
+      - generic [ref=f8e15]:
+        - heading "The Dances of Jharkhand" [level=1] [ref=f8e16]
+        - paragraph [ref=f8e17]: Rhythm as living history. Where every step tells a story of the earth, the ancestors, and the spirit of the tribe.
+      - generic [ref=f8e19]:
+        - generic [ref=f8e27] [cursor=pointer]:
+          - heading "Ho Folk Dance" [level=3] [ref=f8e28]
+          - generic [ref=f8e29]:
+            - paragraph [ref=f8e30]: Tribe Ho
+            - paragraph [ref=f8e31]: Region West Singhbhum
+            - paragraph [ref=f8e32]: Celebrates the creation of the world and agricultural cycles. Characterized by synchronized rhythmic movements, often performed in a circle or semi-circle. It emphasizes community bonding and connection to nature.
+        - generic [ref=f8e40] [cursor=pointer]:
+          - heading "Oraon Folk Dance" [level=3] [ref=f8e41]
+          - generic [ref=f8e42]:
+            - paragraph [ref=f8e43]: Tribe Oraon
+            - paragraph [ref=f8e44]: Region Ranchi, Gumla
+            - paragraph [ref=f8e45]: Vibrant and energetic, honoring nature and the Karam tree. Involves complex footwork and joyous formations, typically accompanied by the rhythmic beats of the Mandar and Nagara.
+        - generic [ref=f8e51] [cursor=pointer]:
+          - generic [ref=f8e52]: Video Coming Soon
+          - heading "Chhau Dance" [level=3] [ref=f8e54]
+          - generic [ref=f8e55]:
+            - paragraph [ref=f8e56]: Tribe Various
+            - paragraph [ref=f8e57]: Region Seraikela
+            - paragraph [ref=f8e58]: A martial and semi-classical dance form originating from the Chota Nagpur Plateau, characterized by elaborate masks, vigorous martial movements, and storytelling based on epics like the Mahabharata and Ramayana.
+        - generic [ref=f8e64] [cursor=pointer]:
+          - generic [ref=f8e65]: Video Coming Soon
+          - heading "Karma Dance" [level=3] [ref=f8e67]
+          - generic [ref=f8e68]:
+            - paragraph [ref=f8e69]: Tribe Baiga, Oraon, Munda
+            - paragraph [ref=f8e70]: Region Across Jharkhand
+            - paragraph [ref=f8e71]: Performed to please Karam Devta, the god of power and youth. Dancers form a circle, placing arms around each other's waists, moving rhythmically to pray for a good harvest and protection.
+        - generic [ref=f8e77] [cursor=pointer]:
+          - generic [ref=f8e78]: Video Coming Soon
+          - heading "Jhumair" [level=3] [ref=f8e80]
+          - generic [ref=f8e81]:
+            - paragraph [ref=f8e82]: Tribe Sadan, Kurmi
+            - paragraph [ref=f8e83]: Region Chota Nagpur
+            - paragraph [ref=f8e84]: A popular folk dance performed largely by women during the harvest season. It expresses joy and gratitude for a bountiful crop, with songs reflecting the daily life and struggles of the agrarian community.
+        - generic [ref=f8e90] [cursor=pointer]:
+          - generic [ref=f8e91]: Video Coming Soon
+          - heading "Paika Dance" [level=3] [ref=f8e93]
+          - generic [ref=f8e94]:
+            - paragraph [ref=f8e95]: Tribe Munda
+            - paragraph [ref=f8e96]: Region Khunti, Ranchi
+            - paragraph [ref=f8e97]: A traditional martial dance performed exclusively by men, brandishing swords and shields. It showcases the courage and martial prowess of the Paika warriors who once defended the region.
+        - generic [ref=f8e105] [cursor=pointer]:
+          - heading "Santhali Dance" [level=3] [ref=f8e106]
+          - generic [ref=f8e107]:
+            - paragraph [ref=f8e108]: Tribe Santhal
+            - paragraph [ref=f8e109]: Region Santhal Pargana
+            - paragraph [ref=f8e110]: A vibrant and synchronized group dance, often performed with a large number of participants. Women dance in long lines holding hands, while men play traditional instruments like the Tirio (flute) and Tumdak (drum).
+        - generic [ref=f8e118] [cursor=pointer]:
+          - heading "Asur Folk Dance" [level=3] [ref=f8e119]
+          - generic [ref=f8e120]:
+            - paragraph [ref=f8e121]: Tribe Asur
+            - paragraph [ref=f8e122]: Region Jharkhand
+            - paragraph [ref=f8e123]: Asur tribe folk dance, performed during tribal festivals
+        - generic [ref=f8e131] [cursor=pointer]:
+          - heading "Kharia Folk Dance" [level=3] [ref=f8e132]
+          - generic [ref=f8e133]:
+            - paragraph [ref=f8e134]: Tribe Kharia
+            - paragraph [ref=f8e135]: Region Jharkhand
+            - paragraph [ref=f8e136]: Kharia tribe folk dance, performed during harvest festivals
+      - generic [ref=f8e137]:
+        - generic [ref=f8e138]:
+          - heading "More Coming Soon" [level=2] [ref=f8e139]
+          - paragraph [ref=f8e140]: Our cultural documentation is ongoing. More dances are being added to the archive.
+        - generic [ref=f8e141]:
+          - heading "Firkal Dance" [level=4] [ref=f8e144]
+          - heading "Mundari Dance" [level=4] [ref=f8e147]
+          - heading "Barao Dance" [level=4] [ref=f8e150]
+          - heading "Domkach" [level=4] [ref=f8e153]
+  - contentinfo [ref=f8e154]:
+    - generic [ref=f8e156]:
+      - link "वनज VANAJ" [ref=f8e157] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=f8e158]: झारखंड की जीवंत विरासत
+      - list [ref=f8e159]:
+        - listitem [ref=f8e160]:
+          - link "Dance" [ref=f8e161] [cursor=pointer]:
+            - /url: /dance
+        - listitem [ref=f8e162]:
+          - link "Languages" [ref=f8e163] [cursor=pointer]:
+            - /url: /languages
+        - listitem [ref=f8e164]:
+          - link "Food" [ref=f8e165] [cursor=pointer]:
+            - /url: /food
+        - listitem [ref=f8e166]:
+          - link "Marketplace" [ref=f8e167] [cursor=pointer]:
+            - /url: /marketplace
+        - listitem [ref=f8e168]:
+          - link "Tourism" [ref=f8e169] [cursor=pointer]:
+            - /url: /tourism
+        - listitem [ref=f8e170]:
+          - link "Oral History" [ref=f8e171] [cursor=pointer]:
+            - /url: /archive
+      - generic [ref=f8e173]:
+        - paragraph [ref=f8e174]: © 2026 Vanaj. All rights reserved.
+        - paragraph [ref=f8e175]: Honoring Jharkhand's Indigenous Roots
