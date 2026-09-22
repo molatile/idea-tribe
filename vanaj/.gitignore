@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 public/videos/dance/asur-folk dance.mp4
-
-# Antigravity MCP Server files
-.playwright-mcp/
