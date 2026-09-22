@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import FestivalStrip from '../components/shared/FestivalStrip';
+import OpportunitySection from '../components/shared/OpportunitySection';
 
 // --- SVG Patterns and Icons ---
 
@@ -249,6 +250,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Opportunity Section */}
+      <OpportunitySection />
 
       {/* Festival Strip */}
       <FestivalStrip />
