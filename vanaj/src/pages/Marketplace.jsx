@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FeedbackSection from '../components/shared/FeedbackSection';
 
 const clothesData = [
   {
@@ -909,6 +910,9 @@ const Marketplace = () => {
                     </div>
                 )}
             </div>
+
+            {/* Cultural Feedback & Patron Reviews Section */}
+            <FeedbackSection vertical="marketplace" theme="light" />
 
             {/* Image Viewer Modal */}
             {selectedImageIndex !== null && (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Leaf, ChefHat, Calendar, Users } from 'lucide-react';
+import FeedbackSection from '../components/shared/FeedbackSection';
 
 const foodData = [
   {
@@ -213,6 +214,9 @@ export default function Food() {
           ))}
         </div>
       </div>
+
+      {/* Culinary Feedback & Tasting Impressions Section */}
+      <FeedbackSection vertical="food" theme="light" />
 
       {/* Expanded Detail Modal */}
       <AnimatePresence>

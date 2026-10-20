@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { tourismData } from '../data/tourismData';
+import FeedbackSection from '../components/shared/FeedbackSection';
 
 // Fix for default marker icon in leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -717,6 +718,9 @@ const Tourism = () => {
           ))}
         </div>
       </section>
+
+      {/* Cultural Feedback & Traveler Reflections Section */}
+      <FeedbackSection vertical="tourism" theme="light" />
 
       {/* Host a Workshop (For Organizations) */}
       <section className="bg-vanaj-dark py-24 relative overflow-hidden text-vanaj-cream">

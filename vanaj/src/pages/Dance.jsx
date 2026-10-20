@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Share2, Check } from 'lucide-react';
+import FeedbackSection from '../components/shared/FeedbackSection';
 
 const DANCES = [
   {
@@ -434,6 +435,9 @@ export default function Dance() {
       </section>
 
 
+
+      {/* Cultural Feedback & Audience Impressions Section */}
+      <FeedbackSection vertical="dance" theme="dark" />
 
       {/* Fullscreen Modal */}
       <AnimatePresence>
