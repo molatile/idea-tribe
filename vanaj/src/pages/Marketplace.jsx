@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FeedbackSection from '../components/shared/FeedbackSection';
+import { getItemLikes, toggleItemLike } from '../utils/storage';
+import { Heart } from 'lucide-react';
 
 const clothesData = [
   {
@@ -718,6 +720,13 @@ const Marketplace = () => {
     const [activeTab, setActiveTab] = useState('Clothes');
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
+    const [marketLikes, setMarketLikes] = useState(() => getItemLikes('marketplace'));
+
+    const handleToggleMarketLike = (itemId) => {
+        toggleItemLike('marketplace', itemId, 28);
+        setMarketLikes(getItemLikes('marketplace'));
+    };
+
     const [cart, setCart] = useState(() => {
         const savedCart = localStorage.getItem('marketplace_cart');
         return savedCart ? JSON.parse(savedCart) : [];
@@ -869,7 +878,7 @@ const Marketplace = () => {
                                         </p>
                                     )}
                                     
-                                    <div className="mt-auto flex items-center justify-between gap-3">
+                                    <div className="mt-auto flex items-center justify-between gap-2">
                                         <button 
                                             className="flex-1 bg-[#1A1A1A] text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-[#C68537] transition-all shadow-sm hover:shadow-md"
                                             onClick={(e) => {
@@ -878,6 +887,21 @@ const Marketplace = () => {
                                             }}
                                         >
                                             Buy Now
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`p-2.5 rounded-lg border transition-all active:scale-95 ${
+                                                marketLikes[item.id]?.liked
+                                                    ? 'bg-amber-500/15 text-[#C68537] border-[#C68537]'
+                                                    : 'bg-stone-50 border-stone-200 text-stone-500 hover:text-stone-900'
+                                            }`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleToggleMarketLike(item.id);
+                                            }}
+                                            title="Save to favorites"
+                                        >
+                                            <Heart size={18} className={marketLikes[item.id]?.liked ? 'fill-current' : ''} />
                                         </button>
                                         <a 
                                             href={`https://wa.me/1234567890?text=I'm interested in the ${item.name} from the Marketplace.`}

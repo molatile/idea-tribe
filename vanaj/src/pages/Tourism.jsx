@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin, ArrowLeft, Calendar, Info, Map as MapIcon, Clock, User, CheckCircle, ChevronRight, Check, Star } from 'lucide-react';
+import { Search, MapPin, ArrowLeft, Calendar, Info, Map as MapIcon, Clock, User, CheckCircle, ChevronRight, Check, Star, Heart } from 'lucide-react';
+import { getItemLikes, toggleItemLike, saveWorkshopProposal } from '../utils/storage';
 import { motion, useInView, useAnimation } from 'framer-motion';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -204,6 +205,10 @@ const HostWorkshopForm = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [orgName, setOrgName] = useState('');
+  const [orgType, setOrgType] = useState('NGO');
+  const [contactName, setContactName] = useState('');
+  const [proposalDetails, setProposalDetails] = useState('');
 
   const nextStep = (e) => {
     e.preventDefault();
@@ -215,14 +220,26 @@ const HostWorkshopForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
+    // Save proposal to local storage
+    saveWorkshopProposal({
+      orgName: orgName || 'Cultural Initiative',
+      orgType: orgType || 'Cultural',
+      contactName: contactName || 'Partner Representative',
+      proposalDetails: proposalDetails || 'Tribal Craft Immersion Workshop'
+    });
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
+      setOrgName('');
+      setContactName('');
+      setProposalDetails('');
       setTimeout(() => {
         setIsSuccess(false);
         setStep(1);
       }, 5000);
-    }, 1500);
+    }, 1200);
   };
 
   const renderStep = () => {
@@ -233,11 +250,11 @@ const HostWorkshopForm = () => {
             <h3 className="text-xl font-heading text-vanaj-ochre mb-4">Tell us about your organization</h3>
             <div>
               <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Organization Name</label>
-              <input required type="text" className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="e.g. Jharkhand Tribal Arts Council" />
+              <input required type="text" value={orgName} onChange={(e) => setOrgName(e.target.value)} className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="e.g. Jharkhand Tribal Arts Council" />
             </div>
             <div>
               <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Organization Type</label>
-              <select required className="w-full bg-vanaj-dark/80 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all">
+              <select required value={orgType} onChange={(e) => setOrgType(e.target.value)} className="w-full bg-vanaj-dark/80 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all">
                 <option value="">Select type...</option>
                 <option value="Government">Government Body</option>
                 <option value="NGO">Non-Profit / NGO</option>
@@ -257,7 +274,7 @@ const HostWorkshopForm = () => {
             <h3 className="text-xl font-heading text-vanaj-ochre mb-4">Contact Details</h3>
             <div>
               <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Point of Contact</label>
-              <input required type="text" className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="Full Name" />
+              <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="Full Name" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -287,7 +304,7 @@ const HostWorkshopForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-vanaj-cream/80 mb-2">Brief Description</label>
-              <textarea required rows="3" className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="Describe the activities and learning outcomes..."></textarea>
+              <textarea required rows="3" value={proposalDetails} onChange={(e) => setProposalDetails(e.target.value)} className="w-full bg-vanaj-dark/50 border border-vanaj-ochre/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-vanaj-ochre focus:ring-1 focus:ring-vanaj-ochre transition-all" placeholder="Describe the activities and learning outcomes..."></textarea>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -359,6 +376,12 @@ const Tourism = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [tourismLikes, setTourismLikes] = useState(() => getItemLikes('tourism'));
+
+  const handleToggleTourismLike = (locId) => {
+    toggleItemLike('tourism', locId, 54);
+    setTourismLikes(getItemLikes('tourism'));
+  };
 
 
   // Filter logic
@@ -556,9 +579,27 @@ const Tourism = () => {
                       {location.type}
                     </span>
                   </div>
-                  <div className="flex items-center text-vanaj-dark/60 text-sm mb-4">
-                    <MapPin className="w-4 h-4 mr-1 text-vanaj-ochre" />
-                    {location.district}
+                  <div className="flex items-center justify-between text-sm mb-4">
+                    <div className="flex items-center text-vanaj-dark/60">
+                      <MapPin className="w-4 h-4 mr-1 text-vanaj-ochre" />
+                      {location.district}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleTourismLike(location.id);
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all active:scale-95 ${
+                        tourismLikes[location.id]?.liked
+                          ? 'bg-vanaj-ochre text-vanaj-dark border-vanaj-ochre shadow-sm'
+                          : 'bg-stone-100 border-stone-200 text-stone-600 hover:bg-stone-200'
+                      }`}
+                      title="Like destination"
+                    >
+                      <Heart size={13} className={tourismLikes[location.id]?.liked ? 'fill-current' : ''} />
+                      <span>{tourismLikes[location.id]?.count ?? 54}</span>
+                    </button>
                   </div>
                   <p className="text-vanaj-dark/80 text-sm line-clamp-2 mt-auto">
                     {location.shortDesc}

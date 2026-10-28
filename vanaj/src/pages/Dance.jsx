@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Play, Share2, Check } from 'lucide-react';
+import { X, Play, Share2, Check, Heart } from 'lucide-react';
+import { getItemLikes, toggleItemLike } from '../utils/storage';
 import FeedbackSection from '../components/shared/FeedbackSection';
 
 const DANCES = [
@@ -182,7 +183,7 @@ const CinematicPlayer = ({ dance }) => {
   );
 };
 
-const VideoCard = ({ dance, onClick }) => {
+const VideoCard = ({ dance, onClick, isLiked, likesCount, onToggleLike }) => {
   const videoRef = useRef(null);
 
   const handleMouseEnter = () => {
@@ -227,6 +228,23 @@ const VideoCard = ({ dance, onClick }) => {
       )}
 
       <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/50 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500 z-0" />
+      {/* Top Left Like Button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleLike(dance.id);
+        }}
+        className={`absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md transition-all border ${
+          isLiked
+            ? 'bg-[#C9952A] text-black border-[#C9952A] shadow-[0_0_12px_rgba(201,149,42,0.6)]'
+            : 'bg-black/60 text-white/80 border-white/10 hover:text-white hover:bg-black/80'
+        }`}
+        title="Like this indigenous dance"
+      >
+        <Heart size={13} className={isLiked ? 'fill-current' : ''} />
+        <span>{likesCount}</span>
+      </button>
 
       <div className="absolute bottom-0 left-0 w-full p-6 flex flex-col justify-end h-full z-10">
         <div className="mt-auto transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 ease-out">
@@ -254,7 +272,7 @@ const VideoCard = ({ dance, onClick }) => {
   );
 };
 
-const Modal = ({ dance, onClose, allDances, onSelectRelated }) => {
+const Modal = ({ dance, onClose, allDances, onSelectRelated, isLiked, likesCount, onToggleLike }) => {
   const [copied, setCopied] = useState(false);
   
   useEffect(() => {
@@ -324,13 +342,27 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated }) => {
              </div>
            </div>
            
-           <button 
-             onClick={handleShare}
-             className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-white font-body text-sm hover:scale-105 active:scale-95"
-           >
-             {copied ? <Check size={18} className="text-green-400" /> : <Share2 size={18} />}
-             {copied ? 'Link Copied' : 'Share Dance'}
-           </button>
+           <div className="flex items-center gap-3">
+             <button
+               type="button"
+               onClick={() => onToggleLike(dance.id)}
+               className={`flex items-center gap-2 px-6 py-3 rounded-full border transition-all text-sm font-body active:scale-95 ${
+                 isLiked
+                   ? 'bg-[#C9952A] text-black font-semibold border-[#C9952A] shadow-[0_0_15px_rgba(201,149,42,0.5)]'
+                   : 'bg-white/5 hover:bg-white/10 border-white/10 text-white'
+               }`}
+             >
+               <Heart size={18} className={isLiked ? 'fill-current text-black' : ''} />
+               <span>{isLiked ? 'Favorited' : 'Favorite'} ({likesCount})</span>
+             </button>
+             <button 
+               onClick={handleShare}
+               className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-white font-body text-sm hover:scale-105 active:scale-95"
+             >
+               {copied ? <Check size={18} className="text-green-400" /> : <Share2 size={18} />}
+               {copied ? 'Link Copied' : 'Share Dance'}
+             </button>
+           </div>
         </div>
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-10"></div>
@@ -381,6 +413,12 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated }) => {
 
 export default function Dance() {
   const [selectedDance, setSelectedDance] = useState(null);
+  const [danceLikes, setDanceLikes] = useState(() => getItemLikes('dance'));
+
+  const handleToggleDanceLike = (danceId) => {
+    toggleItemLike('dance', danceId, 42);
+    setDanceLikes(getItemLikes('dance'));
+  };
 
   useEffect(() => {
     if (selectedDance) {
@@ -428,7 +466,10 @@ export default function Dance() {
             <VideoCard 
               key={dance.id} 
               dance={dance} 
-              onClick={setSelectedDance} 
+              onClick={setSelectedDance}
+              isLiked={danceLikes[dance.id]?.liked}
+              likesCount={danceLikes[dance.id]?.count ?? 42}
+              onToggleLike={handleToggleDanceLike}
             />
           ))}
         </div>
@@ -447,6 +488,9 @@ export default function Dance() {
             allDances={DANCES}
             onClose={() => setSelectedDance(null)} 
             onSelectRelated={setSelectedDance}
+            isLiked={danceLikes[selectedDance.id]?.liked}
+            likesCount={danceLikes[selectedDance.id]?.count ?? 42}
+            onToggleLike={handleToggleDanceLike}
           />
         )}
       </AnimatePresence>

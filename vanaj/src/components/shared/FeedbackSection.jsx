@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Star, 
@@ -12,8 +12,29 @@ import {
   Send, 
   Heart,
   Award,
-  Filter
+  Filter,
+  Trash2,
+  RotateCcw,
+  Database,
+  Check,
+  Edit3,
+  CheckCheck,
+  PlusCircle,
+  FileText
 } from 'lucide-react';
+import {
+  getStoredReviews,
+  saveUserReview,
+  updateUserReview,
+  deleteStoredReview,
+  resetStoredReviews,
+  getStoredReviewLikes,
+  toggleStoredReviewLike,
+  getFeedbackDraft,
+  saveFeedbackDraft,
+  clearFeedbackDraft,
+  isStorageAvailable
+} from '../../utils/storage';
 
 /**
  * Pre-seeded authentic feedback data tailored for each cultural vertical
@@ -62,7 +83,7 @@ const DEFAULT_REVIEWS = {
       location: 'Pune, Maharashtra',
       role: 'Art Historian',
       topic: 'Tribal Silver-Plated Armlet',
-      rating: 5,
+      rating: 4,
       date: '3 weeks ago',
       review: 'The weight, geometric etching, and tribal motif accuracy are historically pristine. The artisan details included with the parcel made this an educational and aesthetic marvel. Exemplary initiative!',
       likes: 19,
@@ -100,7 +121,7 @@ const DEFAULT_REVIEWS = {
       location: 'Jamshedpur, Jharkhand',
       role: 'Heritage Traveler',
       topic: 'Paitkar Scroll Painting Masterclass',
-      rating: 5,
+      rating: 4,
       date: '2 weeks ago',
       review: 'Learning to grind natural river pigments from ochre stones and wild leaves alongside Sumi Santal was an unforgettable privilege. The narrative storytelling through painted scrolls moved our entire cohort.',
       likes: 29,
@@ -150,7 +171,7 @@ const DEFAULT_REVIEWS = {
       location: 'Bengaluru, Karnataka',
       role: 'Experimental Foodie',
       topic: 'Santhali Red Ant Chutney (Demta)',
-      rating: 5,
+      rating: 4,
       date: '2 weeks ago',
       review: 'The vibrant, citrusy burst of natural formic acid paired with wild coriander and red chilies was extraordinary. A rare culinary adventure that connects you directly to the living pulse of the wilderness.',
       likes: 74,
@@ -212,10 +233,60 @@ const DEFAULT_REVIEWS = {
       location: 'Bhubaneswar, Odisha',
       role: 'Folk Performing Arts Curator',
       topic: 'Oraon Karma Dance Form',
-      rating: 5,
+      rating: 4,
       date: '1 month ago',
       review: 'The balance between athletic vigor and poetic gentleness in the Karma dance is poetry in motion. Vanaj gives these timeless indigenous traditions the global spotlight they richly merit.',
       likes: 33,
+      recommended: true
+    }
+  ],
+  languages: [
+    {
+      id: 'l1',
+      name: 'Prof. Ramdayal Munda',
+      location: 'Ranchi, Jharkhand',
+      role: 'Linguistic Scholar',
+      topic: 'Ol Chiki Script & Typography',
+      rating: 5,
+      date: '2 days ago',
+      review: 'Preserving the sacred Ol Chiki glyphs alongside natural acoustic pronunciation guides honors Pandit Raghunath Murmu’s vision. Vanaj brings linguistic dignity to our mother tongues on the global stage.',
+      likes: 49,
+      recommended: true
+    },
+    {
+      id: 'l2',
+      name: 'Sunita Hembrom',
+      location: 'Dumka, Jharkhand',
+      role: 'Tribal Educator',
+      topic: 'Santali Vocabulary & Grammar',
+      rating: 5,
+      date: '1 week ago',
+      review: 'The interactive flashcards and vernacular translations make teaching our children second nature. Seeing ancient oral traditions codified with such reverence is deeply inspiring.',
+      likes: 36,
+      recommended: true
+    },
+    {
+      id: 'l3',
+      name: 'Devkaran Soren',
+      location: 'Jamshedpur, Jharkhand',
+      role: 'Diaspora Student',
+      topic: 'Mundari Dialect & Idioms',
+      rating: 5,
+      date: '2 weeks ago',
+      review: 'Living away from our ancestral soil, Vanaj’s language repository has become my daily sanctuary. The etymological roots of words like "Johar" and "Sasandiri" bridge the generational divide.',
+      likes: 28,
+      recommended: true
+    },
+    {
+      id: 'l4',
+      name: 'Dr. Anupama Topno',
+      location: 'New Delhi',
+      role: 'Anthropology Fellow',
+      topic: 'Ho Language & Warang Chiti',
+      rating: 4,
+      date: '3 weeks ago',
+      review: 'Scholarly precision paired with accessible digital UI. A stellar resource for preserving the Austroasiatic and Dravidian heritage of Central India.',
+      likes: 22,
       recommended: true
     }
   ]
@@ -253,6 +324,14 @@ const TOPIC_OPTIONS = {
     'Asur Ancestral Dance',
     'Kharia Harvest Celebration',
     'Folk Percussion & Instruments'
+  ],
+  languages: [
+    'Ol Chiki Script & Typography',
+    'Santali Vocabulary & Grammar',
+    'Mundari Dialect & Idioms',
+    'Ho Language & Warang Chiti',
+    'Kurukh Oral Heritage',
+    'Overall Language Preservation'
   ]
 };
 
@@ -261,14 +340,16 @@ export default function FeedbackSection({
   theme = 'light',
   className = '' 
 }) {
-  const storageKey = `vanaj_feedback_${vertical}`;
-  const likesKey = `vanaj_likes_${vertical}`;
-
   const [reviews, setReviews] = useState([]);
   const [likedMap, setLikedMap] = useState({});
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState(null);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState('all');
   const [showThankYou, setShowThankYou] = useState(false);
+  const [justSubmittedReview, setJustSubmittedReview] = useState(null);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [storageIndicator, setStorageIndicator] = useState('Synced');
+  const [draftRestored, setDraftRestored] = useState(false);
 
   // Form State
   const [formName, setFormName] = useState('');
@@ -280,53 +361,111 @@ export default function FeedbackSection({
   const [formRecommended, setFormRecommended] = useState(true);
   const [formError, setFormError] = useState('');
 
-  // Load from local storage or defaults on mount
+  // Load from local storage or defaults on mount and when vertical changes
   useEffect(() => {
-    try {
-      const storedReviews = localStorage.getItem(storageKey);
-      if (storedReviews) {
-        setReviews(JSON.parse(storedReviews));
-      } else {
-        const defaults = DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace;
-        setReviews(defaults);
-        localStorage.setItem(storageKey, JSON.stringify(defaults));
-      }
+    const defaults = DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace;
+    const loadedReviews = getStoredReviews(vertical, defaults);
+    setReviews(loadedReviews);
 
-      const storedLikes = localStorage.getItem(likesKey);
-      if (storedLikes) {
-        setLikedMap(JSON.parse(storedLikes));
-      }
-    } catch {
-      setReviews(DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace);
+    const loadedLikes = getStoredReviewLikes(vertical);
+    setLikedMap(loadedLikes);
+
+    // Restore draft if any exists and not editing
+    const draft = getFeedbackDraft(vertical);
+    if (draft && (draft.name || draft.review || draft.location)) {
+      setFormName(draft.name || '');
+      setFormLocation(draft.location || '');
+      setFormTopic(draft.topic || '');
+      setFormRating(draft.rating || 5);
+      setFormReview(draft.review || '');
+      setFormRecommended(draft.recommended ?? true);
+      setDraftRestored(true);
     }
-  }, [vertical, storageKey, likesKey]);
+  }, [vertical]);
 
-  // Handle Like / Helpful toggle
-  const handleLike = (id) => {
-    const isAlreadyLiked = likedMap[id];
-    const newLikedMap = { ...likedMap, [id]: !isAlreadyLiked };
-    setLikedMap(newLikedMap);
+  // Persist draft on any input change
+  const handleInputChange = (field, value) => {
+    let nextDraft = {
+      name: formName,
+      location: formLocation,
+      topic: formTopic,
+      rating: formRating,
+      review: formReview,
+      recommended: formRecommended,
+      [field]: value
+    };
 
-    const updatedReviews = reviews.map(rev => {
-      if (rev.id === id) {
-        return {
-          ...rev,
-          likes: isAlreadyLiked ? Math.max(0, (rev.likes || 0) - 1) : (rev.likes || 0) + 1
-        };
-      }
-      return rev;
-    });
+    if (field === 'name') setFormName(value);
+    else if (field === 'location') setFormLocation(value);
+    else if (field === 'topic') setFormTopic(value);
+    else if (field === 'rating') setFormRating(value);
+    else if (field === 'review') setFormReview(value);
+    else if (field === 'recommended') setFormRecommended(value);
 
-    setReviews(updatedReviews);
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(updatedReviews));
-      localStorage.setItem(likesKey, JSON.stringify(newLikedMap));
-    } catch (e) {
-      console.error(e);
+    if (!editingReviewId) {
+      saveFeedbackDraft(vertical, nextDraft);
     }
   };
 
-  // Submit new review
+  const handleDiscardDraft = () => {
+    clearFeedbackDraft(vertical);
+    setFormName('');
+    setFormLocation('');
+    setFormTopic('');
+    setFormRating(5);
+    setFormReview('');
+    setFormRecommended(true);
+    setDraftRestored(false);
+  };
+
+  // Start editing a user-submitted review
+  const handleStartEdit = (rev) => {
+    setEditingReviewId(rev.id);
+    setFormName(rev.name || '');
+    setFormLocation(rev.location || '');
+    setFormTopic(rev.topic || '');
+    setFormRating(rev.rating || 5);
+    setFormReview(rev.review || '');
+    setFormRecommended(rev.recommended ?? true);
+    setShowThankYou(false);
+    setJustSubmittedReview(null);
+    setIsFormOpen(true);
+
+    const formEl = document.getElementById(`feedback-form-${vertical}`);
+    if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingReviewId(null);
+    // Restore draft if any
+    const draft = getFeedbackDraft(vertical);
+    if (draft) {
+      setFormName(draft.name || '');
+      setFormLocation(draft.location || '');
+      setFormTopic(draft.topic || '');
+      setFormRating(draft.rating || 5);
+      setFormReview(draft.review || '');
+      setFormRecommended(draft.recommended ?? true);
+    } else {
+      setFormName('');
+      setFormLocation('');
+      setFormTopic('');
+      setFormRating(5);
+      setFormReview('');
+      setFormRecommended(true);
+    }
+    setIsFormOpen(false);
+  };
+
+  // Handle Like / Helpful toggle with unified local storage
+  const handleLike = (id) => {
+    const result = toggleStoredReviewLike(vertical, id, reviews);
+    setReviews(result.updatedReviews);
+    setLikedMap(result.newLikesMap);
+    flashStorageIndicator();
+  };
+
+  // Submit new review or save edit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formName.trim() || !formLocation.trim() || !formReview.trim()) {
@@ -336,55 +475,149 @@ export default function FeedbackSection({
 
     setFormError('');
 
+    if (editingReviewId) {
+      const updated = updateUserReview(vertical, editingReviewId, {
+        name: formName.trim(),
+        location: formLocation.trim(),
+        topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Community Impression',
+        rating: formRating,
+        review: formReview.trim(),
+        recommended: formRecommended
+      }, reviews);
+
+      setReviews(updated);
+      setEditingReviewId(null);
+      clearFeedbackDraft(vertical);
+      flashStorageIndicator();
+      setSelectedRatingFilter('all');
+      setIsFormOpen(false);
+      return;
+    }
+
     const newReviewItem = {
       id: `usr_${Date.now()}`,
       name: formName.trim(),
       location: formLocation.trim(),
       role: 'Cultural Patron',
-      topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Cultural Impression',
+      topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Community Impression',
       rating: formRating,
       date: 'Just now',
       review: formReview.trim(),
-      likes: 1,
+      likes: 0,
       recommended: formRecommended,
       isUserSubmitted: true
     };
 
-    const newReviewsList = [newReviewItem, ...reviews];
-    setReviews(newReviewsList);
+    const updated = saveUserReview(vertical, newReviewItem, reviews);
+    setReviews(updated);
+    clearFeedbackDraft(vertical);
+    flashStorageIndicator();
+    setSelectedRatingFilter('all');
 
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(newReviewsList));
-    } catch (err) {
-      console.error(err);
-    }
+    // Keep newly submitted review pinned & visible
+    setJustSubmittedReview(newReviewItem);
+    setShowThankYou(true);
 
-    // Reset Form
+    // Reset Form fields for future inputs
     setFormName('');
     setFormLocation('');
     setFormTopic('');
     setFormRating(5);
     setFormReview('');
     setFormRecommended(true);
-    setShowThankYou(true);
+    setDraftRestored(false);
 
+    // Smooth scroll down to "Your Submitted Feedback"
     setTimeout(() => {
-      setShowThankYou(false);
-      setIsFormOpen(false);
-    }, 2400);
+      const spotlightEl = document.getElementById(`user-spotlight-${vertical}`);
+      if (spotlightEl) spotlightEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 400);
   };
 
-  // Filter reviews
-  const filteredReviews = reviews.filter(rev => {
-    if (selectedRatingFilter === '5') return rev.rating === 5;
-    if (selectedRatingFilter === 'recommended') return rev.recommended;
-    return true;
-  });
+  // Delete a user-submitted review
+  const handleDeleteReview = (id) => {
+    if (window.confirm('Are you sure you want to remove your feedback? This will delete it from your local storage.')) {
+      const updated = deleteStoredReview(vertical, id, reviews);
+      setReviews(updated);
+      if (justSubmittedReview?.id === id) {
+        setJustSubmittedReview(null);
+      }
+      flashStorageIndicator();
+    }
+  };
 
-  // Calculate average rating
-  const avgRating = reviews.length > 0 
-    ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(1)
-    : '5.0';
+  // Reset to default reviews
+  const handleResetToDefaults = () => {
+    const defaults = DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace;
+    const restored = resetStoredReviews(vertical, defaults);
+    setReviews(restored);
+    setResetConfirmOpen(false);
+    setSelectedRatingFilter('all');
+    setJustSubmittedReview(null);
+    flashStorageIndicator();
+  };
+
+  const flashStorageIndicator = () => {
+    setStorageIndicator('Saved');
+    setTimeout(() => setStorageIndicator('Synced'), 2000);
+  };
+
+  // User submitted reviews that must permanently persist and be highlighted
+  const userReviews = useMemo(() => {
+    return reviews.filter(r => r.isUserSubmitted);
+  }, [reviews]);
+
+  // Calculate dynamic average rating and breakdown
+  const ratingStats = useMemo(() => {
+    if (!reviews || reviews.length === 0) {
+      return {
+        average: '5.0',
+        total: 0,
+        counts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        percentages: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        recommendedCount: 0
+      };
+    }
+
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let sum = 0;
+    let recCount = 0;
+
+    reviews.forEach(r => {
+      const rate = Math.min(5, Math.max(1, Math.round(r.rating || 5)));
+      counts[rate] = (counts[rate] || 0) + 1;
+      sum += rate;
+      if (r.recommended) recCount += 1;
+    });
+
+    const total = reviews.length;
+    const average = (sum / total).toFixed(1);
+    const percentages = {
+      5: Math.round((counts[5] / total) * 100),
+      4: Math.round((counts[4] / total) * 100),
+      3: Math.round((counts[3] / total) * 100),
+      2: Math.round((counts[2] / total) * 100),
+      1: Math.round((counts[1] / total) * 100)
+    };
+
+    return {
+      average,
+      total,
+      counts,
+      percentages,
+      recommendedCount: recCount
+    };
+  }, [reviews]);
+
+  // Filter reviews
+  const filteredReviews = useMemo(() => {
+    return reviews.filter(rev => {
+      if (selectedRatingFilter === 'all') return true;
+      if (selectedRatingFilter === 'recommended') return !!rev.recommended;
+      const targetRating = parseInt(selectedRatingFilter, 10);
+      return Math.round(rev.rating || 5) === targetRating;
+    });
+  }, [reviews, selectedRatingFilter]);
 
   const isDark = theme === 'dark';
 
@@ -417,6 +650,13 @@ export default function FeedbackSection({
       hindi: 'ताल, नृत्य और सांस्कृतिक अनुभूति',
       subtitle: 'Audience reverberations moved by the primordial beats of the Mandar, unison footsteps, and ancestral storytelling.',
       cta: 'Share Your Impression'
+    },
+    languages: {
+      badge: 'LINGUISTIC VOICES',
+      title: 'Voices of Indigenous Tongues',
+      hindi: 'मातृभाषा, लिपि एवं जनसंवाद',
+      subtitle: 'Scholarly reflections, student journeys, and community speakers preserving the living oral traditions of Jharkhand.',
+      cta: 'Share Linguistic Feedback'
     }
   }[vertical] || {
     badge: 'COMMUNITY VOICES',
@@ -486,53 +726,98 @@ export default function FeedbackSection({
         </div>
 
         {/* Rating Overview & Action Bar */}
-        <div className={`p-5 sm:p-7 rounded-2xl sm:rounded-3xl border mb-12 sm:mb-16 transition-all duration-300 ${
+        <div className={`p-6 sm:p-8 rounded-2xl sm:rounded-3xl border mb-12 sm:mb-16 transition-all duration-300 ${
           isDark 
             ? 'bg-[#151515]/90 border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' 
             : 'bg-white/90 border-stone-200/80 shadow-[0_10px_35px_rgba(44,26,14,0.05)]'
         }`}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
             
-            {/* Score & Stars */}
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 sm:gap-6 text-center md:text-left">
-              <div className="flex items-baseline gap-1.5">
-                <span className={`text-4xl sm:text-5xl font-heading font-extrabold ${
-                  isDark ? 'text-white' : 'text-vanaj-dark'
-                }`}>
-                  {avgRating}
-                </span>
-                <span className="text-sm font-medium text-[#C9952A]">/ 5.0</span>
-              </div>
+            {/* Left: Score & Live Rating Breakdown */}
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 w-full lg:w-auto">
+              
+              {/* Score Display */}
+              <div className="text-center sm:text-left shrink-0">
+                <div className="flex items-baseline justify-center sm:justify-start gap-1.5">
+                  <span className={`text-5xl sm:text-6xl font-heading font-extrabold ${
+                    isDark ? 'text-white' : 'text-vanaj-dark'
+                  }`}>
+                    {ratingStats.average}
+                  </span>
+                  <span className="text-sm font-medium text-[#C9952A]">/ 5.0</span>
+                </div>
 
-              <div className="h-10 w-px bg-stone-300 dark:bg-neutral-700 hidden sm:block" />
-
-              <div>
-                <div className="flex items-center justify-center md:justify-start gap-1 mb-1">
+                <div className="flex items-center justify-center sm:justify-start gap-1 my-2">
                   {[...Array(5)].map((_, i) => (
                     <Star 
                       key={i} 
-                      className="w-5 h-5 fill-[#C9952A] text-[#C9952A] filter drop-shadow-sm" 
+                      className={`w-5 h-5 ${
+                        i < Math.round(Number(ratingStats.average))
+                          ? 'fill-[#C9952A] text-[#C9952A]'
+                          : isDark ? 'text-neutral-700' : 'text-stone-300'
+                      }`}
                     />
                   ))}
                 </div>
-                <p className={`text-xs sm:text-sm font-body ${
+
+                <p className={`text-xs font-body ${
                   isDark ? 'text-neutral-400' : 'text-stone-500'
                 }`}>
-                  Based on <strong className={isDark ? 'text-white' : 'text-vanaj-dark'}>{reviews.length}</strong> verified impressions
+                  <strong className={isDark ? 'text-white' : 'text-vanaj-dark'}>
+                    {ratingStats.total}
+                  </strong> verified impressions
                 </p>
+
+                {/* Storage Status Tag */}
+                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                  <Database className="w-3 h-3" />
+                  <span>Local Storage {storageIndicator === 'Saved' ? '✓ Updated' : 'Active'}</span>
+                </div>
               </div>
 
-              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                <Award className="w-3.5 h-3.5" />
-                <span>100% Authentic Community Voices</span>
+              {/* Star Rating Breakdown Bars */}
+              <div className="w-full sm:w-64 space-y-1.5 text-xs font-body">
+                {[5, 4, 3, 2, 1].map((starVal) => {
+                  const count = ratingStats.counts[starVal] || 0;
+                  const pct = ratingStats.percentages[starVal] || 0;
+                  const isSelected = selectedRatingFilter === String(starVal);
+
+                  return (
+                    <button
+                      key={starVal}
+                      type="button"
+                      onClick={() => setSelectedRatingFilter(isSelected ? 'all' : String(starVal))}
+                      className={`w-full flex items-center gap-2 p-1 rounded-md transition-colors text-left group ${
+                        isSelected 
+                          ? isDark ? 'bg-neutral-800' : 'bg-stone-100 font-semibold' 
+                          : 'hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
+                      title={`Filter by ${starVal} stars (${count} reviews)`}
+                    >
+                      <span className="w-6 shrink-0 font-medium text-stone-500 dark:text-neutral-400">
+                        {starVal}★
+                      </span>
+                      <div className="flex-1 h-2 rounded-full overflow-hidden bg-stone-200 dark:bg-neutral-800">
+                        <div 
+                          className="h-full bg-[#C9952A] rounded-full transition-all duration-500"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="w-9 text-right shrink-0 text-stone-500 dark:text-neutral-400 text-[11px]">
+                        {count} ({pct}%)
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+
             </div>
 
-            {/* Filter Pills & Submit Button */}
-            <div className="flex flex-wrap items-center justify-center gap-3 w-full md:w-auto">
+            {/* Right: Filter Buttons & Submit Button */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto justify-end">
               
-              {/* Filter */}
-              <div className={`flex items-center rounded-xl p-1 border text-xs sm:text-sm ${
+              {/* Filter Pills */}
+              <div className={`flex flex-wrap items-center justify-center rounded-xl p-1 border text-xs ${
                 isDark ? 'bg-neutral-900 border-neutral-700' : 'bg-stone-100 border-stone-200'
               }`}>
                 <button
@@ -549,13 +834,24 @@ export default function FeedbackSection({
                 <button
                   type="button"
                   onClick={() => setSelectedRatingFilter('5')}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                  className={`px-2.5 py-1.5 rounded-lg font-medium transition-all ${
                     selectedRatingFilter === '5'
                       ? 'bg-[#C9952A] text-white shadow-sm'
                       : isDark ? 'text-neutral-300 hover:text-white' : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  ★ 5 Stars
+                  5★ ({ratingStats.counts[5] || 0})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRatingFilter('4')}
+                  className={`px-2.5 py-1.5 rounded-lg font-medium transition-all ${
+                    selectedRatingFilter === '4'
+                      ? 'bg-[#C9952A] text-white shadow-sm'
+                      : isDark ? 'text-neutral-300 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+                  }`}
+                >
+                  4★ ({ratingStats.counts[4] || 0})
                 </button>
                 <button
                   type="button"
@@ -566,7 +862,7 @@ export default function FeedbackSection({
                       : isDark ? 'text-neutral-300 hover:text-white' : 'text-stone-600 hover:text-stone-900'
                   }`}
                 >
-                  Recommended
+                  Rec ({ratingStats.recommendedCount})
                 </button>
               </div>
 
@@ -574,7 +870,7 @@ export default function FeedbackSection({
               <button
                 type="button"
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm sm:text-base text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] active:scale-95 transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 min-h-[44px]"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] active:scale-95 transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 min-h-[44px]"
               >
                 {isFormOpen ? (
                   <>
@@ -588,6 +884,7 @@ export default function FeedbackSection({
                   </>
                 )}
               </button>
+
             </div>
 
           </div>
@@ -597,6 +894,7 @@ export default function FeedbackSection({
         <AnimatePresence>
           {isFormOpen && (
             <motion.div
+              id={`feedback-form-${vertical}`}
               initial={{ opacity: 0, height: 0, y: -10 }}
               animate={{ opacity: 1, height: 'auto', y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
@@ -612,19 +910,43 @@ export default function FeedbackSection({
                 {/* Form Header */}
                 <div className="flex items-start justify-between mb-6 pb-4 border-b border-stone-200/60 dark:border-neutral-800">
                   <div>
-                    <h3 className={`font-heading text-xl sm:text-2xl font-bold ${
-                      isDark ? 'text-white' : 'text-vanaj-dark'
-                    }`}>
-                      Share Your Story & Cultural Impression
-                    </h3>
-                    <p className={`font-body text-xs sm:text-sm mt-1 ${
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`font-heading text-xl sm:text-2xl font-bold ${
+                        isDark ? 'text-white' : 'text-vanaj-dark'
+                      }`}>
+                        {editingReviewId ? 'Edit Your Reflection & Feedback' : 'Share Your Story & Cultural Impression'}
+                      </h3>
+                      {editingReviewId && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#C9952A]/20 text-[#C9952A] font-medium border border-[#C9952A]/40">
+                          Editing
+                        </span>
+                      )}
+                    </div>
+                    <p className={`font-body text-xs sm:text-sm ${
                       isDark ? 'text-neutral-400' : 'text-stone-500'
                     }`}>
-                      Your feedback inspires our artisans and preserves the authenticity of Vanaj.
+                      {editingReviewId 
+                        ? 'Update your previously submitted feedback. Changes are saved to your browser storage instantly.'
+                        : 'Your reflection and rating will be preserved in your local archive and published instantly.'}
                     </p>
+
+                    {/* Unsaved draft indicator */}
+                    {!editingReviewId && draftRestored && (
+                      <div className="mt-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-lg text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>Restored your draft in-progress from browser storage</span>
+                        <button
+                          type="button"
+                          onClick={handleDiscardDraft}
+                          className="underline hover:text-red-500 ml-1 font-semibold"
+                        >
+                          Clear Draft
+                        </button>
+                      </div>
+                    )}
                   </div>
                   <button 
-                    onClick={() => setIsFormOpen(false)}
+                    onClick={editingReviewId ? handleCancelEdit : () => setIsFormOpen(false)}
                     className="p-2 rounded-full hover:bg-stone-200/50 dark:hover:bg-neutral-800 transition-colors text-stone-400 hover:text-stone-600 dark:hover:text-white"
                     aria-label="Close form"
                   >
@@ -632,24 +954,63 @@ export default function FeedbackSection({
                   </button>
                 </div>
 
-                {/* Thank you animation state */}
+                {/* Persistent Feedback Confirmation State */}
                 {showThankYou ? (
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="py-12 flex flex-col items-center justify-center text-center space-y-3"
+                    className="py-8 px-6 rounded-2xl bg-gradient-to-b from-emerald-500/10 to-transparent border border-emerald-500/30 text-center space-y-4"
                   >
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mb-2 shadow-inner">
-                      <CheckCircle2 className="w-9 h-9" />
+                    <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto shadow-inner">
+                      <CheckCircle2 className="w-8 h-8" />
                     </div>
-                    <h4 className="text-2xl font-heading font-bold text-[#C9952A]">
-                      जोहार! (Johar!) Thank You!
-                    </h4>
-                    <p className={`font-body text-sm sm:text-base max-w-md ${
-                      isDark ? 'text-neutral-300' : 'text-stone-600'
-                    }`}>
-                      Your feedback has been published and placed into our community archives. We deeply value your respect for tribal heritage.
-                    </p>
+                    <div>
+                      <h4 className="text-2xl font-heading font-bold text-[#C9952A]">
+                        जोहार! (Johar!) Feedback Stored Permanently!
+                      </h4>
+                      <p className={`font-body text-sm sm:text-base max-w-lg mx-auto mt-1 ${
+                        isDark ? 'text-neutral-300' : 'text-stone-600'
+                      }`}>
+                        Your rating and reflection have been recorded into your browser's persistent storage. It will remain saved and will not disappear when you reload or navigate away.
+                      </p>
+                    </div>
+
+                    {justSubmittedReview && (
+                      <div className={`max-w-xl mx-auto p-4 rounded-xl border text-left my-4 text-xs sm:text-sm ${
+                        isDark ? 'bg-neutral-900/90 border-neutral-700 text-neutral-300' : 'bg-white border-stone-200 text-stone-700'
+                      }`}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="font-bold text-[#C9952A]">{justSubmittedReview.name} • {justSubmittedReview.location}</span>
+                          <span className="font-semibold text-emerald-600">{justSubmittedReview.rating}★ Rating</span>
+                        </div>
+                        <p className="italic font-light">"{justSubmittedReview.review}"</p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowThankYou(false);
+                          setIsFormOpen(false);
+                        }}
+                        className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] transition-all shadow-md active:scale-95"
+                      >
+                        Keep Viewing Feedback Below
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowThankYou(false);
+                          setJustSubmittedReview(null);
+                        }}
+                        className={`px-4 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
+                          isDark ? 'border-neutral-700 text-neutral-300 hover:bg-neutral-800' : 'border-stone-300 text-stone-600 hover:bg-stone-100'
+                        }`}
+                      >
+                        Write Another Review
+                      </button>
+                    </div>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
@@ -672,7 +1033,7 @@ export default function FeedbackSection({
                           type="text"
                           required
                           value={formName}
-                          onChange={(e) => setFormName(e.target.value)}
+                          onChange={(e) => handleInputChange('name', e.target.value)}
                           placeholder="e.g. Priya Soren, Siddharth Rao"
                           className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 ${
                             isDark 
@@ -693,7 +1054,7 @@ export default function FeedbackSection({
                           type="text"
                           required
                           value={formLocation}
-                          onChange={(e) => setFormLocation(e.target.value)}
+                          onChange={(e) => handleInputChange('location', e.target.value)}
                           placeholder="e.g. Ranchi, Mumbai, Bengaluru"
                           className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 ${
                             isDark 
@@ -712,7 +1073,7 @@ export default function FeedbackSection({
                         </label>
                         <select
                           value={formTopic}
-                          onChange={(e) => setFormTopic(e.target.value)}
+                          onChange={(e) => handleInputChange('topic', e.target.value)}
                           className={`w-full px-4 py-2.5 rounded-xl text-sm border transition-all focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 ${
                             isDark 
                               ? 'bg-neutral-900 border-neutral-700 text-white' 
@@ -742,7 +1103,7 @@ export default function FeedbackSection({
                             <button
                               key={starVal}
                               type="button"
-                              onClick={() => setFormRating(starVal)}
+                              onClick={() => handleInputChange('rating', starVal)}
                               onMouseEnter={() => setHoverRating(starVal)}
                               onMouseLeave={() => setHoverRating(0)}
                               className="p-1 focus:outline-none focus:scale-110 active:scale-95 transition-transform"
@@ -764,23 +1125,31 @@ export default function FeedbackSection({
                           {formRating === 5 && 'Outstanding & Authentic'}
                           {formRating === 4 && 'Very Impressive'}
                           {formRating === 3 && 'Good Experience'}
-                          {formRating <= 2 && 'Needs Improvement'}
+                          {formRating === 2 && 'Fair / Needs Improvement'}
+                          {formRating === 1 && 'Unsatisfactory'}
                         </span>
                       </div>
                     </div>
 
                     {/* Review Text */}
                     <div>
-                      <label className={`block text-xs sm:text-sm font-medium mb-1.5 ${
-                        isDark ? 'text-neutral-300' : 'text-stone-700'
-                      }`}>
-                        Your Reflection / Feedback *
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className={`block text-xs sm:text-sm font-medium ${
+                          isDark ? 'text-neutral-300' : 'text-stone-700'
+                        }`}>
+                          Your Reflection / Feedback *
+                        </label>
+                        {!editingReviewId && (
+                          <span className="text-[11px] text-[#C9952A] font-light">
+                            Draft automatically auto-saved
+                          </span>
+                        )}
+                      </div>
                       <textarea
                         required
                         rows={3}
                         value={formReview}
-                        onChange={(e) => setFormReview(e.target.value)}
+                        onChange={(e) => handleInputChange('review', e.target.value)}
                         placeholder="Share your genuine experience, what stood out, how it made you feel, or words of encouragement for the indigenous community..."
                         className={`w-full px-4 py-3 rounded-xl text-sm border leading-relaxed transition-all focus:outline-none focus:ring-2 focus:ring-[#C9952A]/50 ${
                           isDark 
@@ -796,7 +1165,7 @@ export default function FeedbackSection({
                         <input
                           type="checkbox"
                           checked={formRecommended}
-                          onChange={(e) => setFormRecommended(e.target.checked)}
+                          onChange={(e) => handleInputChange('recommended', e.target.checked)}
                           className="w-4 h-4 text-[#C9952A] rounded border-stone-300 focus:ring-[#C9952A]"
                         />
                         <span className={isDark ? 'text-neutral-300' : 'text-stone-600'}>
@@ -807,7 +1176,7 @@ export default function FeedbackSection({
                       <div className="flex items-center gap-3 w-full sm:w-auto">
                         <button
                           type="button"
-                          onClick={() => setIsFormOpen(false)}
+                          onClick={editingReviewId ? handleCancelEdit : () => setIsFormOpen(false)}
                           className={`w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                             isDark 
                               ? 'border-neutral-700 text-neutral-300 hover:bg-neutral-800' 
@@ -821,7 +1190,7 @@ export default function FeedbackSection({
                           className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] transition-all shadow-md active:scale-95"
                         >
                           <Send className="w-4 h-4" />
-                          <span>Publish Impression</span>
+                          <span>{editingReviewId ? 'Update Reflection' : 'Publish Reflection'}</span>
                         </button>
                       </div>
                     </div>
@@ -834,11 +1203,148 @@ export default function FeedbackSection({
           )}
         </AnimatePresence>
 
+        {/* Dedicated Spotlight: User's Persisted Feedback */}
+        {userReviews.length > 0 && (
+          <div id={`user-spotlight-${vertical}`} className="mb-12">
+            <div className={`p-6 sm:p-8 rounded-3xl border relative overflow-hidden transition-all ${
+              isDark 
+                ? 'bg-gradient-to-br from-[#1E1710] via-[#16130F] to-[#121212] border-[#C9952A]/40 shadow-[0_10px_30px_rgba(201,149,42,0.15)]' 
+                : 'bg-gradient-to-br from-[#FFFDF9] via-[#FAF5EB] to-[#FFF8ED] border-[#C9952A]/40 shadow-[0_10px_35px_rgba(201,149,42,0.1)]'
+            }`}>
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-[#C9952A]/20">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-[#C9952A] text-white flex items-center justify-center shadow-md">
+                    <CheckCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className={`font-heading text-lg sm:text-xl font-bold ${
+                      isDark ? 'text-white' : 'text-vanaj-dark'
+                    }`}>
+                      Your Published Feedback
+                    </h3>
+                    <p className="text-xs text-[#C9952A] font-medium flex items-center gap-1.5 mt-0.5">
+                      <Database className="w-3.5 h-3.5" />
+                      <span>Permanently saved in your browser storage • Persists across reloads</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingReviewId(null);
+                      setIsFormOpen(true);
+                      setShowThankYou(false);
+                    }}
+                    className={`text-xs font-semibold px-3.5 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 ${
+                      isDark 
+                        ? 'bg-neutral-800 text-neutral-200 border-neutral-700 hover:text-white hover:border-[#C9952A]' 
+                        : 'bg-white text-stone-700 border-stone-200 hover:border-[#C9952A] hover:text-[#C9952A] shadow-sm'
+                    }`}
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>Add Another Feedback</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* User Reviews List in Spotlight */}
+              <div className="space-y-4">
+                {userReviews.map((myRev) => (
+                  <div 
+                    key={myRev.id}
+                    className={`p-5 sm:p-6 rounded-2xl border transition-all ${
+                      isDark 
+                        ? 'bg-[#151515]/95 border-white/10' 
+                        : 'bg-white/95 border-[#C9952A]/30 shadow-sm'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#C9952A] text-white font-heading font-bold flex items-center justify-center text-sm shadow">
+                          {myRev.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className={`font-heading font-bold text-base ${isDark ? 'text-white' : 'text-vanaj-dark'}`}>
+                              {myRev.name}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                              Active in Storage
+                            </span>
+                          </div>
+                          <div className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>
+                            <MapPin className="w-3 h-3 text-[#C9952A]" />
+                            <span>{myRev.location}</span>
+                            <span className="opacity-40">•</span>
+                            <span className="italic">{myRev.date}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-0.5 bg-[#C9952A]/10 px-2.5 py-1 rounded-full border border-[#C9952A]/20">
+                          {[...Array(Math.round(myRev.rating || 5))].map((_, i) => (
+                            <Star key={i} className="w-3.5 h-3.5 fill-[#C9952A] text-[#C9952A]" />
+                          ))}
+                          <span className="text-xs font-bold text-[#C9952A] ml-1">{myRev.rating}★</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleStartEdit(myRev)}
+                          className="px-2.5 py-1 rounded-lg text-xs font-medium border border-[#C9952A]/40 text-[#C9952A] hover:bg-[#C9952A]/10 transition-colors flex items-center gap-1"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReview(myRev.id)}
+                          className="px-2.5 py-1 rounded-lg text-xs font-medium border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors flex items-center gap-1"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {myRev.topic && (
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium mb-2.5 border ${
+                        isDark 
+                          ? 'bg-neutral-800 text-[#C9952A] border-[#C9952A]/20' 
+                          : 'bg-amber-50 text-amber-900 border-amber-200'
+                      }`}>
+                        {myRev.topic}
+                      </span>
+                    )}
+
+                    <p className={`font-body text-sm sm:text-base leading-relaxed ${
+                      isDark ? 'text-neutral-200' : 'text-stone-700'
+                    }`}>
+                      "{myRev.review}"
+                    </p>
+
+                    {myRev.recommended && (
+                      <div className="mt-3 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                        <Heart className="w-3.5 h-3.5 fill-current text-emerald-500" />
+                        <span>You recommend this cultural initiative</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Reviews Responsive Grid */}
         {filteredReviews.length === 0 ? (
           <div className="text-center py-16 px-4">
             <p className={`font-body text-base ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>
-              No feedback found matching the selected filter.
+              No feedback found matching the "{selectedRatingFilter}" filter.
             </p>
             <button
               onClick={() => setSelectedRatingFilter('all')}
@@ -851,6 +1357,8 @@ export default function FeedbackSection({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
             {filteredReviews.map((rev) => {
               const isLiked = !!likedMap[rev.id];
+              const isUserOwned = !!rev.isUserSubmitted;
+
               return (
                 <motion.div
                   key={rev.id}
@@ -858,9 +1366,13 @@ export default function FeedbackSection({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4 }}
                   className={`group relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl sm:rounded-3xl border transition-all duration-300 ${
-                    isDark
-                      ? 'bg-gradient-to-b from-[#161616] to-[#101010] border-white/10 hover:border-[#C9952A]/40 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(201,149,42,0.15)]'
-                      : 'bg-white border-stone-200/90 hover:border-[#C9952A]/40 shadow-[0_4px_20px_rgba(44,26,14,0.04)] hover:shadow-[0_10px_30px_rgba(201,149,42,0.12)]'
+                    isUserOwned 
+                      ? isDark 
+                        ? 'border-[#C9952A]/50 bg-gradient-to-b from-[#1c1810] to-[#121212] shadow-[0_4px_25px_rgba(201,149,42,0.2)]'
+                        : 'border-[#C9952A]/60 bg-[#fffdf8] shadow-[0_4px_25px_rgba(201,149,42,0.12)]'
+                      : isDark
+                        ? 'bg-gradient-to-b from-[#161616] to-[#101010] border-white/10 hover:border-[#C9952A]/40 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(201,149,42,0.15)]'
+                        : 'bg-white border-stone-200/90 hover:border-[#C9952A]/40 shadow-[0_4px_20px_rgba(44,26,14,0.04)] hover:shadow-[0_10px_30px_rgba(201,149,42,0.12)]'
                   }`}
                 >
                   {/* Watermark Quote Icon in Background */}
@@ -877,11 +1389,13 @@ export default function FeedbackSection({
                       {/* Avatar & Author Info */}
                       <div className="flex items-center gap-3.5">
                         <div className={`w-11 h-11 rounded-full flex items-center justify-center font-heading font-bold text-base shadow-sm ${
-                          isDark 
-                            ? 'bg-[#C9952A]/20 text-[#C9952A] border border-[#C9952A]/30' 
-                            : 'bg-amber-100/70 text-[#8B5E3C] border border-[#C9952A]/20'
+                          isUserOwned
+                            ? 'bg-[#C9952A] text-white border-2 border-white/40'
+                            : isDark 
+                              ? 'bg-[#C9952A]/20 text-[#C9952A] border border-[#C9952A]/30' 
+                              : 'bg-amber-100/70 text-[#8B5E3C] border border-[#C9952A]/20'
                         }`}>
-                          {rev.name.charAt(0)}
+                          {rev.name.charAt(0).toUpperCase()}
                         </div>
 
                         <div>
@@ -897,6 +1411,11 @@ export default function FeedbackSection({
                             >
                               <CheckCircle2 className="w-4 h-4 fill-emerald-500/20" />
                             </span>
+                            {isUserOwned && (
+                              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#C9952A]/20 text-[#C9952A] border border-[#C9952A]/40">
+                                Your Review
+                              </span>
+                            )}
                           </div>
 
                           <div className={`flex items-center gap-1.5 text-xs mt-0.5 ${
@@ -913,7 +1432,7 @@ export default function FeedbackSection({
 
                       {/* Stars */}
                       <div className="flex items-center gap-0.5 shrink-0">
-                        {[...Array(rev.rating || 5)].map((_, i) => (
+                        {[...Array(Math.round(rev.rating || 5))].map((_, i) => (
                           <Star 
                             key={i} 
                             className="w-4 h-4 fill-[#C9952A] text-[#C9952A]" 
@@ -944,26 +1463,52 @@ export default function FeedbackSection({
                     </p>
                   </div>
 
-                  {/* Card Bottom: Helpful Button & Recommended Badge */}
-                  <div className={`pt-4 border-t flex items-center justify-between gap-3 text-xs ${
+                  {/* Card Bottom: Helpful Button & Recommended Badge & Delete option for user */}
+                  <div className={`pt-4 border-t flex flex-wrap items-center justify-between gap-3 text-xs ${
                     isDark ? 'border-neutral-800' : 'border-stone-100'
                   }`}>
                     
-                    <button
-                      type="button"
-                      onClick={() => handleLike(rev.id)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-medium transition-all min-h-[36px] active:scale-95 ${
-                        isLiked 
-                          ? 'bg-[#C9952A]/15 text-[#C9952A] border-[#C9952A]/40' 
-                          : isDark 
-                            ? 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700' 
-                            : 'bg-stone-50 border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300'
-                      }`}
-                      aria-label="Mark feedback as helpful"
-                    >
-                      <ThumbsUp className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}`} />
-                      <span>Helpful ({rev.likes || 0})</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleLike(rev.id)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-medium transition-all min-h-[36px] active:scale-95 ${
+                          isLiked 
+                            ? 'bg-[#C9952A]/20 text-[#C9952A] border-[#C9952A]/50 font-bold' 
+                            : isDark 
+                              ? 'bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700' 
+                              : 'bg-stone-50 border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300'
+                        }`}
+                        aria-label="Mark feedback as helpful"
+                      >
+                        <ThumbsUp className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}`} />
+                        <span>Helpful ({rev.likes || 0})</span>
+                      </button>
+
+                      {isUserOwned && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleStartEdit(rev)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#C9952A]/40 text-[#C9952A] hover:bg-[#C9952A]/10 transition-colors"
+                            title="Edit your reflection"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteReview(rev.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors"
+                            title="Delete your review from storage"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
 
                     {rev.recommended && (
                       <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-medium text-xs">
@@ -980,15 +1525,50 @@ export default function FeedbackSection({
           </div>
         )}
 
-        {/* Bottom Assurance Note */}
-        <div className="mt-14 sm:mt-16 text-center">
-          <p className={`text-xs sm:text-sm font-body tracking-wide flex items-center justify-center gap-2 ${
+        {/* Storage Controls & Bottom Assurance Note */}
+        <div className="mt-14 sm:mt-16 pt-8 border-t border-stone-200/60 dark:border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <p className={`text-xs font-body tracking-wide flex items-center justify-center sm:justify-start gap-2 ${
             isDark ? 'text-neutral-500' : 'text-stone-400'
           }`}>
             <span className="w-1.5 h-1.5 rounded-full bg-[#C9952A]" />
-            All submissions are reviewed in spirit with Vanaj's tribal ethics & cultural preservation mission.
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C9952A]" />
+            Local Storage enabled • All ratings, reviews, and likes are persistently recorded.
           </p>
+
+          <div className="flex items-center gap-2">
+            {!resetConfirmOpen ? (
+              <button
+                type="button"
+                onClick={() => setResetConfirmOpen(true)}
+                className={`text-xs flex items-center gap-1 px-2.5 py-1 rounded-md border transition-colors ${
+                  isDark 
+                    ? 'border-neutral-800 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800' 
+                    : 'border-stone-200 text-stone-500 hover:text-stone-800 hover:bg-stone-100'
+                }`}
+                title="Reset this section to default seeded reviews"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset Reviews</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-red-500">Reset reviews to default?</span>
+                <button
+                  type="button"
+                  onClick={handleResetToDefaults}
+                  className="px-2 py-0.5 rounded bg-red-600 text-white font-medium hover:bg-red-700"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setResetConfirmOpen(false)}
+                  className="px-2 py-0.5 rounded border border-stone-300 dark:border-neutral-700 hover:bg-stone-200 dark:hover:bg-neutral-800"
+                >
+                  No
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Leaf, ChefHat, Calendar, Users } from 'lucide-react';
+import { X, MapPin, Leaf, ChefHat, Calendar, Users, Heart } from 'lucide-react';
+import { getItemLikes, toggleItemLike } from '../utils/storage';
 import FeedbackSection from '../components/shared/FeedbackSection';
 
 const foodData = [
@@ -137,6 +138,12 @@ const heroMessages = [
 
 export default function Food() {
   const [selectedFood, setSelectedFood] = useState(null);
+  const [foodLikes, setFoodLikes] = useState(() => getItemLikes('food'));
+
+  const handleToggleFoodLike = (foodId) => {
+    toggleItemLike('food', foodId, 36);
+    setFoodLikes(getItemLikes('food'));
+  };
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -193,9 +200,25 @@ export default function Food() {
               <div className="absolute inset-0 bg-gradient-to-t from-vanaj-very-dark/90 via-vanaj-dark/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
               
               {/* Tribe Badge */}
-              <div className="absolute top-4 right-4 bg-vanaj-ochre/90 backdrop-blur-sm text-vanaj-very-dark px-3 py-1 rounded-full text-xs font-bold font-body uppercase tracking-wider shadow-md">
+              <div className="absolute top-4 left-4 bg-vanaj-ochre/90 backdrop-blur-sm text-vanaj-very-dark px-3 py-1 rounded-full text-xs font-bold font-body uppercase tracking-wider shadow-md">
                 {food.tribe}
               </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleFoodLike(food.id);
+                }}
+                className={`absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md transition-all active:scale-95 ${
+                  foodLikes[food.id]?.liked
+                    ? 'bg-vanaj-red text-white shadow-red-900/30'
+                    : 'bg-vanaj-cream/90 text-vanaj-dark hover:bg-white'
+                }`}
+                title="Like dish"
+              >
+                <Heart size={13} className={foodLikes[food.id]?.liked ? 'fill-current text-white' : ''} />
+                <span>{foodLikes[food.id]?.count ?? 36}</span>
+              </button>
 
               {/* Content at Bottom */}
               <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
@@ -254,12 +277,26 @@ export default function Food() {
                 </motion.div>
 
                 <div className="md:w-1/2 p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                  <motion.h2 
-                    layoutId={`title-${selectedFood.id}`}
-                    className="text-3xl sm:text-4xl font-heading font-bold text-vanaj-red mb-6"
-                  >
-                    {selectedFood.name}
-                  </motion.h2>
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <motion.h2 
+                      layoutId={`title-${selectedFood.id}`}
+                      className="text-3xl sm:text-4xl font-heading font-bold text-vanaj-red"
+                    >
+                      {selectedFood.name}
+                    </motion.h2>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleFoodLike(selectedFood.id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all active:scale-95 ${
+                        foodLikes[selectedFood.id]?.liked
+                          ? 'bg-vanaj-red text-white border-vanaj-red shadow-md'
+                          : 'bg-white border-stone-200 text-stone-700 hover:bg-stone-50'
+                      }`}
+                    >
+                      <Heart size={15} className={foodLikes[selectedFood.id]?.liked ? 'fill-current text-white' : 'text-vanaj-red'} />
+                      <span>{foodLikes[selectedFood.id]?.liked ? 'Liked' : 'Like Dish'} ({foodLikes[selectedFood.id]?.count ?? 36})</span>
+                    </button>
+                  </div>
 
                   <div className="space-y-6 font-body text-vanaj-dark">
                     <div className="flex items-start gap-3">
