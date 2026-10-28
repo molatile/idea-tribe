@@ -90,8 +90,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Please enter a word or short phrase to translate.' });
   }
 
-  // Reads the key directly from process.env.GEMINI_API_KEY (no VITE_ prefix)
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Reads the key from either GEMINI_API_KEY or VITE_GEMINI_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
 
   // If no API key configured, check fallback dictionary
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
