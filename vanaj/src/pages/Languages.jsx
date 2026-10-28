@@ -5,6 +5,7 @@ import { X, Sparkles, Volume2, ArrowRightLeft, Globe, BookOpen, PenTool, Sun, Mo
 import jharkhandData from '../data/jharkhand.json';
 import { districtInfo, languageColors, languageHistories } from '../data/districtInfo';
 import FeedbackSection from '../components/shared/FeedbackSection';
+import GeminiTranslator from '../components/languages/GeminiTranslator';
 import {
   getStoredLanguageInscriptions,
   saveLanguageInscription,
@@ -69,11 +70,6 @@ export default function Languages() {
   // Tribal Simulation State
   const [isDrumming, setIsDrumming] = useState(false);
 
-  // AI Translator State
-  const [sourceText, setSourceText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [targetLang, setTargetLang] = useState('Santali');
-  const [isTranslating, setIsTranslating] = useState(false);
   
   // Community Inscriptions (Local Storage Persisted)
   const [inscriptions, setInscriptions] = useState(() => getStoredLanguageInscriptions());
@@ -200,30 +196,6 @@ export default function Languages() {
       const updated = deleteLanguageInscription(id);
       setInscriptions(updated);
     }
-  };
-
-  const handleTranslate = () => {
-    if (!sourceText.trim()) return;
-    setIsTranslating(true);
-    
-    setTimeout(() => {
-      const dictionary = {
-        'hello': { 'santali': 'Johar', 'mundari': 'Johar', 'ho': 'Johar', 'kurukh': 'Johar' },
-        'how are you': { 'santali': 'Chet leka menama?', 'mundari': 'Chilka menama?', 'ho': 'Chilka menama?', 'kurukh': 'Engane ulday?' },
-        'thank you': { 'santali': 'Aadi sarhao', 'mundari': 'Eshuu marang', 'ho': 'Eshuu marang', 'kurukh': 'Dhanyavad' },
-        'good morning': { 'santali': 'Sagun seta', 'mundari': 'Seta johar', 'ho': 'Seta johar', 'kurukh': 'Pahare johar' },
-      };
-      
-      const lower = sourceText.toLowerCase().trim().replace(/[?!.]/g, '');
-      let result = `[AI Translation generated for "${sourceText}" in ${targetLang}. This is a simulated response.]`;
-      
-      if (dictionary[lower] && dictionary[lower][targetLang.toLowerCase()]) {
-        result = dictionary[lower][targetLang.toLowerCase()];
-      }
-      
-      setTranslatedText(result);
-      setIsTranslating(false);
-    }, 1500);
   };
 
   return (
@@ -490,76 +462,7 @@ export default function Languages() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           
           {/* AI Translator Section */}
-          <div className="bg-[#fffdf8] rounded-xl shadow-xl border border-[#d4c5b0] overflow-hidden">
-            <div className="bg-[#4a332a] p-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-[#f4e8d1] flex items-center gap-3">
-                  <Sparkles className="text-[#FFD700]" /> 
-                  Tribal AI Translator
-                </h2>
-                <p className="text-[#c7a052] text-sm mt-1 opacity-90">Powered by Neural Vernacular Processing</p>
-              </div>
-            </div>
-            
-            <div className="p-8">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-                <div className="w-full">
-                  <label className="block text-xs font-bold text-[#8a6020] uppercase tracking-widest mb-2">From</label>
-                  <div className="bg-[#f4e8d1] px-4 py-2 rounded border border-[#d4c5b0] font-bold text-[#4a332a]">English</div>
-                </div>
-                
-                <div className="bg-[#f4e8d1] p-3 rounded-full border border-[#d4c5b0] shadow-sm hidden md:block mt-6">
-                  <ArrowRightLeft size={20} className="text-[#8a6020]" />
-                </div>
-
-                <div className="w-full">
-                  <label className="block text-xs font-bold text-[#8a6020] uppercase tracking-widest mb-2">To</label>
-                  <select 
-                    value={targetLang}
-                    onChange={(e) => setTargetLang(e.target.value)}
-                    className="w-full bg-white px-4 py-2 min-h-[44px] rounded border-2 border-[#8a6020] font-bold text-[#4a332a] focus:ring-2 focus:ring-[#8a6020] focus:outline-none"
-                  >
-                    <option value="Santali">Santali</option>
-                    <option value="Mundari">Mundari</option>
-                    <option value="Ho">Ho</option>
-                    <option value="Kurukh">Kurukh</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <textarea 
-                  value={sourceText}
-                  onChange={(e) => setSourceText(e.target.value)}
-                  placeholder="Enter English text to translate..."
-                  className="w-full h-32 p-4 bg-white border-2 border-[#d4c5b0] rounded focus:border-[#8a6020] focus:ring-0 resize-none font-medium text-lg placeholder:text-[#a0907d]"
-                ></textarea>
-                
-                <button 
-                  onClick={handleTranslate}
-                  disabled={isTranslating || !sourceText}
-                  className="w-full py-4 bg-[#8a6020] hover:bg-[#6e4b17] disabled:bg-[#d4c5b0] text-white font-bold rounded flex items-center justify-center gap-2 transition-all"
-                >
-                  {isTranslating ? (
-                    <span className="flex items-center gap-2"><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Translating...</span>
-                  ) : (
-                    <span className="flex items-center gap-2 uppercase tracking-widest"><Sparkles size={18} /> Translate to {targetLang}</span>
-                  )}
-                </button>
-
-                <div className="relative">
-                  <div className="absolute top-4 right-4 flex gap-2">
-                     <button className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#8a6020] hover:bg-[#f4e8d1] rounded transition" title="Listen">
-                       <Volume2 size={20} />
-                     </button>
-                  </div>
-                  <div className={`w-full min-h-[128px] p-4 bg-[#f9f5eb] border-2 border-[#8a6020] rounded text-[#4a332a] font-bold text-xl ${translatedText ? '' : 'text-opacity-40 italic'}`}>
-                    {translatedText || "Translation will appear here..."}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <GeminiTranslator />
 
           {/* Flashcards Section */}
           <div className="bg-[#2d1b14] rounded-xl shadow-xl overflow-hidden flex flex-col">
