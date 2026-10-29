@@ -53,6 +53,11 @@ CREATE POLICY "Anyone can update feedback"
   WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Anyone can delete feedback" ON public.feedback;
+-- Security Notice:
+-- In the Vanaj web app, delete operations are restricted by browser ownership (only the author's device has the review ID).
+-- If you want to allow authors to delete their feedback from the client browser, keep USING (true).
+-- If you want to COMPLETELY PREVENT any public deletion via the client API (recommended if you want all public feedback permanent,
+-- or manageable only via Supabase Dashboard / Admin), change USING (true) to USING (false) below:
 CREATE POLICY "Anyone can delete feedback"
   ON public.feedback
   FOR DELETE

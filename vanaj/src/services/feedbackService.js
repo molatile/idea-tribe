@@ -51,16 +51,19 @@ export function formatReviewDate(dateStr, createdAt) {
  * Get IDs of reviews submitted by this browser
  */
 export function getMySubmittedReviewIds() {
-  return safeGet(MY_REVIEWS_KEY, []) || [];
+  const ids = safeGet(MY_REVIEWS_KEY, []) || [];
+  return Array.isArray(ids) ? ids.map(String) : [];
 }
 
 /**
  * Record a review ID as belonging to this browser
  */
 export function recordMyReviewId(id) {
+  if (!id) return getMySubmittedReviewIds();
+  const idStr = String(id);
   const existing = getMySubmittedReviewIds();
-  if (!existing.includes(id)) {
-    const updated = [id, ...existing];
+  if (!existing.includes(idStr)) {
+    const updated = [idStr, ...existing];
     safeSet(MY_REVIEWS_KEY, updated);
     return updated;
   }
@@ -71,19 +74,23 @@ export function recordMyReviewId(id) {
  * Remove a review ID from local ownership list
  */
 export function unrecordMyReviewId(id) {
+  if (!id) return getMySubmittedReviewIds();
+  const idStr = String(id);
   const existing = getMySubmittedReviewIds();
-  const updated = existing.filter(i => i !== id);
+  const updated = existing.filter(i => i !== idStr);
   safeSet(MY_REVIEWS_KEY, updated);
   return updated;
 }
 
 /**
- * Check if a review was submitted by this browser
+ * Check if a review was submitted by this browser.
+ * Only returns true if the review ID was recorded as submitted by this browser.
+ * Fixes critical vulnerability where any community review was treated as user-owned.
  */
-export function isMyReview(id, reviewItem) {
-  if (reviewItem?.isUserSubmitted) return true;
+export function isMyReview(id) {
+  if (!id) return false;
   const myIds = getMySubmittedReviewIds();
-  return myIds.includes(id);
+  return myIds.includes(String(id));
 }
 
 /**
@@ -273,8 +280,18 @@ export async function submitCloudFeedback(vertical, reviewData, currentReviews =
 
 /**
  * Update an existing review (either on Supabase or locally)
+ * Strictly verifies ownership so only the author can edit their reflection.
  */
 export async function updateCloudFeedback(vertical, reviewId, updatedFields, currentReviews = []) {
+  if (!isMyReview(reviewId)) {
+    console.warn('[Supabase Feedback] Unauthorized edit blocked for review ID:', reviewId);
+    return {
+      success: false,
+      error: 'Unauthorized: You can only edit feedback you personally submitted.',
+      updatedReviews: currentReviews
+    };
+  }
+
   const isCloudId = !String(reviewId).startsWith('usr_');
 
   if (isSupabaseConfigured && supabase && isCloudId) {
@@ -328,8 +345,18 @@ export async function updateCloudFeedback(vertical, reviewId, updatedFields, cur
 
 /**
  * Delete a user's review (from Supabase if present, and from local cache)
+ * Strictly verifies ownership so only the author can delete their feedback.
  */
 export async function deleteCloudFeedback(vertical, reviewId, currentReviews = []) {
+  if (!isMyReview(reviewId)) {
+    console.warn('[Supabase Feedback] Unauthorized delete blocked for review ID:', reviewId);
+    return {
+      success: false,
+      error: 'Unauthorized: You can only delete feedback that you personally submitted.',
+      updatedReviews: currentReviews
+    };
+  }
+
   unrecordMyReviewId(reviewId);
 
   const isCloudId = !String(reviewId).startsWith('usr_');

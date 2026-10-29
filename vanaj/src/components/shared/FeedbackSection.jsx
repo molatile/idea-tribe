@@ -463,6 +463,10 @@ export default function FeedbackSection({
 
   // Start editing a user-submitted review
   const handleStartEdit = (rev) => {
+    if (!rev || !isMyReview(rev.id)) {
+      alert('You can only edit feedback that you personally submitted.');
+      return;
+    }
     setEditingReviewId(rev.id);
     setFormName(rev.name || '');
     setFormLocation(rev.location || '');
@@ -579,11 +583,20 @@ export default function FeedbackSection({
 
   // Delete a user-submitted review
   const handleDeleteReview = async (id) => {
+    if (!id || !isMyReview(id)) {
+      alert('You can only delete feedback that you personally submitted.');
+      return;
+    }
+
     if (window.confirm('Are you sure you want to remove your feedback? This will delete it permanently.')) {
       const res = await deleteCloudFeedback(vertical, id, reviews);
-      setReviews(res.updatedReviews);
-      if (justSubmittedReview?.id === id) {
-        setJustSubmittedReview(null);
+      if (res && res.success) {
+        setReviews(res.updatedReviews);
+        if (justSubmittedReview?.id === id) {
+          setJustSubmittedReview(null);
+        }
+      } else if (res && res.error) {
+        alert(res.error);
       }
     }
   };
@@ -599,7 +612,7 @@ export default function FeedbackSection({
 
   // User submitted reviews from this browser
   const userReviews = useMemo(() => {
-    return reviews.filter(r => isMyReview(r.id, r));
+    return reviews.filter(r => isMyReview(r.id));
   }, [reviews]);
 
   // Dynamic rating statistics
@@ -1423,7 +1436,7 @@ export default function FeedbackSection({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
             {filteredReviews.map((rev) => {
               const isLiked = Boolean(likedMap[rev.id]);
-              const isUserOwned = isMyReview(rev.id, rev);
+              const isUserOwned = isMyReview(rev.id);
 
               return (
                 <motion.div
