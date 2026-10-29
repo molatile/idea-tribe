@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Star, 
@@ -11,29 +11,31 @@ import {
   X, 
   Send, 
   Heart,
-  Award,
-  Filter,
-  Trash2,
   RotateCcw,
   Database,
-  Check,
+  Globe,
   Edit3,
   CheckCheck,
   PlusCircle,
-  FileText
+  FileText,
+  Trash2,
+  RefreshCw,
+  AlertCircle
 } from 'lucide-react';
 import {
-  getStoredReviews,
-  saveUserReview,
-  updateUserReview,
-  deleteStoredReview,
-  resetStoredReviews,
-  getStoredReviewLikes,
-  toggleStoredReviewLike,
+  getVerticalFeedback,
+  submitCloudFeedback,
+  updateCloudFeedback,
+  deleteCloudFeedback,
+  toggleCloudFeedbackLike,
+  subscribeToFeedbackRealtime,
+  isMyReview,
+  getStoredLikesMap
+} from '../../services/feedbackService';
+import {
   getFeedbackDraft,
   saveFeedbackDraft,
-  clearFeedbackDraft,
-  isStorageAvailable
+  clearFeedbackDraft
 } from '../../utils/storage';
 
 /**
@@ -341,14 +343,16 @@ export default function FeedbackSection({
   className = '' 
 }) {
   const [reviews, setReviews] = useState([]);
-  const [likedMap, setLikedMap] = useState({});
+  const [likedMap, setLikedMap] = useState(() => getStoredLikesMap(vertical));
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingReviewId, setEditingReviewId] = useState(null);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState('all');
   const [showThankYou, setShowThankYou] = useState(false);
   const [justSubmittedReview, setJustSubmittedReview] = useState(null);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
-  const [storageIndicator, setStorageIndicator] = useState('Synced');
+  const [syncStatus, setSyncStatus] = useState('syncing'); // 'cloud' | 'local' | 'syncing'
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [draftRestored, setDraftRestored] = useState(false);
 
   // Form State
@@ -361,16 +365,36 @@ export default function FeedbackSection({
   const [formRecommended, setFormRecommended] = useState(true);
   const [formError, setFormError] = useState('');
 
-  // Load from local storage or defaults on mount and when vertical changes
-  useEffect(() => {
+  // Fetch reviews from Supabase with instant local fallback
+  const loadReviews = useCallback(async (showIndicator = false) => {
+    if (showIndicator) setIsRefreshing(true);
     const defaults = DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace;
-    const loadedReviews = getStoredReviews(vertical, defaults);
-    setReviews(loadedReviews);
+    
+    try {
+      const res = await getVerticalFeedback(vertical, defaults);
+      setReviews(res.reviews);
+      setSyncStatus(res.isCloud ? 'cloud' : 'local');
+    } catch (err) {
+      console.warn('Error loading feedback:', err);
+      setSyncStatus('local');
+    } finally {
+      if (showIndicator) {
+        setTimeout(() => setIsRefreshing(false), 500);
+      }
+    }
+  }, [vertical]);
 
-    const loadedLikes = getStoredReviewLikes(vertical);
-    setLikedMap(loadedLikes);
+  // Initial load & Realtime sync
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      await loadReviews(false);
+      if (isMounted) {
+        setLikedMap(getStoredLikesMap(vertical));
+      }
+    })();
 
-    // Restore draft if any exists and not editing
+    // Restore draft if any exists and not currently editing
     const draft = getFeedbackDraft(vertical);
     if (draft && (draft.name || draft.review || draft.location)) {
       setFormName(draft.name || '');
@@ -381,11 +405,30 @@ export default function FeedbackSection({
       setFormRecommended(draft.recommended ?? true);
       setDraftRestored(true);
     }
-  }, [vertical]);
 
-  // Persist draft on any input change
+    // Subscribe to live updates from Supabase channel
+    const unsubscribe = subscribeToFeedbackRealtime(vertical, (event) => {
+      if (event.type === 'INSERT' && event.review) {
+        setReviews(prev => {
+          if (prev.some(r => r.id === event.review.id)) return prev;
+          return [event.review, ...prev];
+        });
+      } else if (event.type === 'UPDATE' && event.review) {
+        setReviews(prev => prev.map(r => r.id === event.review.id ? { ...r, ...event.review } : r));
+      } else if (event.type === 'DELETE' && event.id) {
+        setReviews(prev => prev.filter(r => r.id !== event.id));
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      if (typeof unsubscribe === 'function') unsubscribe();
+    };
+  }, [vertical, loadReviews]);
+
+  // Persist draft on user typing
   const handleInputChange = (field, value) => {
-    let nextDraft = {
+    const nextDraft = {
       name: formName,
       location: formLocation,
       topic: formTopic,
@@ -437,7 +480,6 @@ export default function FeedbackSection({
 
   const handleCancelEdit = () => {
     setEditingReviewId(null);
-    // Restore draft if any
     const draft = getFeedbackDraft(vertical);
     if (draft) {
       setFormName(draft.name || '');
@@ -457,16 +499,15 @@ export default function FeedbackSection({
     setIsFormOpen(false);
   };
 
-  // Handle Like / Helpful toggle with unified local storage
-  const handleLike = (id) => {
-    const result = toggleStoredReviewLike(vertical, id, reviews);
+  // Handle Like / Helpful toggle synchronized to Supabase
+  const handleLike = async (id) => {
+    const result = await toggleCloudFeedbackLike(vertical, id, reviews);
     setReviews(result.updatedReviews);
     setLikedMap(result.newLikesMap);
-    flashStorageIndicator();
   };
 
   // Submit new review or save edit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formName.trim() || !formLocation.trim() || !formReview.trim()) {
       setFormError('Please fill in your name, city, and reflection.');
@@ -474,100 +515,94 @@ export default function FeedbackSection({
     }
 
     setFormError('');
+    setIsSubmitting(true);
 
-    if (editingReviewId) {
-      const updated = updateUserReview(vertical, editingReviewId, {
+    try {
+      if (editingReviewId) {
+        const res = await updateCloudFeedback(vertical, editingReviewId, {
+          name: formName.trim(),
+          location: formLocation.trim(),
+          topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Community Impression',
+          rating: formRating,
+          review: formReview.trim(),
+          recommended: formRecommended
+        }, reviews);
+
+        setReviews(res.updatedReviews);
+        setEditingReviewId(null);
+        clearFeedbackDraft(vertical);
+        setSelectedRatingFilter('all');
+        setIsFormOpen(false);
+        return;
+      }
+
+      const newReviewItem = {
         name: formName.trim(),
         location: formLocation.trim(),
+        role: 'Cultural Patron',
         topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Community Impression',
         rating: formRating,
         review: formReview.trim(),
         recommended: formRecommended
-      }, reviews);
+      };
 
-      setReviews(updated);
-      setEditingReviewId(null);
+      const result = await submitCloudFeedback(vertical, newReviewItem, reviews);
+      setReviews(result.updatedReviews);
       clearFeedbackDraft(vertical);
-      flashStorageIndicator();
       setSelectedRatingFilter('all');
-      setIsFormOpen(false);
-      return;
+
+      // Keep newly submitted review pinned & visible in thank-you card
+      setJustSubmittedReview(result.review);
+      setShowThankYou(true);
+      if (result.isCloud) setSyncStatus('cloud');
+
+      // Reset form fields
+      setFormName('');
+      setFormLocation('');
+      setFormTopic('');
+      setFormRating(5);
+      setFormReview('');
+      setFormRecommended(true);
+      setDraftRestored(false);
+
+      setTimeout(() => {
+        const spotlightEl = document.getElementById(`user-spotlight-${vertical}`);
+        if (spotlightEl) spotlightEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 400);
+    } catch (err) {
+      console.error('Error submitting feedback:', err);
+      setFormError('Failed to publish feedback. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const newReviewItem = {
-      id: `usr_${Date.now()}`,
-      name: formName.trim(),
-      location: formLocation.trim(),
-      role: 'Cultural Patron',
-      topic: formTopic || TOPIC_OPTIONS[vertical]?.[0] || 'Community Impression',
-      rating: formRating,
-      date: 'Just now',
-      review: formReview.trim(),
-      likes: 0,
-      recommended: formRecommended,
-      isUserSubmitted: true
-    };
-
-    const updated = saveUserReview(vertical, newReviewItem, reviews);
-    setReviews(updated);
-    clearFeedbackDraft(vertical);
-    flashStorageIndicator();
-    setSelectedRatingFilter('all');
-
-    // Keep newly submitted review pinned & visible
-    setJustSubmittedReview(newReviewItem);
-    setShowThankYou(true);
-
-    // Reset Form fields for future inputs
-    setFormName('');
-    setFormLocation('');
-    setFormTopic('');
-    setFormRating(5);
-    setFormReview('');
-    setFormRecommended(true);
-    setDraftRestored(false);
-
-    // Smooth scroll down to "Your Submitted Feedback"
-    setTimeout(() => {
-      const spotlightEl = document.getElementById(`user-spotlight-${vertical}`);
-      if (spotlightEl) spotlightEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 400);
   };
 
   // Delete a user-submitted review
-  const handleDeleteReview = (id) => {
-    if (window.confirm('Are you sure you want to remove your feedback? This will delete it from your local storage.')) {
-      const updated = deleteStoredReview(vertical, id, reviews);
-      setReviews(updated);
+  const handleDeleteReview = async (id) => {
+    if (window.confirm('Are you sure you want to remove your feedback? This will delete it permanently.')) {
+      const res = await deleteCloudFeedback(vertical, id, reviews);
+      setReviews(res.updatedReviews);
       if (justSubmittedReview?.id === id) {
         setJustSubmittedReview(null);
       }
-      flashStorageIndicator();
     }
   };
 
   // Reset to default reviews
   const handleResetToDefaults = () => {
     const defaults = DEFAULT_REVIEWS[vertical] || DEFAULT_REVIEWS.marketplace;
-    const restored = resetStoredReviews(vertical, defaults);
-    setReviews(restored);
+    setReviews(defaults);
     setResetConfirmOpen(false);
     setSelectedRatingFilter('all');
     setJustSubmittedReview(null);
-    flashStorageIndicator();
   };
 
-  const flashStorageIndicator = () => {
-    setStorageIndicator('Saved');
-    setTimeout(() => setStorageIndicator('Synced'), 2000);
-  };
-
-  // User submitted reviews that must permanently persist and be highlighted
+  // User submitted reviews from this browser
   const userReviews = useMemo(() => {
-    return reviews.filter(r => r.isUserSubmitted);
+    return reviews.filter(r => isMyReview(r.id, r));
   }, [reviews]);
 
-  // Calculate dynamic average rating and breakdown
+  // Dynamic rating statistics
   const ratingStats = useMemo(() => {
     if (!reviews || reviews.length === 0) {
       return {
@@ -609,11 +644,11 @@ export default function FeedbackSection({
     };
   }, [reviews]);
 
-  // Filter reviews
+  // Filtered review list
   const filteredReviews = useMemo(() => {
     return reviews.filter(rev => {
       if (selectedRatingFilter === 'all') return true;
-      if (selectedRatingFilter === 'recommended') return !!rev.recommended;
+      if (selectedRatingFilter === 'recommended') return Boolean(rev.recommended);
       const targetRating = parseInt(selectedRatingFilter, 10);
       return Math.round(rev.rating || 5) === targetRating;
     });
@@ -621,38 +656,38 @@ export default function FeedbackSection({
 
   const isDark = theme === 'dark';
 
-  // Section titles and labels tailored for each vertical
+  // Vertical-specific branding headers
   const headers = {
     marketplace: {
-      badge: 'PATRON TESTIMONIALS',
+      badge: 'COMMUNITY PATRON TESTIMONIALS',
       title: 'Voices of Craft Patrons',
       hindi: 'ग्राहकों एवं कला-संग्राहकों के विचार',
-      subtitle: 'Stories from collectors, ethical buyers, and craft lovers honoring the master artisans of Jharkhand.',
+      subtitle: 'Synchronized feedback from collectors, ethical buyers, and craft lovers honoring the master artisans of Jharkhand.',
       cta: 'Share Your Craft Story'
     },
     tourism: {
-      badge: 'TRAVELER REFLECTIONS',
+      badge: 'LIVE TRAVELER REFLECTIONS',
       title: 'Traveler Journeys & Memories',
       hindi: 'यात्रियों के संस्मरण एवं अनुभव',
-      subtitle: 'Reflections from cultural wanderers who experienced our sacred groves, artisanal workshops, and ancient trails.',
+      subtitle: 'Public reflections from cultural wanderers who experienced our sacred groves, artisanal workshops, and ancient trails.',
       cta: 'Share Your Journey'
     },
     food: {
-      badge: 'GASTRONOMIC REVIEWS',
+      badge: 'PUBLIC GASTRONOMIC REVIEWS',
       title: 'Flavors, Feasts & Reflections',
       hindi: 'स्वाद, परंपरा और जनअनुभव',
       subtitle: 'Tasting notes from culinary explorers experiencing Jharkhand’s ancient wild foraging and hearthside tribal cooking.',
       cta: 'Share Tasting Experience'
     },
     dance: {
-      badge: 'CULTURAL IMPRESSIONS',
+      badge: 'CULTURAL IMPRESSIONS & ECHOES',
       title: 'Rhythms, Echoes & Impressions',
       hindi: 'ताल, नृत्य और सांस्कृतिक अनुभूति',
       subtitle: 'Audience reverberations moved by the primordial beats of the Mandar, unison footsteps, and ancestral storytelling.',
       cta: 'Share Your Impression'
     },
     languages: {
-      badge: 'LINGUISTIC VOICES',
+      badge: 'PUBLIC LINGUISTIC VOICES',
       title: 'Voices of Indigenous Tongues',
       hindi: 'मातृभाषा, लिपि एवं जनसंवाद',
       subtitle: 'Scholarly reflections, student journeys, and community speakers preserving the living oral traditions of Jharkhand.',
@@ -765,13 +800,34 @@ export default function FeedbackSection({
                 }`}>
                   <strong className={isDark ? 'text-white' : 'text-vanaj-dark'}>
                     {ratingStats.total}
-                  </strong> verified impressions
+                  </strong> community reviews
                 </p>
 
-                {/* Storage Status Tag */}
-                <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                  <Database className="w-3 h-3" />
-                  <span>Local Storage {storageIndicator === 'Saved' ? '✓ Updated' : 'Active'}</span>
+                {/* Cloud Sync Status Badge */}
+                <div className="mt-2.5 flex items-center gap-2">
+                  {syncStatus === 'cloud' ? (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <Globe className="w-3 h-3" />
+                      <span>Cloud Live • Visible to Everyone</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      <Database className="w-3 h-3" />
+                      <span>Local Archive • Supabase Connected</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => loadReviews(true)}
+                    disabled={isRefreshing}
+                    className="p-1 text-stone-400 hover:text-[#C9952A] transition-colors"
+                    title="Refresh reviews from Supabase"
+                    aria-label="Refresh feedback"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[#C9952A]' : ''}`} />
+                  </button>
                 </div>
               </div>
 
@@ -926,8 +982,8 @@ export default function FeedbackSection({
                       isDark ? 'text-neutral-400' : 'text-stone-500'
                     }`}>
                       {editingReviewId 
-                        ? 'Update your previously submitted feedback. Changes are saved to your browser storage instantly.'
-                        : 'Your reflection and rating will be preserved in your local archive and published instantly.'}
+                        ? 'Update your previously submitted feedback. Changes are synchronized to everyone.'
+                        : 'Your reflection will be published in the public archive and immediately visible to everyone.'}
                     </p>
 
                     {/* Unsaved draft indicator */}
@@ -966,12 +1022,12 @@ export default function FeedbackSection({
                     </div>
                     <div>
                       <h4 className="text-2xl font-heading font-bold text-[#C9952A]">
-                        जोहार! (Johar!) Feedback Stored Permanently!
+                        जोहार! (Johar!) Feedback Published Successfully!
                       </h4>
                       <p className={`font-body text-sm sm:text-base max-w-lg mx-auto mt-1 ${
                         isDark ? 'text-neutral-300' : 'text-stone-600'
                       }`}>
-                        Your rating and reflection have been recorded into your browser's persistent storage. It will remain saved and will not disappear when you reload or navigate away.
+                        Your reflection and rating have been stored in the public community archive and are now visible to everyone across all browsers and devices.
                       </p>
                     </div>
 
@@ -1015,8 +1071,9 @@ export default function FeedbackSection({
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {formError && (
-                      <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs sm:text-sm font-medium">
-                        {formError}
+                      <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs sm:text-sm font-medium flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{formError}</span>
                       </div>
                     )}
 
@@ -1187,10 +1244,19 @@ export default function FeedbackSection({
                         </button>
                         <button
                           type="submit"
-                          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] transition-all shadow-md active:scale-95"
+                          disabled={isSubmitting}
+                          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#C9952A] to-[#A37418] hover:from-[#d8a436] hover:to-[#b78422] transition-all shadow-md active:scale-95 disabled:opacity-50"
                         >
-                          <Send className="w-4 h-4" />
-                          <span>{editingReviewId ? 'Update Reflection' : 'Publish Reflection'}</span>
+                          {isSubmitting ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Send className="w-4 h-4" />
+                          )}
+                          <span>
+                            {isSubmitting 
+                              ? 'Publishing...' 
+                              : editingReviewId ? 'Update Reflection' : 'Publish for Everyone'}
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -1203,7 +1269,7 @@ export default function FeedbackSection({
           )}
         </AnimatePresence>
 
-        {/* Dedicated Spotlight: User's Persisted Feedback */}
+        {/* Dedicated Spotlight: User's Published Feedback */}
         {userReviews.length > 0 && (
           <div id={`user-spotlight-${vertical}`} className="mb-12">
             <div className={`p-6 sm:p-8 rounded-3xl border relative overflow-hidden transition-all ${
@@ -1223,8 +1289,8 @@ export default function FeedbackSection({
                       Your Published Feedback
                     </h3>
                     <p className="text-xs text-[#C9952A] font-medium flex items-center gap-1.5 mt-0.5">
-                      <Database className="w-3.5 h-3.5" />
-                      <span>Permanently saved in your browser storage • Persists across reloads</span>
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Publicly active & visible to everyone across all devices</span>
                     </p>
                   </div>
                 </div>
@@ -1271,7 +1337,7 @@ export default function FeedbackSection({
                               {myRev.name}
                             </span>
                             <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                              Active in Storage
+                              Public • Live
                             </span>
                           </div>
                           <div className={`flex items-center gap-1.5 text-xs ${isDark ? 'text-neutral-400' : 'text-stone-500'}`}>
@@ -1356,8 +1422,8 @@ export default function FeedbackSection({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
             {filteredReviews.map((rev) => {
-              const isLiked = !!likedMap[rev.id];
-              const isUserOwned = !!rev.isUserSubmitted;
+              const isLiked = Boolean(likedMap[rev.id]);
+              const isUserOwned = isMyReview(rev.id, rev);
 
               return (
                 <motion.div
@@ -1395,7 +1461,7 @@ export default function FeedbackSection({
                               ? 'bg-[#C9952A]/20 text-[#C9952A] border border-[#C9952A]/30' 
                               : 'bg-amber-100/70 text-[#8B5E3C] border border-[#C9952A]/20'
                         }`}>
-                          {rev.name.charAt(0).toUpperCase()}
+                          {rev.name ? rev.name.charAt(0).toUpperCase() : 'U'}
                         </div>
 
                         <div>
@@ -1463,7 +1529,7 @@ export default function FeedbackSection({
                     </p>
                   </div>
 
-                  {/* Card Bottom: Helpful Button & Recommended Badge & Delete option for user */}
+                  {/* Card Bottom: Helpful Button & Recommended Badge & Edit/Delete for owner */}
                   <div className={`pt-4 border-t flex flex-wrap items-center justify-between gap-3 text-xs ${
                     isDark ? 'border-neutral-800' : 'border-stone-100'
                   }`}>
@@ -1501,7 +1567,7 @@ export default function FeedbackSection({
                             type="button"
                             onClick={() => handleDeleteReview(rev.id)}
                             className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors"
-                            title="Delete your review from storage"
+                            title="Delete your review"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Delete</span>
@@ -1531,7 +1597,9 @@ export default function FeedbackSection({
             isDark ? 'text-neutral-500' : 'text-stone-400'
           }`}>
             <span className="w-1.5 h-1.5 rounded-full bg-[#C9952A]" />
-            Local Storage enabled • All ratings, reviews, and likes are persistently recorded.
+            {syncStatus === 'cloud' 
+              ? 'Supabase Cloud synchronized • Feedback is visible to all community members across devices.' 
+              : 'Supabase integration ready • Run the provided SQL migration in Supabase to sync across all visitors.'}
           </p>
 
           <div className="flex items-center gap-2">
@@ -1547,11 +1615,11 @@ export default function FeedbackSection({
                 title="Reset this section to default seeded reviews"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset Reviews</span>
+                <span>Reset View</span>
               </button>
             ) : (
               <div className="flex items-center gap-1.5 text-xs">
-                <span className="text-red-500">Reset reviews to default?</span>
+                <span className="text-red-500">Reset to default reviews?</span>
                 <button
                   type="button"
                   onClick={handleResetToDefaults}
