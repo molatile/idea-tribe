@@ -155,7 +155,6 @@ export const sendOrderReceipt = async ({ order, customer, targetEmail }) => {
   if (!isEmailJsConfigured()) {
     console.warn(
       '[EmailJS Service] Running in Simulated Demo Mode (Keys not yet added in .env).',
-      '\n-> Admin Receipt would go to:', storeOwnerEmail,
       '\n-> Buyer Confirmation would go to:', buyerEmail,
       '\nOrder details:', baseParams
     );
@@ -166,9 +165,8 @@ export const sendOrderReceipt = async ({ order, customer, targetEmail }) => {
       success: true,
       simulated: true,
       orderId,
-      storeOwnerEmail,
       buyerEmail,
-      message: `Simulated receipt sent to store (${storeOwnerEmail}) and buyer (${buyerEmail}).`,
+      message: `Simulated receipt sent to buyer (${buyerEmail}).`,
     };
   }
 

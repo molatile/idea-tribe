@@ -14,7 +14,7 @@ import {
   Sparkles,
   Info
 } from 'lucide-react';
-import { sendOrderReceipt, EMAILJS_CONFIG, isEmailJsConfigured } from '../../services/emailService';
+import { sendOrderReceipt, isEmailJsConfigured } from '../../services/emailService';
 
 const parsePrice = (priceStr) => {
   if (!priceStr) return 0;
@@ -40,13 +40,11 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
     address: '',
     pincode: '',
     notes: '',
-    targetEmail: EMAILJS_CONFIG.receiptEmail || '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [completedOrder, setCompletedOrder] = useState(null);
-  const [showEmailConfigTip, setShowEmailConfigTip] = useState(false);
 
   if (!isOpen) return null;
 
@@ -79,12 +77,6 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
       return;
     }
 
-    const destinationEmail = (formData.targetEmail.trim() || EMAILJS_CONFIG.receiptEmail || formData.email).trim();
-    if (!emailRegex.test(destinationEmail)) {
-      setErrorMessage('Please enter a valid destination email address for the receipt.');
-      return;
-    }
-
     setIsSubmitting(true);
     setErrorMessage('');
 
@@ -110,7 +102,6 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
       const result = await sendOrderReceipt({
         order: orderPayload,
         customer: customerPayload,
-        targetEmail: destinationEmail,
       });
 
       setCompletedOrder({
@@ -119,7 +110,6 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
         items,
         total: totalAmount,
         customer: customerPayload,
-        recipient: destinationEmail,
         isSimulated: result.simulated,
       });
 
@@ -204,13 +194,13 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
                   </div>
                   <div className="flex-1">
                     <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537]">
-                      Email Receipt Destination
+                      Email Receipt Sent To
                     </div>
                     <div className="text-base font-bold text-stone-900 mt-0.5 break-all">
-                      {completedOrder.recipient}
+                      {completedOrder.customer.email}
                     </div>
                     <p className="text-xs text-stone-500 mt-1">
-                      Customer notification also recorded for: <span className="font-medium text-stone-700">{completedOrder.customer.email}</span>
+                      A copy of your purchase receipt and artisan shipment updates have been dispatched to your inbox.
                     </p>
                   </div>
                 </div>
@@ -422,46 +412,7 @@ const CheckoutModal = ({ isOpen, onClose, items = [], onOrderSuccess }) => {
                     </div>
                   </div>
 
-                  {/* EmailJS Target Receipt Email Customization */}
-                  <div className="p-4 bg-amber-50/70 border border-[#C68537]/30 rounded-2xl">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
-                        <Mail size={14} className="text-[#C68537]" />
-                        Automatic Receipt Destination Email
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowEmailConfigTip(!showEmailConfigTip)}
-                        className="text-[11px] text-[#C68537] hover:underline flex items-center gap-1"
-                      >
-                        <Info size={12} /> {showEmailConfigTip ? 'Hide info' : 'How does this work?'}
-                      </button>
-                    </div>
 
-                    <input
-                      type="email"
-                      name="targetEmail"
-                      value={formData.targetEmail}
-                      onChange={handleInputChange}
-                      placeholder="e.g. orders@yourdomain.com or admin@gmail.com"
-                      className="w-full px-3.5 py-2 bg-white border border-stone-200 rounded-xl text-xs font-mono text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#C68537]/50"
-                    />
-
-                    <p className="text-[11px] text-stone-500 mt-1.5">
-                      This is the specific email inbox where the purchase receipt will be automatically delivered by EmailJS.
-                    </p>
-
-                    {showEmailConfigTip && (
-                      <div className="mt-2.5 pt-2 border-t border-amber-200/60 text-[11px] text-stone-600 leading-relaxed space-y-1">
-                        <p>
-                          ✨ In EmailJS, configure your template's <strong>"To Email"</strong> field to <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">{"{{to_email}}"}</code> so every receipt routes automatically to this address.
-                        </p>
-                        <p>
-                          💡 You can also set a default in your <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">.env</code> via <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">VITE_EMAILJS_RECEIPT_EMAIL</code>.
-                        </p>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
 
