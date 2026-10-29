@@ -69,6 +69,34 @@ export default function Languages() {
   
   // Tribal Simulation State
   const [isDrumming, setIsDrumming] = useState(false);
+  const mandarAudioRef = useRef(null);
+
+  const toggleMandarMusic = () => {
+    if (!mandarAudioRef.current) return;
+
+    if (isDrumming) {
+      mandarAudioRef.current.pause();
+      mandarAudioRef.current.currentTime = 0;
+      setIsDrumming(false);
+    } else {
+      mandarAudioRef.current.currentTime = 0;
+      mandarAudioRef.current.play().then(() => {
+        setIsDrumming(true);
+      }).catch((err) => {
+        console.error("Audio playback error:", err);
+        setIsDrumming(false);
+      });
+    }
+  };
+
+  useEffect(() => {
+    const audioEl = mandarAudioRef.current;
+    return () => {
+      if (audioEl) {
+        audioEl.pause();
+      }
+    };
+  }, []);
 
   
   // Community Inscriptions (Local Storage Persisted)
@@ -404,6 +432,13 @@ export default function Languages() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Interactive Drum */}
             <div className="bg-[#2d1b14] rounded-xl p-6 border-2 border-[#8a6020] text-center shadow-xl relative overflow-hidden group">
+              <audio 
+                ref={mandarAudioRef} 
+                src="/audio/mandar.mp3" 
+                preload="auto"
+                onEnded={() => setIsDrumming(false)}
+                onPause={() => setIsDrumming(false)}
+              />
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/wood-pattern.png")' }}></div>
               <h3 className="text-xl font-bold text-[#FFD700] mb-4 relative z-10 uppercase tracking-widest flex items-center justify-center gap-2">
                 <Music size={20} /> The Mandar Rhythm
@@ -411,14 +446,21 @@ export default function Languages() {
               <p className="text-[#e6d5b8] text-sm mb-6 relative z-10">Feel the pulse of tribal gatherings. Click to play the sacred rhythm.</p>
               
               <button 
-                onClick={() => {
-                  setIsDrumming(true);
-                  setTimeout(() => setIsDrumming(false), 2000);
-                }}
-                className={`relative z-10 w-32 h-32 mx-auto rounded-full border-8 border-[#6e4b17] bg-[#e6d5b8] shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center transition-all ${isDrumming ? 'animate-[pulse_0.2s_ease-in-out_infinite] scale-95 shadow-[0_0_30px_#FFD700]' : 'hover:scale-105'}`}
+                type="button"
+                onClick={toggleMandarMusic}
+                title={isDrumming ? "Click to stop rhythm" : "Click to play rhythm"}
+                aria-label={isDrumming ? "Stop Mandar rhythm" : "Play Mandar rhythm"}
+                className={`relative z-10 w-32 h-32 mx-auto rounded-full border-8 border-[#6e4b17] bg-[#e6d5b8] shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] flex items-center justify-center transition-all cursor-pointer ${isDrumming ? 'animate-[pulse_0.2s_ease-in-out_infinite] scale-95 shadow-[0_0_30px_#FFD700]' : 'hover:scale-105'}`}
               >
-                <div className="w-24 h-24 rounded-full border-2 border-dashed border-[#8a6020] flex items-center justify-center">
-                  <span className="text-[#4a332a] font-bold text-sm uppercase tracking-widest">Beat</span>
+                <div className="w-24 h-24 rounded-full border-2 border-dashed border-[#8a6020] flex flex-col items-center justify-center">
+                  {isDrumming ? (
+                    <>
+                      <Volume2 size={20} className="text-[#8a6020] animate-bounce mb-1" />
+                      <span className="text-[#4a332a] font-bold text-xs uppercase tracking-widest">Playing</span>
+                    </>
+                  ) : (
+                    <span className="text-[#4a332a] font-bold text-sm uppercase tracking-widest">Beat</span>
+                  )}
                 </div>
               </button>
             </div>
