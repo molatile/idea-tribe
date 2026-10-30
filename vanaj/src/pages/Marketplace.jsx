@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import FeedbackSection from '../components/shared/FeedbackSection';
 import { getItemLikes, toggleItemLike } from '../utils/storage';
 import { Heart, ShoppingBag } from 'lucide-react';
@@ -6,7 +7,7 @@ import CheckoutModal from '../components/marketplace/CheckoutModal';
 
 const clothesData = [
   {
-    id: 1,
+    id: 'cloth-1',
     name: 'Asur Tribe Clothing',
     tribe: 'Asur Tribe',
     description: 'Traditional Asur tribe clothing featuring distinct indigenous weaving patterns and earth-toned colors reflecting their deep connection to nature and their iron-smelting heritage.',
@@ -17,7 +18,7 @@ const clothesData = [
     image: '/models/clothes/asur cloth.png'
   },
   {
-    id: 2,
+    id: 'cloth-2',
     name: 'Ho Tribe Clothing',
     tribe: 'Ho Tribe',
     description: 'Vibrant and intricate Ho tribe attire, characterized by elegant borders and traditional motifs that narrate stories of their agrarian lifestyle.',
@@ -28,7 +29,7 @@ const clothesData = [
     image: '/models/clothes/ho cloth.png'
   },
   {
-    id: 3,
+    id: 'cloth-3',
     name: 'Kharia Tribe Clothing',
     tribe: 'Kharia Tribe',
     description: 'Graceful Kharia tribe garments adorned with simple yet striking geometric patterns, embodying their minimalist yet culturally rich traditions.',
@@ -39,7 +40,7 @@ const clothesData = [
     image: '/models/clothes/kharia cloth.png'
   },
   {
-    id: 4,
+    id: 'cloth-4',
     name: 'Khortha Tribe Clothing',
     tribe: 'Khortha Tribe',
     description: 'Beautifully crafted Khortha clothing, showcasing the vibrant cultural blend of the Chota Nagpur plateau through vivid colors and comfortable drapes.',
@@ -50,7 +51,7 @@ const clothesData = [
     image: '/models/clothes/khortha cloth.png'
   },
   {
-    id: 5,
+    id: 'cloth-5',
     name: 'Kurukh Tribe Clothing',
     tribe: 'Kurukh Tribe',
     description: 'Distinctive Kurukh tribe apparel featuring traditional red and white borders, signifying auspiciousness and community pride.',
@@ -61,7 +62,7 @@ const clothesData = [
     image: '/models/clothes/kurukh cloth.png'
   },
   {
-    id: 6,
+    id: 'cloth-6',
     name: 'Munda Tribe Clothing',
     tribe: 'Munda Tribe',
     description: 'Classic Munda tribe garments, beautifully woven with deep cultural motifs and vibrant borders that stand out against earthy base colors.',
@@ -72,7 +73,7 @@ const clothesData = [
     image: '/models/clothes/munda cloth.png'
   },
   {
-    id: 7,
+    id: 'cloth-7',
     name: 'Oraon Tribe Clothing',
     tribe: 'Oraon Tribe',
     description: 'Elegant Oraon traditional wear, reflecting their vibrant agricultural festivals and rich heritage through symbolic weaving styles.',
@@ -83,7 +84,7 @@ const clothesData = [
     image: '/models/clothes/oraon cloth.png'
   },
   {
-    id: 8,
+    id: 'cloth-8',
     name: 'Santhali Tribe Clothing',
     tribe: 'Santhali Tribe',
     description: 'Iconic Santhali clothing, famous for its elegant Phuta Kacha style and striking check patterns that hold profound historical value.',
@@ -97,7 +98,7 @@ const clothesData = [
 
 const ornamentsData = [
   {
-    id: 1,
+    id: 'ornament-1',
     name: 'Tribal Armlet',
     tribe: 'Various Tribes',
     description: 'A beautifully crafted traditional armlet worn during festivals and special occasions.',
@@ -108,7 +109,7 @@ const ornamentsData = [
     image: '/models/ornaments/armlet.png'
   },
   {
-    id: 2,
+    id: 'ornament-2',
     name: 'Banki (traditional bracelet)',
     tribe: 'Santhal & Ho Tribes',
     description: 'An elegant traditional bracelet known as Banki, featuring intricate tribal motifs.',
@@ -119,7 +120,7 @@ const ornamentsData = [
     image: '/models/ornaments/banki.png'
   },
   {
-    id: 3,
+    id: 'ornament-3',
     name: 'Tribal Finger Ring',
     tribe: 'Various Tribes',
     description: 'A distinctive tribal finger ring with unique geometric patterns.',
@@ -130,7 +131,7 @@ const ornamentsData = [
     image: '/models/ornaments/finger%20ring.png'
   },
   {
-    id: 4,
+    id: 'ornament-4',
     name: 'Hair Ornament',
     tribe: 'Munda & Oraon Tribes',
     description: 'A traditional hair ornament that adds grace to tribal dance attires.',
@@ -141,7 +142,7 @@ const ornamentsData = [
     image: '/models/ornaments/hair%20ornament.png'
   },
   {
-    id: 5,
+    id: 'ornament-5',
     name: 'Hair Pin',
     tribe: 'Various Tribes',
     description: 'An intricately designed hair pin used to secure traditional buns.',
@@ -152,7 +153,7 @@ const ornamentsData = [
     image: '/models/ornaments/hair%20pin.png'
   },
   {
-    id: 6,
+    id: 'ornament-6',
     name: 'Khadag',
     tribe: 'Santhal Tribe',
     description: 'A heavy traditional solid bracelet worn by tribal women.',
@@ -163,7 +164,7 @@ const ornamentsData = [
     image: '/models/ornaments/khadag.png'
   },
   {
-    id: 7,
+    id: 'ornament-7',
     name: 'Kundri (earring)',
     tribe: 'Ho & Kharia Tribes',
     description: 'Classic Kundri earrings featuring hanging floral designs.',
@@ -174,7 +175,7 @@ const ornamentsData = [
     image: '/models/ornaments/kundri.png'
   },
   {
-    id: 8,
+    id: 'ornament-8',
     name: 'Tribal Nose Ring',
     tribe: 'Various Tribes',
     description: 'A prominent tribal nose ring with delicate detailing.',
@@ -185,7 +186,7 @@ const ornamentsData = [
     image: '/models/ornaments/nose%20ring.png'
   },
   {
-    id: 9,
+    id: 'ornament-9',
     name: 'Panwari',
     tribe: 'Oraon Tribe',
     description: 'A beautiful Panwari ornament featuring ethnic tribal patterns.',
@@ -196,7 +197,7 @@ const ornamentsData = [
     image: '/models/ornaments/panwari.png'
   },
   {
-    id: 10,
+    id: 'ornament-10',
     name: 'Tribal Waist Belt',
     tribe: 'Various Tribes',
     description: 'A traditional ornate waist belt worn over tribal sarees.',
@@ -210,7 +211,7 @@ const ornamentsData = [
 
 const handicraftsData = [
   {
-    id: 1,
+    id: 'craft-1',
     name: 'Dhokra Tribal Family Figurine',
     tribe: 'Various Tribes',
     description: 'A beautiful handmade Dhokra metal craft depicting a traditional tribal family.',
@@ -221,7 +222,7 @@ const handicraftsData = [
     image: '/models/handicrafts/dhokra%20tribal%20family%20figurine.png'
   },
   {
-    id: 2,
+    id: 'craft-2',
     name: 'Dhokra Tribal Family Sculpture',
     tribe: 'Various Tribes',
     description: 'An intricately detailed sculpture of a tribal family, created using the lost-wax casting technique.',
@@ -232,7 +233,7 @@ const handicraftsData = [
     image: '/models/handicrafts/dhokra%20tribal%20family%20sculpture.png'
   },
   {
-    id: 3,
+    id: 'craft-3',
     name: 'Dhokra Tribal Musician Sculpture',
     tribe: 'Various Tribes',
     description: 'A charming sculpture of a tribal musician playing a traditional instrument.',
@@ -243,7 +244,7 @@ const handicraftsData = [
     image: '/models/handicrafts/dhokra%20tribal%20musician%20sculpture.png'
   },
   {
-    id: 4,
+    id: 'craft-4',
     name: 'Terracotta Tribal Dancer Sculpture',
     tribe: 'Various Tribes',
     description: 'A vibrant terracotta sculpture capturing the graceful movements of a tribal dancer.',
@@ -254,7 +255,7 @@ const handicraftsData = [
     image: '/models/handicrafts/terracotta%20tribal%20dancer%20sculpture.png'
   },
   {
-    id: 5,
+    id: 'craft-5',
     name: 'Tribal Bird Terracotta Vessel',
     tribe: 'Various Tribes',
     description: 'A unique terracotta vessel adorned with tribal bird motifs.',
@@ -265,7 +266,7 @@ const handicraftsData = [
     image: '/models/handicrafts/tribal%20bird%20terracotta%20vessel.png'
   },
   {
-    id: 6,
+    id: 'craft-6',
     name: 'Tribal Folk Drummer Figurine',
     tribe: 'Various Tribes',
     description: 'A beautifully crafted figurine of a tribal folk drummer in action.',
@@ -276,7 +277,7 @@ const handicraftsData = [
     image: '/models/handicrafts/tribal%20folk%20drummer%20figurine.png'
   },
   {
-    id: 7,
+    id: 'craft-7',
     name: 'Tribal Terracotta Ceremonial Pot',
     tribe: 'Various Tribes',
     description: 'An ornate terracotta pot used in traditional tribal ceremonies.',
@@ -287,7 +288,7 @@ const handicraftsData = [
     image: '/models/handicrafts/tribal%20terracotta%20ceremonial%20pot.png'
   },
   {
-    id: 8,
+    id: 'craft-8',
     name: 'Warli Tribal Wall Hanging',
     tribe: 'Warli / Various Tribes',
     description: 'A decorative wall hanging featuring traditional tribal art motifs.',
@@ -298,7 +299,7 @@ const handicraftsData = [
     image: '/models/handicrafts/warli%20tribal%20wall%20hanging.png'
   },
   {
-    id: 9,
+    id: 'craft-9',
     name: 'Wooden Tribal Ceremonial Mask',
     tribe: 'Various Tribes',
     description: 'A striking hand-carved wooden mask used in traditional ceremonies.',
@@ -312,7 +313,7 @@ const handicraftsData = [
 
 const bambooCraftsData = [
   {
-    id: 1,
+    id: 'bamboo-1',
     name: 'Bamboo Grain Basket',
     tribe: 'Various Tribes',
     description: 'A traditional grain basket woven from bamboo.',
@@ -323,7 +324,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/Bamboo%20Grain%20Basket.png'
   },
   {
-    id: 2,
+    id: 'bamboo-2',
     name: 'Bamboo Mouni Basket',
     tribe: 'Various Tribes',
     description: 'A beautifully woven Bamboo Mouni Basket.',
@@ -334,7 +335,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/Bamboo%20Mouni%20Basket.png'
   },
   {
-    id: 3,
+    id: 'bamboo-3',
     name: 'Basket Tray',
     tribe: 'Various Tribes',
     description: 'A flat basket tray crafted with precision.',
@@ -345,7 +346,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/Basket%20Tray.png'
   },
   {
-    id: 4,
+    id: 'bamboo-4',
     name: 'Handwoven Bamboo Winnowing Basket',
     tribe: 'Various Tribes',
     description: 'A handwoven winnowing basket with intricate patterns.',
@@ -356,7 +357,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/Handwoven%20Bamboo%20Winnowing%20Basket.png'
   },
   {
-    id: 5,
+    id: 'bamboo-5',
     name: 'Bamboo Basket Lantern',
     tribe: 'Various Tribes',
     description: 'A decorative lantern made of woven bamboo.',
@@ -367,7 +368,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/bamboo%20basket%20lantern.png'
   },
   {
-    id: 6,
+    id: 'bamboo-6',
     name: 'Bamboo Fish Basket',
     tribe: 'Various Tribes',
     description: 'A sturdy basket designed for catching and holding fish.',
@@ -378,7 +379,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/bamboo%20fish%20basket.png'
   },
   {
-    id: 7,
+    id: 'bamboo-7',
     name: 'Bamboo Fish Trap',
     tribe: 'Various Tribes',
     description: 'A traditional woven fish trap.',
@@ -389,7 +390,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/bamboo%20fish%20trap.png'
   },
   {
-    id: 8,
+    id: 'bamboo-8',
     name: 'Bamboo Fishing Structure',
     tribe: 'Various Tribes',
     description: 'A complex bamboo structure used in fishing.',
@@ -400,7 +401,7 @@ const bambooCraftsData = [
     image: '/models/bamboo%20crafts/bamboo%20fishing%20structure.png'
   },
   {
-    id: 9,
+    id: 'bamboo-9',
     name: 'Bamboo Winnowing Tray',
     tribe: 'Various Tribes',
     description: 'A classic bamboo winnowing tray.',
@@ -414,7 +415,7 @@ const bambooCraftsData = [
 
 const necklacesData = [
   {
-    id: 1,
+    id: 'necklace-1',
     name: 'Beaded Collar Necklace',
     tribe: 'Various Tribes',
     description: 'A beautifully crafted beaded collar necklace representing vibrant tribal traditions.',
@@ -425,7 +426,7 @@ const necklacesData = [
     image: '/models/necklace/beaded collar necklace.png'
   },
   {
-    id: 2,
+    id: 'necklace-2',
     name: 'Dhokra Peacock Feather Pendant Necklace',
     tribe: 'Various Tribes',
     description: 'An exquisite Dhokra necklace featuring a peacock feather pendant design.',
@@ -436,7 +437,7 @@ const necklacesData = [
     image: '/models/necklace/dhokra peacock feather pendant necklace.png'
   },
   {
-    id: 3,
+    id: 'necklace-3',
     name: 'Dhokra Torque Necklace',
     tribe: 'Various Tribes',
     description: 'A traditional Dhokra torque necklace with intricate detailing.',
@@ -447,7 +448,7 @@ const necklacesData = [
     image: '/models/necklace/dhokra torque necklace.png'
   },
   {
-    id: 4,
+    id: 'necklace-4',
     name: 'Dhokra Tree of Life Necklace',
     tribe: 'Various Tribes',
     description: 'A meaningful Dhokra necklace depicting the tree of life motif.',
@@ -458,7 +459,7 @@ const necklacesData = [
     image: '/models/necklace/dhokra tree of life necklace.png'
   },
   {
-    id: 5,
+    id: 'necklace-5',
     name: 'Hansuk Bell Necklace',
     tribe: 'Various Tribes',
     description: 'A charming necklace adorned with traditional Hansuk bells.',
@@ -469,7 +470,7 @@ const necklacesData = [
     image: '/models/necklace/hansuk bell necklace.png'
   },
   {
-    id: 6,
+    id: 'necklace-6',
     name: 'Hansuli Necklace',
     tribe: 'Santhal & Oraon Tribes',
     description: 'A traditional solid metal collar necklace known as Hansuli.',
@@ -480,7 +481,7 @@ const necklacesData = [
     image: '/models/necklace/hansuli necklace.png'
   },
   {
-    id: 7,
+    id: 'necklace-7',
     name: 'Kajra Coin Necklace',
     tribe: 'Various Tribes',
     description: 'A timeless necklace crafted with traditional Kajra coins.',
@@ -491,7 +492,7 @@ const necklacesData = [
     image: '/models/necklace/kajra coin necklace.png'
   },
   {
-    id: 8,
+    id: 'necklace-8',
     name: 'Lapis Lazuli Dhokra Necklace',
     tribe: 'Various Tribes',
     description: 'A unique necklace combining Dhokra craft with Lapis Lazuli stones.',
@@ -502,7 +503,7 @@ const necklacesData = [
     image: '/models/necklace/lapis lazuli dhokra necklace.png'
   },
   {
-    id: 9,
+    id: 'necklace-9',
     name: 'Santhal Dhokra Peacock Sun Pendant Necklace',
     tribe: 'Santhal Tribe',
     description: 'A majestic Santhal necklace featuring a sun and peacock motif.',
@@ -513,7 +514,7 @@ const necklacesData = [
     image: '/models/necklace/santhal dhokra peacock sun pendant necklace.png'
   },
   {
-    id: 10,
+    id: 'necklace-10',
     name: 'Terracotta Leaf Pendant Necklace',
     tribe: 'Various Tribes',
     description: 'An earthy terracotta necklace with a delicate leaf pendant.',
@@ -526,7 +527,9 @@ const necklacesData = [
 ];
 
 const ImageViewer = ({ item, onClose, onNext, onPrev, onAddToCart, onBuyNow }) => {
+  const [loadedSrc, setLoadedSrc] = useState('');
   if (!item) return null;
+  const isLoaded = loadedSrc === item.image;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0D1F17]/95 backdrop-blur-sm overflow-y-auto">
@@ -546,10 +549,19 @@ const ImageViewer = ({ item, onClose, onNext, onPrev, onAddToCart, onBuyNow }) =
 
           {/* Image Section */}
           <div className="w-full md:w-3/5 h-[40vh] md:h-[80vh] bg-black relative group flex items-center justify-center">
+            {!isLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-10 h-10 border-2 border-stone-600 border-t-[#C68537] rounded-full animate-spin"></div>
+              </div>
+            )}
             <img 
+              key={item.image}
               src={item.image} 
               alt={item.name} 
-              className={`w-full h-full cursor-zoom-in transition-transform duration-500 hover:scale-[1.02] ${item.image.includes('clothes') ? 'object-contain md:object-cover' : 'object-contain'}`}
+              loading="lazy"
+              decoding="async"
+              onLoad={() => setLoadedSrc(item.image)}
+              className={`w-full h-full cursor-zoom-in transition-all duration-300 hover:scale-[1.02] ${isLoaded ? 'opacity-100' : 'opacity-0'} ${item.image.includes('clothes') ? 'object-contain md:object-cover' : 'object-contain'}`}
             />
             
             {/* Navigation Arrows */}
@@ -734,6 +746,125 @@ const CartFloatingButton = ({ cartItemCount, setIsCartOpen }) => (
     </button>
 );
 
+const ProductCard = ({ item, isClothes, onSelect, onDirectBuy, onAddToCart, isLiked, onToggleLike }) => {
+    const [loadedSrc, setLoadedSrc] = useState('');
+    const isLoaded = loadedSrc === item.image;
+
+    return (
+        <div 
+            className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-xl transition-all duration-500 group flex flex-col h-full cursor-pointer transform hover:-translate-y-1"
+            onClick={onSelect}
+        >
+            {/* Product Image Area */}
+            <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden flex items-center justify-center">
+                {!isLoaded && (
+                    <div className="absolute inset-0 bg-stone-100 flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-stone-300 border-t-[#C68537] rounded-full animate-spin opacity-50"></div>
+                    </div>
+                )}
+                
+                <img
+                    key={item.image}
+                    src={item.image}
+                    alt={item.name}
+                    loading="lazy"
+                    decoding="async"
+                    onLoad={() => setLoadedSrc(item.image)}
+                    className={`w-full h-full transition-all duration-500 group-hover:scale-110 ${
+                        isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    } ${isClothes ? 'object-cover' : 'object-contain p-4'}`}
+                />
+                
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="bg-white/95 backdrop-blur text-[#1A1A1A] px-6 py-3 rounded-full font-medium shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-[#C68537]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        </svg>
+                        View Details
+                    </div>
+                </div>
+            </div>
+            
+            {/* Product Info */}
+            <div className="p-5 flex flex-col flex-grow bg-white">
+                <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537] mb-1.5">{item.tribe}</div>
+                <h3 className="text-lg font-bold text-[#1A1A1A] mb-2 leading-tight group-hover:text-[#C68537] transition-colors line-clamp-1">{item.name}</h3>
+                
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg font-bold text-[#1A1A1A]">{item.discountPrice || item.price}</span>
+                    {item.discountPrice && item.discountPrice !== item.price && (
+                        <span className="text-sm text-stone-400 line-through">{item.price}</span>
+                    )}
+                </div>
+
+                {!isClothes ? (
+                    <>
+                        <p className="text-stone-500 text-sm mb-1 line-clamp-1 font-light">
+                            <span className="font-semibold text-stone-600">Materials:</span> {item.materials}
+                        </p>
+                        <p className="text-stone-500 text-sm mb-4 line-clamp-1 flex-grow font-light">
+                            <span className="font-semibold text-stone-600">Significance:</span> {item.significance}
+                        </p>
+                    </>
+                ) : (
+                    <p className="text-stone-500 text-sm mb-4 line-clamp-2 flex-grow font-light">
+                        {item.description}
+                    </p>
+                )}
+                
+                <div className="mt-auto flex items-center justify-between gap-2">
+                    <button 
+                        className="flex-1 bg-[#1A1A1A] text-white py-2.5 px-3 rounded-lg text-sm font-medium hover:bg-[#C68537] transition-all shadow-sm hover:shadow-md text-center"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDirectBuy(item);
+                        }}
+                    >
+                        Buy Now
+                    </button>
+                    <button
+                        type="button"
+                        className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 text-stone-600 hover:text-[#C68537] hover:border-[#C68537] transition-all active:scale-95"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onAddToCart(item);
+                        }}
+                        title="Add to cart"
+                    >
+                        <ShoppingBag size={18} />
+                    </button>
+                    <button
+                        type="button"
+                        className={`p-2.5 rounded-lg border transition-all active:scale-95 ${
+                            isLiked
+                                ? 'bg-amber-500/15 text-[#C68537] border-[#C68537]'
+                                : 'bg-stone-50 border-stone-200 text-stone-500 hover:text-stone-900'
+                        }`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleLike(item.id);
+                        }}
+                        title="Save to favorites"
+                    >
+                        <Heart size={18} className={isLiked ? 'fill-current' : ''} />
+                    </button>
+                    <a 
+                        href={`https://wa.me/1234567890?text=I'm interested in the ${item.name} from the Marketplace.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center p-2.5 bg-[#25D366] text-white rounded-lg hover:bg-[#20bd5a] transition-all shadow-sm hover:shadow-md"
+                        onClick={(e) => e.stopPropagation()}
+                        title="Contact via WhatsApp"
+                    >
+                        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Marketplace = () => {
 
     const tabs = ['Clothes', 'Ornaments', 'Necklaces', 'Handicrafts', 'Bamboo Crafts'];
@@ -853,7 +984,10 @@ const Marketplace = () => {
                     {tabs.map((tab) => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab)}
+                            onClick={() => {
+                                setActiveTab(tab);
+                                setSelectedImageIndex(null);
+                            }}
                             className={`whitespace-nowrap px-6 py-2.5 rounded-full font-medium transition-all duration-300 ${
                                 activeTab === tab
                                     ? 'bg-[#C68537] text-white shadow-md transform scale-105'
@@ -872,110 +1006,26 @@ const Marketplace = () => {
 
                 {/* Content */}
                 {activeData.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                    <motion.div 
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
+                    >
                         {activeData.map((item, index) => (
-                            <div 
-                                key={item.id} 
-                                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-xl transition-all duration-500 group flex flex-col h-full cursor-pointer transform hover:-translate-y-1"
-                                onClick={() => setSelectedImageIndex(index)}
-                            >
-                                {/* Product Image Area */}
-                                <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden flex items-center justify-center">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className={`w-full h-full transition-transform duration-700 group-hover:scale-110 ${activeTab === 'Clothes' ? 'object-cover' : 'object-contain p-4'}`}
-                                    />
-                                    
-                                    {/* Overlay on hover */}
-                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                        <div className="bg-white/95 backdrop-blur text-[#1A1A1A] px-6 py-3 rounded-full font-medium shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex items-center">
-                                            <svg className="w-5 h-5 mr-2 text-[#C68537]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                                            </svg>
-                                            View Details
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {/* Product Info */}
-                                <div className="p-5 flex flex-col flex-grow bg-white">
-                                    <div className="text-xs font-semibold uppercase tracking-wider text-[#C68537] mb-1.5">{item.tribe}</div>
-                                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2 leading-tight group-hover:text-[#C68537] transition-colors line-clamp-1">{item.name}</h3>
-                                    
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <span className="text-lg font-bold text-[#1A1A1A]">{item.discountPrice || item.price}</span>
-                                        {item.discountPrice && item.discountPrice !== item.price && (
-                                            <span className="text-sm text-stone-400 line-through">{item.price}</span>
-                                        )}
-                                    </div>
-
-                                    {(activeTab !== 'Clothes') ? (
-                                        <>
-                                            <p className="text-stone-500 text-sm mb-1 line-clamp-1 font-light">
-                                                <span className="font-semibold text-stone-600">Materials:</span> {item.materials}
-                                            </p>
-                                            <p className="text-stone-500 text-sm mb-4 line-clamp-1 flex-grow font-light">
-                                                <span className="font-semibold text-stone-600">Significance:</span> {item.significance}
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <p className="text-stone-500 text-sm mb-4 line-clamp-2 flex-grow font-light">
-                                            {item.description}
-                                        </p>
-                                    )}
-                                    
-                                    <div className="mt-auto flex items-center justify-between gap-2">
-                                        <button 
-                                            className="flex-1 bg-[#1A1A1A] text-white py-2.5 px-3 rounded-lg text-sm font-medium hover:bg-[#C68537] transition-all shadow-sm hover:shadow-md text-center"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDirectBuy(item);
-                                            }}
-                                        >
-                                            Buy Now
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="p-2.5 rounded-lg border border-stone-200 bg-stone-50 text-stone-600 hover:text-[#C68537] hover:border-[#C68537] transition-all active:scale-95"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                addToCart(item);
-                                            }}
-                                            title="Add to cart"
-                                        >
-                                            <ShoppingBag size={18} />
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={`p-2.5 rounded-lg border transition-all active:scale-95 ${
-                                                marketLikes[item.id]?.liked
-                                                    ? 'bg-amber-500/15 text-[#C68537] border-[#C68537]'
-                                                    : 'bg-stone-50 border-stone-200 text-stone-500 hover:text-stone-900'
-                                            }`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleToggleMarketLike(item.id);
-                                            }}
-                                            title="Save to favorites"
-                                        >
-                                            <Heart size={18} className={marketLikes[item.id]?.liked ? 'fill-current' : ''} />
-                                        </button>
-                                        <a 
-                                            href={`https://wa.me/1234567890?text=I'm interested in the ${item.name} from the Marketplace.`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-center p-2.5 bg-[#25D366] text-white rounded-lg hover:bg-[#20bd5a] transition-all shadow-sm hover:shadow-md"
-                                            onClick={(e) => e.stopPropagation()}
-                                            title="Contact via WhatsApp"
-                                        >
-                                            <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard
+                                key={item.id}
+                                item={item}
+                                isClothes={activeTab === 'Clothes'}
+                                onSelect={() => setSelectedImageIndex(index)}
+                                onDirectBuy={handleDirectBuy}
+                                onAddToCart={addToCart}
+                                isLiked={Boolean(marketLikes[item.id]?.liked)}
+                                onToggleLike={handleToggleMarketLike}
+                            />
                         ))}
-                    </div>
+                    </motion.div>
                 ) : (
                     <div className="py-24 flex flex-col items-center justify-center text-center bg-white rounded-3xl border border-stone-100 shadow-sm mt-8">
                         <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mb-6">
