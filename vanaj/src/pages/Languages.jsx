@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MapContainer, GeoJSON, useMapEvents, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { X, Sparkles, Volume2, ArrowRightLeft, Globe, BookOpen, PenTool, Sun, Moon, Music, Flame, Wind, Feather, ChevronDown, Heart, ThumbsUp, Trash2 } from 'lucide-react';
@@ -60,11 +61,23 @@ const jharkhandBounds = [
 ];
 
 export default function Languages() {
+  const [searchParams] = useSearchParams();
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const selectedDistrictRef = useRef(null);
   const geoJsonRef = useRef(null);
   const [showContributeSuccess, setShowContributeSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('Santali');
+
+  useEffect(() => {
+    const langParam = searchParams.get('lang') || searchParams.get('language') || searchParams.get('tribe');
+    if (langParam) {
+      const validLangs = ['Santali', 'Mundari', 'Ho', 'Kurukh', 'Kharia', 'Khortha'];
+      const found = validLangs.find(l => l.toLowerCase() === langParam.toLowerCase());
+      if (found) {
+        setActiveTab(found);
+      }
+    }
+  }, [searchParams]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   
   // Tribal Simulation State

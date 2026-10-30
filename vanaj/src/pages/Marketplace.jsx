@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import FeedbackSection from '../components/shared/FeedbackSection';
 import { getItemLikes, toggleItemLike } from '../utils/storage';
@@ -735,7 +736,9 @@ const CartSidebar = ({ cart, isCartOpen, setIsCartOpen, removeFromCart, updateQu
 const CartFloatingButton = ({ cartItemCount, setIsCartOpen }) => (
     <button 
         onClick={() => setIsCartOpen(true)}
-        className="fixed bottom-8 right-8 z-[90] bg-[#1A1A1A] text-white p-4 rounded-full shadow-2xl hover:bg-[#C68537] transition-all transform hover:scale-110 flex items-center justify-center"
+        className="fixed bottom-24 right-6 sm:bottom-28 sm:right-8 z-[75] bg-[#1A1A1A] text-white p-3.5 sm:p-4 rounded-full shadow-2xl hover:bg-[#C68537] transition-all transform hover:scale-110 flex items-center justify-center border border-white/10"
+        title="View Shopping Cart"
+        aria-label="View Shopping Cart"
     >
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
         {cartItemCount > 0 && (
@@ -866,9 +869,21 @@ const ProductCard = ({ item, isClothes, onSelect, onDirectBuy, onAddToCart, isLi
 };
 
 const Marketplace = () => {
-
+    const [searchParams] = useSearchParams();
     const tabs = ['Clothes', 'Ornaments', 'Necklaces', 'Handicrafts', 'Bamboo Crafts'];
     const [activeTab, setActiveTab] = useState('Clothes');
+
+    useEffect(() => {
+        const tabParam = searchParams.get('tab') || searchParams.get('category');
+        if (tabParam) {
+            const normalized = tabParam.toLowerCase().replace(/[\s+_]+/g, '');
+            const found = tabs.find(t => t.toLowerCase().replace(/[\s+_]+/g, '') === normalized);
+            if (found) {
+                setActiveTab(found);
+            }
+        }
+    }, [searchParams]);
+
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
     const [marketLikes, setMarketLikes] = useState(() => getItemLikes('marketplace'));

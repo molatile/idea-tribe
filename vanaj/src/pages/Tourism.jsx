@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, MapPin, ArrowLeft, Calendar, Info, Map as MapIcon, Clock, User, CheckCircle, ChevronRight, Check, Star, Heart } from 'lucide-react';
 import { getItemLikes, toggleItemLike, saveWorkshopProposal } from '../utils/storage';
 import { motion, useInView, useAnimation } from 'framer-motion';
@@ -373,8 +374,21 @@ const HostWorkshopForm = () => {
 };
 
 const Tourism = () => {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+
+  useEffect(() => {
+    const filterParam = searchParams.get('filter') || searchParams.get('type') || searchParams.get('category');
+    if (filterParam) {
+      const clean = filterParam.toLowerCase();
+      const found = Filters.find(f => f.toLowerCase() === clean);
+      if (found) {
+        setActiveFilter(found);
+      }
+    }
+  }, [searchParams]);
+
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [tourismLikes, setTourismLikes] = useState(() => getItemLikes('tourism'));
 

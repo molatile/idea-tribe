@@ -1,11 +1,17 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 import translateHandler from './api/translate.js';
+import voiceNavigateHandler from './api/voice-navigate.js';
+import ttsHandler from './api/tts.js';
 
-function createTranslateMiddleware(apiKey) {
-  return async (req, res) => {
-    if (apiKey && !process.env.GEMINI_API_KEY) {
-      process.env.GEMINI_API_KEY = apiKey;
+function createApiMiddleware(apiHandler, envVars) {
+  return (req, res) => {
+    if (envVars) {
+      for (const [k, v] of Object.entries(envVars)) {
+        if (v && !process.env[k]) {
+          process.env[k] = v;
+        }
+      }
     }
 
     if (req.method === 'OPTIONS') {
@@ -14,13 +20,18 @@ function createTranslateMiddleware(apiKey) {
       return;
     }
 
-    let body = '';
+    let raw = '';
     req.on('data', chunk => {
-      body += chunk;
+      raw += chunk;
     });
     req.on('end', async () => {
       try {
-        const parsedBody = body ? JSON.parse(body) : {};
+        let parsedBody = {};
+        if (raw) {
+          try {
+            parsedBody = JSON.parse(raw);
+          } catch {}
+        }
         const adaptedReq = {
           method: req.method,
           body: parsedBody
@@ -39,11 +50,15 @@ function createTranslateMiddleware(apiKey) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(data));
           },
+          send(data) {
+            res.statusCode = this.statusCode;
+            res.end(data);
+          },
           end() {
             res.end();
           }
         };
-        await translateHandler(adaptedReq, adaptedRes);
+        await apiHandler(adaptedReq, adaptedRes);
       } catch (err) {
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json');
@@ -53,20 +68,18 @@ function createTranslateMiddleware(apiKey) {
   };
 }
 
-function localDevApiPlugin(apiKey) {
+function localDevApiPlugin(envVars) {
   return {
     name: 'local-dev-api',
     configureServer(server) {
-      if (apiKey) {
-        process.env.GEMINI_API_KEY = apiKey;
-      }
-      server.middlewares.use('/api/translate', createTranslateMiddleware(apiKey));
+      server.middlewares.use('/api/translate', createApiMiddleware(translateHandler, envVars));
+      server.middlewares.use('/api/voice-navigate', createApiMiddleware(voiceNavigateHandler, envVars));
+      server.middlewares.use('/api/tts', createApiMiddleware(ttsHandler, envVars));
     },
     configurePreviewServer(server) {
-      if (apiKey) {
-        process.env.GEMINI_API_KEY = apiKey;
-      }
-      server.middlewares.use('/api/translate', createTranslateMiddleware(apiKey));
+      server.middlewares.use('/api/translate', createApiMiddleware(translateHandler, envVars));
+      server.middlewares.use('/api/voice-navigate', createApiMiddleware(voiceNavigateHandler, envVars));
+      server.middlewares.use('/api/tts', createApiMiddleware(ttsHandler, envVars));
     }
   };
 }
@@ -74,13 +87,22 @@ function localDevApiPlugin(apiKey) {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const apiKey = env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+  const geminiKey = env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+  const elevenlabsKey = env.ELEVENLABS_API_KEY || process.env.ELEVENLABS_API_KEY;
 
-  if (apiKey) {
-    process.env.GEMINI_API_KEY = apiKey;
+  if (geminiKey) {
+    process.env.GEMINI_API_KEY = geminiKey;
+  }
+  if (elevenlabsKey) {
+    process.env.ELEVENLABS_API_KEY = elevenlabsKey;
   }
 
+  const envVars = {
+    GEMINI_API_KEY: geminiKey,
+    ELEVENLABS_API_KEY: elevenlabsKey
+  };
+
   return {
-    plugins: [react(), localDevApiPlugin(apiKey)],
+    plugins: [react(), localDevApiPlugin(envVars)],
   };
 });

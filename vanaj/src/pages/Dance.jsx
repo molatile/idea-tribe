@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Play, Share2, Check, Heart } from 'lucide-react';
 import { getItemLikes, toggleItemLike } from '../utils/storage';
@@ -412,8 +413,26 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated, isLiked, likesCount
 };
 
 export default function Dance() {
+  const [searchParams] = useSearchParams();
   const [selectedDance, setSelectedDance] = useState(null);
   const [danceLikes, setDanceLikes] = useState(() => getItemLikes('dance'));
+
+  useEffect(() => {
+    const query = searchParams.get('dance') || searchParams.get('tribe') || searchParams.get('filter');
+    if (query) {
+      const clean = query.toLowerCase();
+      const match = DANCES.find(d =>
+        d.id.toLowerCase() === clean ||
+        d.tribe.toLowerCase().includes(clean) ||
+        d.name.toLowerCase().includes(clean) ||
+        (clean.includes('santhal') && d.id === 'santhali') ||
+        (clean.includes('santal') && d.id === 'santhali')
+      );
+      if (match) {
+        setSelectedDance(match);
+      }
+    }
+  }, [searchParams]);
 
   const handleToggleDanceLike = (danceId) => {
     toggleItemLike('dance', danceId, 42);
