@@ -4,7 +4,7 @@ import { MapContainer, GeoJSON, useMapEvents, ZoomControl } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import { X, Sparkles, Volume2, ArrowRightLeft, Globe, BookOpen, PenTool, Sun, Moon, Music, Flame, Wind, Feather, ChevronDown, Heart, ThumbsUp, Trash2 } from 'lucide-react';
 import jharkhandData from '../data/jharkhand.json';
-import { districtInfo, languageColors, languageHistories } from '../data/districtInfo';
+import { districtInfo, languageColors, languageHistories, resolveDistrictName } from '../data/districtInfo';
 import FeedbackSection from '../components/shared/FeedbackSection';
 import GeminiTranslator from '../components/languages/GeminiTranslator';
 import {
@@ -67,6 +67,29 @@ export default function Languages() {
   const geoJsonRef = useRef(null);
   const [showContributeSuccess, setShowContributeSuccess] = useState(false);
   const [activeTab, setActiveTab] = useState('Santali');
+  const [focusedCardIndex, setFocusedCardIndex] = useState(0);
+  const [flippedCardIndex, setFlippedCardIndex] = useState(null);
+
+  const selectDistrictByName = (rawName) => {
+    if (!rawName) return;
+    const resolved = resolveDistrictName(rawName) || rawName;
+    if (districtInfo[resolved]) {
+      const newDistrict = {
+        name: resolved,
+        ...districtInfo[resolved]
+      };
+      setSelectedDistrict(newDistrict);
+      selectedDistrictRef.current = newDistrict.name;
+      setIsHistoryExpanded(false);
+
+      setTimeout(() => {
+        const mapEl = document.getElementById('jharkhand-map');
+        if (mapEl) {
+          mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 200);
+    }
+  };
 
   useEffect(() => {
     const langParam = searchParams.get('lang') || searchParams.get('language') || searchParams.get('tribe');
@@ -77,7 +100,135 @@ export default function Languages() {
         setActiveTab(found);
       }
     }
+
+    const districtParam = searchParams.get('district') || searchParams.get('dist');
+    if (districtParam) {
+      selectDistrictByName(districtParam);
+    } else if (searchParams.get('map') === 'true') {
+      setTimeout(() => {
+        const mapEl = document.getElementById('jharkhand-map');
+        if (mapEl) {
+          mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 200);
+    } else {
+      // Check for stored pending action
+      try {
+        const rawPending = sessionStorage.getItem('vanaj_pending_action');
+        if (rawPending) {
+          const pending = JSON.parse(rawPending);
+          if (pending && pending.type === 'SELECT_DISTRICT' && pending.district) {
+            selectDistrictByName(pending.district);
+            sessionStorage.removeItem('vanaj_pending_action');
+          } else if (pending && pending.type === 'OPEN_MAP') {
+            setTimeout(() => {
+              const mapEl = document.getElementById('jharkhand-map');
+              if (mapEl) {
+                mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 200);
+            sessionStorage.removeItem('vanaj_pending_action');
+          } else if (pending && pending.type === 'OPEN_FLASHCARDS') {
+            if (pending.language) setActiveTab(pending.language);
+            setTimeout(() => {
+              const fcEl = document.getElementById('flashcards-section');
+              if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+            sessionStorage.removeItem('vanaj_pending_action');
+          } else if (pending && pending.type === 'FLIP_CARD') {
+            setFlippedCardIndex(prev => (prev !== null ? null : focusedCardIndex));
+            setTimeout(() => {
+              const fcEl = document.getElementById('flashcards-section');
+              if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+            sessionStorage.removeItem('vanaj_pending_action');
+          } else if (pending && pending.type === 'NEXT_CARD') {
+            setFocusedCardIndex(prev => (prev + 1) % 10);
+            setFlippedCardIndex(null);
+            setTimeout(() => {
+              const fcEl = document.getElementById('flashcards-section');
+              if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 200);
+            sessionStorage.removeItem('vanaj_pending_action');
+          }
+        }
+      } catch (e) {
+        console.warn('Error reading pending map action:', e);
+      }
+    }
+
+    if (searchParams.get('playMusic') === 'true') {
+      if (mandarAudioRef.current && !isDrumming) {
+        mandarAudioRef.current.play().then(() => setIsDrumming(true)).catch(() => {});
+      }
+    }
   }, [searchParams]);
+
+  // Real-time Voice Command Listener for Map & District & Flashcards Navigation
+  useEffect(() => {
+    const handleVoiceSelectDistrict = (e) => {
+      if (e.detail?.district) {
+        selectDistrictByName(e.detail.district);
+      }
+    };
+
+    const handleVoiceOpenMap = () => {
+      setTimeout(() => {
+        const mapEl = document.getElementById('jharkhand-map');
+        if (mapEl) {
+          mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+    };
+
+    const handleVoiceMusic = (e) => {
+      if (!mandarAudioRef.current) return;
+      if (e.detail?.play) {
+        mandarAudioRef.current.currentTime = 0;
+        mandarAudioRef.current.play().then(() => setIsDrumming(true)).catch(() => {});
+      } else {
+        mandarAudioRef.current.pause();
+        mandarAudioRef.current.currentTime = 0;
+        setIsDrumming(false);
+      }
+    };
+
+    const handleVoiceFlashcards = (e) => {
+      const detail = e.detail || {};
+      if (detail.action === 'OPEN') {
+        if (detail.language) setActiveTab(detail.language);
+        setTimeout(() => {
+          const fcEl = document.getElementById('flashcards-section');
+          if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      } else if (detail.action === 'FLIP') {
+        setFlippedCardIndex(prev => (prev !== null ? null : focusedCardIndex));
+        setTimeout(() => {
+          const fcEl = document.getElementById('flashcards-section');
+          if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      } else if (detail.action === 'NEXT') {
+        setFocusedCardIndex(prev => (prev + 1) % (flashcards[activeTab]?.length || 10));
+        setFlippedCardIndex(null);
+        setTimeout(() => {
+          const fcEl = document.getElementById('flashcards-section');
+          if (fcEl) fcEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      }
+    };
+
+    window.addEventListener('vanaj:select-district', handleVoiceSelectDistrict);
+    window.addEventListener('vanaj:open-map', handleVoiceOpenMap);
+    window.addEventListener('vanaj:mandar-music', handleVoiceMusic);
+    window.addEventListener('vanaj:flashcards-action', handleVoiceFlashcards);
+
+    return () => {
+      window.removeEventListener('vanaj:select-district', handleVoiceSelectDistrict);
+      window.removeEventListener('vanaj:open-map', handleVoiceOpenMap);
+      window.removeEventListener('vanaj:mandar-music', handleVoiceMusic);
+      window.removeEventListener('vanaj:flashcards-action', handleVoiceFlashcards);
+    };
+  }, [activeTab, focusedCardIndex]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
   
   // Tribal Simulation State
@@ -270,7 +421,7 @@ export default function Languages() {
         </div>
 
         {/* Map Section (Old Map Design) */}
-        <div className="relative rounded-xl mb-16 flex flex-col lg:flex-row h-auto lg:min-h-[650px] shadow-2xl border-[12px] border-[#4a332a] bg-[#e6d5b8]">
+        <div id="jharkhand-map" className="relative rounded-xl mb-16 flex flex-col lg:flex-row h-auto lg:min-h-[650px] shadow-2xl border-[12px] border-[#4a332a] bg-[#e6d5b8] scroll-mt-24">
           <div className="w-full lg:w-[60%] lg:h-full relative z-0 p-2 md:p-4 flex flex-col">
             <div className="absolute inset-0 bg-[#e6d5b8] opacity-50 z-[-1]" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/old-map.png")' }}></div>
             
@@ -520,19 +671,24 @@ export default function Languages() {
           <GeminiTranslator />
 
           {/* Flashcards Section */}
-          <div className="bg-[#2d1b14] rounded-xl shadow-xl overflow-hidden flex flex-col">
+          <div id="flashcards-section" className="bg-[#2d1b14] rounded-xl shadow-xl overflow-hidden flex flex-col scroll-mt-24">
             <div className="p-6 border-b border-[#4a332a] flex justify-between items-center bg-[#1a0f0b]">
               <div>
                 <h2 className="text-2xl font-bold text-[#FFD700] flex items-center gap-3">
                   <BookOpen /> Vocabulary Lexicon
                 </h2>
-                <p className="text-[#a0907d] text-sm mt-1">Master the ancient tongues</p>
+                <p className="text-[#a0907d] text-sm mt-1">Master the ancient tongues (Tap card to flip)</p>
               </div>
               <div className="flex gap-2">
                 {['Santali', 'Mundari'].map(lang => (
                   <button
                     key={lang}
-                    onClick={() => setActiveTab(lang)}
+                    id={`flashcard-tab-${lang.toLowerCase()}`}
+                    onClick={() => {
+                      setActiveTab(lang);
+                      setFocusedCardIndex(0);
+                      setFlippedCardIndex(null);
+                    }}
                     className={`px-4 min-h-[44px] rounded text-sm font-bold transition-all uppercase tracking-wider ${
                       activeTab === lang 
                         ? 'bg-[#8a6020] text-white' 
@@ -548,15 +704,28 @@ export default function Languages() {
             <div className="p-8 flex-1 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {flashcards[activeTab].map((card, idx) => (
-                  <div key={idx} className="group perspective-1000 h-28">
-                    <div className="relative h-full w-full transition-all duration-700 transform-style-preserve-3d group-hover:rotate-y-180 cursor-pointer">
+                  <div 
+                    key={idx} 
+                    id={`flashcard-${idx}`}
+                    onClick={() => {
+                      setFocusedCardIndex(idx);
+                      setFlippedCardIndex(flippedCardIndex === idx ? null : idx);
+                    }}
+                    className={`group perspective-1000 h-28 cursor-pointer rounded-xl transition-all ${
+                      focusedCardIndex === idx ? 'ring-2 ring-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.5)]' : ''
+                    }`}
+                  >
+                    <div className={`relative h-full w-full transition-all duration-700 transform-style-preserve-3d ${
+                      flippedCardIndex === idx ? 'rotate-y-180' : ''
+                    } group-hover:rotate-y-180`}>
                       {/* Front */}
-                      <div className="absolute inset-0 backface-hidden bg-[#e6d5b8] border-2 border-[#8a6020] rounded-lg shadow-sm flex items-center justify-center p-4 text-center">
+                      <div className="absolute inset-0 backface-hidden bg-[#e6d5b8] border-2 border-[#8a6020] rounded-lg shadow-sm flex flex-col items-center justify-center p-4 text-center">
                         <span className="font-bold text-xl text-[#4a332a]">{card.word}</span>
+                        <span className="text-[10px] text-[#8a6020] uppercase font-bold tracking-widest mt-1">Tap or say "flip the card"</span>
                       </div>
                       {/* Back */}
                       <div className="absolute inset-0 backface-hidden bg-[#8a6020] border-2 border-[#6e4b17] rounded-lg shadow-sm flex items-center justify-center p-4 text-center rotate-y-180">
-                        <span className="text-white font-medium italic">{card.meaning}</span>
+                        <span className="text-white font-medium italic text-base">{card.meaning}</span>
                       </div>
                     </div>
                   </div>

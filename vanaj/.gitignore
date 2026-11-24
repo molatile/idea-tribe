@@ -34,3 +34,8 @@ prompts.log
 *.sln
 *.sw?
 public/videos/dance/asur-folk dance.mp4
+test-screenshots/
+screenshot-*.png
+test-*.png
+scratch/
+*.log

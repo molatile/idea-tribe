@@ -7,6 +7,68 @@ export const languageColors = {
   Khortha: '#5D4037'  // Earthy Brown
 };
 
+export const DISTRICT_ALIASES = {
+  ranchi: 'Ranchi',
+  jamshedpur: 'Purba Singhbhum',
+  'east singhbhum': 'Purba Singhbhum',
+  'purba singhbhum': 'Purba Singhbhum',
+  tatanagar: 'Purba Singhbhum',
+  tata: 'Purba Singhbhum',
+  'west singhbhum': 'Pashchimi Singhbhum',
+  'pashchimi singhbhum': 'Pashchimi Singhbhum',
+  chaibasa: 'Pashchimi Singhbhum',
+  dhanbad: 'Dhanbad',
+  bokaro: 'Bokaro',
+  deoghar: 'Deoghar',
+  dumka: 'Dumka',
+  hazaribag: 'Hazaribag',
+  hazaribagh: 'Hazaribag',
+  kodarma: 'Kodarma',
+  koderma: 'Kodarma',
+  'saraikela-kharsawan': 'Saraikela-Kharsawan',
+  saraikela: 'Saraikela-Kharsawan',
+  seraikela: 'Saraikela-Kharsawan',
+  kharsawan: 'Saraikela-Kharsawan',
+  khunti: 'Khunti',
+  gumla: 'Gumla',
+  simdega: 'Simdega',
+  lohardaga: 'Lohardaga',
+  latehar: 'Latehar',
+  palamu: 'Palamu',
+  daltonganj: 'Palamu',
+  garhwa: 'Garhwa',
+  chatra: 'Chatra',
+  giridih: 'Giridih',
+  jamtara: 'Jamtara',
+  godda: 'Godda',
+  sahibganj: 'Sahibganj',
+  sahebganj: 'Sahibganj',
+  pakur: 'Pakur',
+  ramgarh: 'Ramgarh'
+};
+
+export function resolveDistrictName(query) {
+  if (!query) return null;
+  const clean = query.toLowerCase().replace(/[^a-z0-9\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  // Check direct alias mapping
+  for (const [alias, canonical] of Object.entries(DISTRICT_ALIASES)) {
+    if (clean === alias || clean.includes(alias)) {
+      return canonical;
+    }
+  }
+
+  // Check matching districtInfo keys
+  const keys = Object.keys(districtInfo);
+  for (const key of keys) {
+    if (clean.includes(key.toLowerCase())) {
+      return key;
+    }
+  }
+
+  return null;
+}
+
 export const districtInfo = {
   Bokaro: { dominantLanguage: 'Khortha', speakers: '1,500,000+', tribes: ['Karmali', 'Munda'], unescoStatus: 'Safe' },
   Chatra: { dominantLanguage: 'Khortha', speakers: '800,000+', tribes: ['Birhor', 'Oraon'], unescoStatus: 'Safe' },

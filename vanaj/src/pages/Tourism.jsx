@@ -379,6 +379,47 @@ const Tourism = () => {
   const [activeFilter, setActiveFilter] = useState('All');
 
   useEffect(() => {
+    // Process pending actions from sessionStorage
+    try {
+      const rawPending = sessionStorage.getItem('vanaj_pending_action');
+      if (rawPending) {
+        const pending = JSON.parse(rawPending);
+        if (pending && pending.type === 'FILTER_TOURISM') {
+          const found = Filters.find(f => f.toLowerCase() === (pending.filter || '').toLowerCase());
+          if (found) setActiveFilter(found);
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'SEARCH_TOURISM') {
+          setSearchQuery(pending.query || '');
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'SHOW_WORKSHOPS') {
+          setTimeout(() => {
+            const sec = document.getElementById('workshops-section');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'OPEN_HOST_WORKSHOP') {
+          setTimeout(() => {
+            const sec = document.getElementById('host-workshop-section');
+            if (sec) {
+              sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              const input = sec.querySelector('input');
+              if (input) input.focus();
+            }
+          }, 200);
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'SELECT_SPOT') {
+          const cleanSpot = (pending.spot || '').toLowerCase().trim();
+          const matched = tourismData.find(loc => 
+            loc.name.toLowerCase().includes(cleanSpot) || cleanSpot.includes(loc.name.toLowerCase())
+          );
+          if (matched) setSelectedLocation(matched);
+          sessionStorage.removeItem('vanaj_pending_action');
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading pending tourism action:', e);
+    }
+
     const filterParam = searchParams.get('filter') || searchParams.get('type') || searchParams.get('category');
     if (filterParam) {
       const clean = filterParam.toLowerCase();
@@ -387,7 +428,100 @@ const Tourism = () => {
         setActiveFilter(found);
       }
     }
+
+    const searchParam = searchParams.get('search') || searchParams.get('q');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+
+    const sectionParam = searchParams.get('section');
+    if (sectionParam === 'workshops') {
+      setTimeout(() => {
+        const sec = document.getElementById('workshops-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    } else if (sectionParam === 'host-workshop') {
+      setTimeout(() => {
+        const sec = document.getElementById('host-workshop-section');
+        if (sec) {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const input = sec.querySelector('input');
+          if (input) input.focus();
+        }
+      }, 200);
+    }
+
+    const spotParam = searchParams.get('spot') || searchParams.get('destination') || searchParams.get('place');
+    if (spotParam) {
+      const cleanSpot = spotParam.toLowerCase().trim();
+      const matched = tourismData.find(loc => 
+        loc.name.toLowerCase().includes(cleanSpot) || 
+        cleanSpot.includes(loc.name.toLowerCase()) ||
+        loc.district.toLowerCase() === cleanSpot
+      );
+      if (matched) {
+        setSelectedLocation(matched);
+      }
+    }
   }, [searchParams]);
+
+  // Real-time Voice Command Listener for Tourism Destinations, Filters & Sections
+  useEffect(() => {
+    const handleVoiceSelectSpot = (e) => {
+      const spotName = e.detail?.spot;
+      if (spotName) {
+        const clean = spotName.toLowerCase().trim();
+        const matched = tourismData.find(loc => 
+          loc.name.toLowerCase().includes(clean) || clean.includes(loc.name.toLowerCase())
+        );
+        if (matched) {
+          setSelectedLocation(matched);
+        }
+      }
+    };
+
+    const handleVoiceFilter = (e) => {
+      const filter = e.detail?.filter;
+      if (filter) {
+        const found = Filters.find(f => f.toLowerCase() === filter.toLowerCase());
+        if (found) setActiveFilter(found);
+      }
+    };
+
+    const handleVoiceSearch = (e) => {
+      const query = e.detail?.query;
+      if (query !== undefined) {
+        setSearchQuery(query);
+      }
+    };
+
+    const handleVoiceSection = (e) => {
+      const section = e.detail?.section;
+      if (section === 'workshops') {
+        const sec = document.getElementById('workshops-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (section === 'host-workshop') {
+        const sec = document.getElementById('host-workshop-section');
+        if (sec) {
+          sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const input = sec.querySelector('input');
+          if (input) input.focus();
+        }
+      }
+    };
+
+    window.addEventListener('vanaj:select-spot', handleVoiceSelectSpot);
+    window.addEventListener('vanaj:tourism-filter', handleVoiceFilter);
+    window.addEventListener('vanaj:tourism-search', handleVoiceSearch);
+    window.addEventListener('vanaj:tourism-section', handleVoiceSection);
+
+    return () => {
+      window.removeEventListener('vanaj:select-spot', handleVoiceSelectSpot);
+      window.removeEventListener('vanaj:tourism-filter', handleVoiceFilter);
+      window.removeEventListener('vanaj:tourism-search', handleVoiceSearch);
+      window.removeEventListener('vanaj:tourism-section', handleVoiceSection);
+    };
+  }, []);
 
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [tourismLikes, setTourismLikes] = useState(() => getItemLikes('tourism'));
@@ -685,7 +819,7 @@ const Tourism = () => {
       </section>
 
       {/* Workshop Showcase */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
+      <section id="workshops-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20 scroll-mt-24">
         <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 pb-8 snap-x snap-mandatory md:snap-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {workshops.map((workshop) => (
             <div key={workshop.id} className="min-w-[300px] w-[85vw] md:w-auto snap-center group relative h-[500px] rounded-3xl overflow-hidden shadow-2xl cursor-pointer">
@@ -778,7 +912,7 @@ const Tourism = () => {
       <FeedbackSection vertical="tourism" theme="light" />
 
       {/* Host a Workshop (For Organizations) */}
-      <section className="bg-vanaj-dark py-24 relative overflow-hidden text-vanaj-cream">
+      <section id="host-workshop-section" className="bg-vanaj-dark py-24 relative overflow-hidden text-vanaj-cream scroll-mt-24">
         <div className="absolute inset-0">
           <img src="https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&q=80&w=2000" alt="Tribal Art Texture" className="w-full h-full object-cover opacity-10" />
           <div className="absolute inset-0 bg-gradient-to-r from-vanaj-dark via-vanaj-dark/90 to-vanaj-dark/60"></div>

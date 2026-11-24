@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { 
   Sparkles, 
   ArrowRightLeft, 
@@ -25,6 +26,7 @@ const SAMPLE_PHRASES = [
 ];
 
 export default function GeminiTranslator() {
+  const [searchParams] = useSearchParams();
   const [sourceText, setSourceText] = useState('');
   const [targetLang, setTargetLang] = useState('Santali');
   const [isTranslating, setIsTranslating] = useState(false);
@@ -57,6 +59,62 @@ export default function GeminiTranslator() {
       setIsTranslating(false);
     }
   };
+
+  // URL parameters and pending action listener on mount
+  useEffect(() => {
+    try {
+      const rawPending = sessionStorage.getItem('vanaj_pending_action');
+      if (rawPending) {
+        const pending = JSON.parse(rawPending);
+        if (pending && pending.type === 'TRANSLATE' && pending.word) {
+          const w = pending.word;
+          const l = pending.language || 'Santali';
+          setSourceText(w);
+          setTargetLang(l);
+          handleTranslate(w, l);
+          sessionStorage.removeItem('vanaj_pending_action');
+          setTimeout(() => {
+            const sec = document.getElementById('translator-section');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 200);
+        }
+      }
+    } catch (e) {}
+
+    const translateParam = searchParams.get('translate');
+    const wordParam = searchParams.get('word');
+    const langParam = searchParams.get('lang');
+    if (translateParam === 'true' && wordParam) {
+      const l = langParam || 'Santali';
+      setSourceText(wordParam);
+      setTargetLang(l);
+      handleTranslate(wordParam, l);
+      setTimeout(() => {
+        const sec = document.getElementById('translator-section');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+  }, [searchParams]);
+
+  // Live voice translate listener
+  useEffect(() => {
+    const handleVoiceTranslate = (e) => {
+      const { word, language } = e.detail || {};
+      if (word) {
+        const target = language || 'Santali';
+        setSourceText(word);
+        setTargetLang(target);
+        handleTranslate(word, target);
+        setTimeout(() => {
+          const sec = document.getElementById('translator-section');
+          if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      }
+    };
+
+    window.addEventListener('vanaj:translate-action', handleVoiceTranslate);
+    return () => window.removeEventListener('vanaj:translate-action', handleVoiceTranslate);
+  }, []);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -92,7 +150,7 @@ export default function GeminiTranslator() {
   };
 
   return (
-    <div className="bg-[#0D1F17] rounded-2xl shadow-2xl border-2 border-[#C9952A]/40 overflow-hidden text-[#FDF0E0] font-sans transition-all">
+    <div id="translator-section" className="bg-[#0D1F17] rounded-2xl shadow-2xl border-2 border-[#C9952A]/40 overflow-hidden text-[#FDF0E0] font-sans transition-all scroll-mt-24">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-[#08140F] via-[#0D1F17] to-[#122B20] p-6 md:p-8 border-b border-[#C9952A]/30">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

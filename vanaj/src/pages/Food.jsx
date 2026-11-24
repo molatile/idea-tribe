@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Leaf, ChefHat, Calendar, Users, Heart } from 'lucide-react';
 import { getItemLikes, toggleItemLike } from '../utils/storage';
@@ -136,8 +137,12 @@ const heroMessages = [
   }
 ];
 
+const TRIBES = ['All', 'Santhali', 'Ho', 'Oraon', 'Munda', 'Kharia', 'Pan Jharkhand'];
+
 export default function Food() {
+  const [searchParams] = useSearchParams();
   const [selectedFood, setSelectedFood] = useState(null);
+  const [selectedTribe, setSelectedTribe] = useState('All');
   const [foodLikes, setFoodLikes] = useState(() => getItemLikes('food'));
 
   const handleToggleFoodLike = (foodId) => {
@@ -147,16 +152,96 @@ export default function Food() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   useEffect(() => {
+    // Process pending actions from sessionStorage
+    try {
+      const rawPending = sessionStorage.getItem('vanaj_pending_action');
+      if (rawPending) {
+        const pending = JSON.parse(rawPending);
+        if (pending && (pending.type === 'FILTER_FOOD_TRIBE' || pending.tribe)) {
+          const tribeTarget = pending.tribe || 'Santhali';
+          const matchTribe = TRIBES.find(t => t.toLowerCase() === tribeTarget.toLowerCase()) || tribeTarget;
+          setSelectedTribe(matchTribe);
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && (pending.type === 'SELECT_FOOD' || pending.dish)) {
+          const clean = (pending.dish || '').toLowerCase().trim();
+          const matched = foodData.find(f => 
+            f.name.toLowerCase().includes(clean) || clean.includes(f.name.toLowerCase())
+          );
+          if (matched) {
+            setSelectedFood(matched);
+          }
+          sessionStorage.removeItem('vanaj_pending_action');
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading pending food action:', e);
+    }
+
+    const tribeParam = searchParams.get('tribe');
+    if (tribeParam) {
+      const matchTribe = TRIBES.find(t => t.toLowerCase() === tribeParam.toLowerCase()) || tribeParam;
+      setSelectedTribe(matchTribe);
+    }
+
+    const dishParam = searchParams.get('dish') || searchParams.get('recipe') || searchParams.get('food');
+    if (dishParam) {
+      const clean = dishParam.toLowerCase().trim();
+      const matched = foodData.find(f => 
+        f.name.toLowerCase().includes(clean) || clean.includes(f.name.toLowerCase())
+      );
+      if (matched) {
+        setSelectedFood(matched);
+      }
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const handleVoiceSelectDish = (e) => {
+      const dish = e.detail?.dish;
+      if (dish) {
+        const clean = dish.toLowerCase().trim();
+        const matched = foodData.find(f => 
+          f.name.toLowerCase().includes(clean) || clean.includes(f.name.toLowerCase())
+        );
+        if (matched) {
+          setSelectedFood(matched);
+        }
+      }
+    };
+
+    const handleVoiceFilterTribe = (e) => {
+      const tribe = e.detail?.tribe;
+      if (tribe) {
+        const matchTribe = TRIBES.find(t => t.toLowerCase() === tribe.toLowerCase()) || tribe;
+        setSelectedTribe(matchTribe);
+      }
+    };
+
+    window.addEventListener('vanaj:select-dish', handleVoiceSelectDish);
+    window.addEventListener('vanaj:food-filter-tribe', handleVoiceFilterTribe);
+
+    return () => {
+      window.removeEventListener('vanaj:select-dish', handleVoiceSelectDish);
+      window.removeEventListener('vanaj:food-filter-tribe', handleVoiceFilterTribe);
+    };
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentMessageIndex((prev) => (prev + 1) % heroMessages.length);
     }, 3000);
     return () => clearInterval(timer);
   }, []);
 
+  const displayedFood = foodData.filter((food) => {
+    if (selectedTribe === 'All') return true;
+    return food.tribe.toLowerCase().includes(selectedTribe.toLowerCase());
+  });
+
   return (
     <div className="min-h-screen bg-vanaj-cream pt-24 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="min-h-[100px] md:min-h-[60px] flex flex-col justify-center items-center mb-4">
             <AnimatePresence mode="wait">
               <motion.h1
@@ -171,51 +256,87 @@ export default function Food() {
               </motion.h1>
             </AnimatePresence>
           </div>
-          <p className="text-lg text-vanaj-dark max-w-2xl mx-auto font-body">
+          <p className="text-lg text-vanaj-dark max-w-2xl mx-auto font-body mb-8">
             Discover the rich, earthy, and vibrant culinary traditions of Jharkhand's indigenous tribes. Every dish tells a story of harmony with nature.
           </p>
+
+          {/* Tribe Filter Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-3xl mx-auto mb-6">
+            {TRIBES.map((tribe) => (
+              <button
+                key={tribe}
+                id={`tribe-filter-${tribe.toLowerCase().replace(/[\s/]+/g, '-')}`}
+                type="button"
+                onClick={() => setSelectedTribe(tribe)}
+                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold tracking-wide transition-all border ${
+                  selectedTribe.toLowerCase() === tribe.toLowerCase()
+                    ? 'bg-vanaj-red text-white border-vanaj-red shadow-md scale-105'
+                    : 'bg-white/80 hover:bg-white text-stone-700 border-stone-200 hover:border-stone-300'
+                }`}
+              >
+                {tribe === 'All' ? 'All Tribes' : `${tribe} Tribe`}
+              </button>
+            ))}
+          </div>
+          {selectedTribe !== 'All' && (
+            <p className="text-xs text-stone-500 italic">
+              Showing dishes from <strong className="text-vanaj-red">{selectedTribe}</strong> ({displayedFood.length} found)
+            </p>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {foodData.map((food) => (
-            <motion.div
-              key={food.id}
-              layoutId={`card-${food.id}`}
-              onClick={() => setSelectedFood(food)}
-              className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300 bg-vanaj-dark-cream"
-              whileHover={{ y: -5 }}
+        {displayedFood.length === 0 ? (
+          <div className="text-center py-16 bg-white/60 rounded-3xl border border-stone-200">
+            <h3 className="text-xl font-heading font-bold text-stone-800 mb-2">No dishes found</h3>
+            <p className="text-stone-500 text-sm mb-4">No culinary items currently tagged under {selectedTribe}.</p>
+            <button
+              onClick={() => setSelectedTribe('All')}
+              className="px-5 py-2 rounded-full bg-vanaj-red text-white text-xs font-semibold hover:bg-red-800 transition-colors"
             >
-              {/* Image with zoom effect on hover */}
-              <motion.img
-                layoutId={`image-${food.id}`}
-                src={food.image}
-                alt={food.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                onError={() => {
-                  console.error("Image failed to load:", food.image);
-                }}
-              />
-              
-              {/* Warm Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-vanaj-very-dark/90 via-vanaj-dark/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-              
-              {/* Tribe Badge */}
-              <div className="absolute top-4 left-4 bg-vanaj-ochre/90 backdrop-blur-sm text-vanaj-very-dark px-3 py-1 rounded-full text-xs font-bold font-body uppercase tracking-wider shadow-md">
-                {food.tribe}
-              </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleFoodLike(food.id);
-                }}
-                className={`absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md transition-all active:scale-95 ${
-                  foodLikes[food.id]?.liked
-                    ? 'bg-vanaj-red text-white shadow-red-900/30'
-                    : 'bg-vanaj-cream/90 text-vanaj-dark hover:bg-white'
-                }`}
-                title="Like dish"
+              Reset to All Tribes
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {displayedFood.map((food) => (
+              <motion.div
+                key={food.id}
+                layoutId={`card-${food.id}`}
+                onClick={() => setSelectedFood(food)}
+                className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300 bg-vanaj-dark-cream"
+                whileHover={{ y: -5 }}
               >
+                {/* Image with zoom effect on hover */}
+                <motion.img
+                  layoutId={`image-${food.id}`}
+                  src={food.image}
+                  alt={food.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  onError={() => {
+                    console.error("Image failed to load:", food.image);
+                  }}
+                />
+                
+                {/* Warm Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-vanaj-very-dark/90 via-vanaj-dark/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+                
+                {/* Tribe Badge */}
+                <div className="absolute top-4 left-4 bg-vanaj-ochre/90 backdrop-blur-sm text-vanaj-very-dark px-3 py-1 rounded-full text-xs font-bold font-body uppercase tracking-wider shadow-md">
+                  {food.tribe}
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleFoodLike(food.id);
+                  }}
+                  className={`absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-md transition-all active:scale-95 ${
+                    foodLikes[food.id]?.liked
+                      ? 'bg-vanaj-red text-white shadow-red-900/30'
+                      : 'bg-vanaj-cream/90 text-vanaj-dark hover:bg-white'
+                  }`}
+                  title="Like dish"
+                >
                 <Heart size={13} className={foodLikes[food.id]?.liked ? 'fill-current text-white' : ''} />
                 <span>{foodLikes[food.id]?.count ?? 36}</span>
               </button>
@@ -236,6 +357,7 @@ export default function Food() {
             </motion.div>
           ))}
         </div>
+        )}
       </div>
 
       {/* Culinary Feedback & Tasting Impressions Section */}

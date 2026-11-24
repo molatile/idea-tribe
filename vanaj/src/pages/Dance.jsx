@@ -72,6 +72,22 @@ const CinematicPlayer = ({ dance }) => {
     return () => clearTimeout(timer);
   }, [dance]);
 
+  // Voice command listener for video controls
+  useEffect(() => {
+    const handleVoiceDance = (e) => {
+      const detail = e.detail || {};
+      if (detail.action === 'PAUSE' && videoRef.current) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else if (detail.action === 'PLAY' && videoRef.current) {
+        videoRef.current.play().catch(() => {});
+        setIsPlaying(true);
+      }
+    };
+    window.addEventListener('vanaj:dance-action', handleVoiceDance);
+    return () => window.removeEventListener('vanaj:dance-action', handleVoiceDance);
+  }, []);
+
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
@@ -296,6 +312,7 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated, isLiked, likesCount
 
   return (
     <motion.div
+      id="dance-modal"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -303,6 +320,8 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated, isLiked, likesCount
       className="fixed inset-0 z-50 flex flex-col items-center justify-start bg-[#0D0D0D]/98 backdrop-blur-xl p-4 sm:p-6 lg:p-8 overflow-y-auto hide-scrollbar"
     >
       <button 
+        id="close-dance-modal-btn"
+        aria-label="Close dance modal"
         onClick={onClose}
         className="fixed top-4 right-4 sm:top-8 sm:right-8 z-[60] p-3 sm:p-4 bg-white/5 hover:bg-white/10 text-white rounded-full backdrop-blur-md transition-all border border-white/10 group hover:scale-105"
       >
@@ -413,11 +432,38 @@ const Modal = ({ dance, onClose, allDances, onSelectRelated, isLiked, likesCount
 };
 
 export default function Dance() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedDance, setSelectedDance] = useState(null);
   const [danceLikes, setDanceLikes] = useState(() => getItemLikes('dance'));
 
   useEffect(() => {
+    // Check for pending voice action from sessionStorage
+    try {
+      const rawPending = sessionStorage.getItem('vanaj_pending_action');
+      if (rawPending) {
+        const pending = JSON.parse(rawPending);
+        if (pending && (pending.type === 'PLAY_DANCE' || pending.dance)) {
+          const targetDance = pending.dance || 'ho';
+          const match = DANCES.find(d => d.id === targetDance || d.tribe.toLowerCase().includes(targetDance.toLowerCase()));
+          if (match) setSelectedDance(match);
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'NEXT_DANCE') {
+          setSelectedDance(prev => {
+            if (!prev) return DANCES[0];
+            const idx = DANCES.findIndex(d => d.id === prev.id);
+            return DANCES[(idx + 1) % DANCES.length];
+          });
+          sessionStorage.removeItem('vanaj_pending_action');
+        } else if (pending && pending.type === 'CLOSE_VIDEO') {
+          setSelectedDance(null);
+          setSearchParams({}, { replace: true });
+          sessionStorage.removeItem('vanaj_pending_action');
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading pending dance action:', e);
+    }
+
     const query = searchParams.get('dance') || searchParams.get('tribe') || searchParams.get('filter');
     if (query) {
       const clean = query.toLowerCase();
@@ -432,7 +478,31 @@ export default function Dance() {
         setSelectedDance(match);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, setSearchParams]);
+
+  // Live voice assistant listener when Dance page is mounted
+  useEffect(() => {
+    const handleVoiceDanceAction = (e) => {
+      const detail = e.detail || {};
+      if (detail.action === 'PLAY') {
+        const targetDance = detail.dance || 'ho';
+        const match = DANCES.find(d => d.id === targetDance || d.tribe.toLowerCase().includes(targetDance.toLowerCase()));
+        if (match) setSelectedDance(match);
+      } else if (detail.action === 'CLOSE') {
+        setSelectedDance(null);
+        setSearchParams({}, { replace: true });
+      } else if (detail.action === 'NEXT') {
+        setSelectedDance(prev => {
+          if (!prev) return DANCES[0];
+          const idx = DANCES.findIndex(d => d.id === prev.id);
+          return DANCES[(idx + 1) % DANCES.length];
+        });
+      }
+    };
+
+    window.addEventListener('vanaj:dance-action', handleVoiceDanceAction);
+    return () => window.removeEventListener('vanaj:dance-action', handleVoiceDanceAction);
+  }, [setSearchParams]);
 
   const handleToggleDanceLike = (danceId) => {
     toggleItemLike('dance', danceId, 42);
@@ -505,7 +575,10 @@ export default function Dance() {
           <Modal 
             dance={selectedDance} 
             allDances={DANCES}
-            onClose={() => setSelectedDance(null)} 
+            onClose={() => {
+              setSelectedDance(null);
+              setSearchParams({}, { replace: true });
+            }} 
             onSelectRelated={setSelectedDance}
             isLiked={danceLikes[selectedDance.id]?.liked}
             likesCount={danceLikes[selectedDance.id]?.count ?? 42}
